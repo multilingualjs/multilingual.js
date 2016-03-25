@@ -1,0 +1,36 @@
+{
+  "name": "multilingual.js",
+  "version": "0.0.1",
+  "description": "Micro screen typography for CJK typesetting",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/wonyoungso/multilingual.js.git"
+  },
+  "keywords": [
+    "CJK",
+    "typography",
+    "js",
+    "composite",
+    "fonts"
+  ],
+  "devDependencies": {
+    "webpack": "^1.9.11",
+    "expose-loader": "~0.7.1",
+    "mocha-loader": "~0.7.1",
+    "mocha": "~2.0.1",
+    "webpack-dev-server": "^1.9.0",
+    "lodash": "~4.2.0",
+    "jquery": "~2.1.4",
+    "backbone-events-standalone": "~0.2.7"
+  },
+  "author": "Wonyoung So <mail@wonyoung.so> (http://wonyoung.so/), E Roon Kang <eroonkang@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wonyoungso/multilingual.js/issues"
+  },
+  "homepage": "https://github.com/wonyoungso/multilingual.js#readme"
+}
