@@ -63,7 +63,8 @@
 	  en: "[A-Za-z]+",
 	  ko: "[가-힣]+",
 	  numeric: "[0-9]+",
-	  puncutation: "[.,\/#!$%\^&\*;:{}=\-_`~()]+"
+	  puncutation: "[\(\).,“”\-]+"
+	  // puncutation: "[\-.,\/#“”!$%\^&\*;:{}=\-_`~\(\)]+"
 	}
 	
 	function MultiLingual(params){
@@ -78,28 +79,37 @@
 	
 	MultiLingual.prototype = {
 	  init: function(){
+	    // debugger;
 	    var final_regex = this.compose_regex();
+	    // var result = final_regex.exec(this.containers[0].innerHTML);
+	   
 	
+	    var configuration = this.configuration;
 	    this.containers.each(_.bind(function(i, container){
 	
-	      _.each(this.configuration, _.bind(function(config){
-	        var content = container.innerHTML;
-	        container.innerHTML = container.innerHTML.replace(final_regex, function(result){
-	          // 결과를 보고 클래스를 맞게 집어넣는 로직을 넣는다
-	        });
-	      }, this));
+	      container.innerHTML = container.innerHTML.replace(final_regex, function(){
+	        for (var i = 1; i < arguments.length; i++) {
+	          if (!_.isUndefined(arguments[i])) {
+	            var lang = configuration[i - 1].lang;
+	            return "<span class='ml-" + lang + "'>" + arguments[i] + "</span>";
+	          }
+	        }
+	      });
+	
 	
 	    }, this));
 	  },
 	
 	  compose_regex: function(){
-	    // ([가-힣]+)|([A-Za-z]+)|([0-9]+)|([.,\/#!$%\^&\*;:{}=\-_`~()]+)
 	    var final_regex_str = "";
 	
-	    _.each(this.configuration, function(config){
-	      final_regex_str += "(" + regexs[config.lang] + "+)|";
-	    });
-	
+	    _.each(this.configuration, _.bind(function(config, i){
+	      final_regex_str += "(" + regexs[config.lang] + ")";
+	      if (i < this.configuration.length - 1) {
+	        final_regex_str += "|";
+	      }
+	    }, this));
+	    // debugger;
 	    return new RegExp(final_regex_str, "gm");
 	  }
 	}
