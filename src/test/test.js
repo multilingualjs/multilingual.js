@@ -13,19 +13,23 @@ describe('국문, 영문 분리', function() {
       configuration: [
         {
           lang: "en",
-          font: "Times"
+          font: "Times",
+          fontSize: 13
         },
         {
           lang: "ko",
-          font: "Apple SD Gothic Neo"
+          font: "Apple SD Gothic Neo",
+          fontSize: 12
         },
         {
           lang: "numeric",
-          font: "Times"
+          font: "Times",
+          fontSize: 10
         },
         {
           lang: "puncutation",
-          font: "Times"
+          font: "Times",
+          fontSize: 20
         }
       ]
     });
