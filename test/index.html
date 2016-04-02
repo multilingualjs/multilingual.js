@@ -1,29 +1,58 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Mocha Tests</title>
-  <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
-  <link href="./css/basic.css" rel="stylesheet" />
+  <title>Tests</title>
+  <link href="../src/jquery.multilingual.css" rel="stylesheet" />
 </head>
 <body>
   <div id="mocha"></div>
 
   <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
-  <script src="https://cdn.rawgit.com/Automattic/expect.js/0.3.1/index.js"></script>
-  <script src="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.js"></script>
-
-  <script>mocha.setup('bdd')</script>
-  <script src="../dist/test.js"></script>
+  <script src="../src/jquery.multilingual.js"></script>
+  <script src="./test.js"></script>
 
   <div class="container1">
     다른 프로젝트에 참여하려거나(Contribute) Git 저장소를 복사하고 싶을 때 git clone 명령을 사용한다. 이미 Subversion 같은 VCS에 익숙한 사용자에게는 “checkout” 이 아니라 “clone” 이라는 점이 도드라져 보일 것이다. Git이 Subversion과 다른 가장 큰 차이점은 서버에 있는 거의 모든 데이터를 복사한다는 것이다. git clone을 실행하면 프로젝트 히스토리를 전부 받아온다. 실제로 서버의 디스크가 망가져도 클라이언트 저장소 중에서 아무거나 하나 가져다가 복구하면 된다(서버에만 적용했던 설정은 복구하지 못하지만 모든 데이터는 복구된다 - “서버에 Git 설치하기”에서 좀 더 자세히 다룬다).
   </div>
 
+  <div class="container1">
+    다른 프로젝트에 참여하려거나(Contribute) Git 저장소를 복사하고 싶을 때 git clone 명령을 사용한다. 이미 Subversion 같은 VCS에 익숙한 사용자에게는 “checkout” 이 아니라 “clone” 이라는 점이 도드라져 보일 것이다. Git이 Subversion과 다른 가장 큰 차이점은 서버에 있는 거의 모든 데이터를 복사한다는 것이다. git clone을 실행하면 프로젝트 히스토리를 전부 받아온다. 실제로 서버의 디스크가 망가져도 클라이언트 저장소 중에서 아무거나 하나 가져다가 복구하면 된다(서버에만 적용했던 설정은 복구하지 못하지만 모든 데이터는 복구된다 - “서버에 Git 설치하기”에서 좀 더 자세히 다룬다).
+  </div>
 
-  <script>
-    mocha.checkLeaks();
-    mocha.globals(['jQuery']);
-    mocha.run();
-  </script>
+  <div class="container1">
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <a href="#">제목</a>
+          </th>
+
+          <th>
+            <a href="#">내용</a>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <a href="#">내게로 와(come closer)</a>
+          </td>
+
+          <td>
+            <a href="#">롤러코스터(Roller Coaster)</a>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a href="#">무지개 (Jazzy Remix)</a>
+          </td>
+
+          <td>
+            <a href="#">롤러코스터(Roller Coaster)</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
