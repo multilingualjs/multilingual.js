@@ -1,0 +1,129 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+/* fonts */
+@font-face {
+  font-family: 'NotoSans';
+  src: url('fonts/NotoSansCJKkr-Regular-2350.eot'); /* IE9 Compat Modes */
+  src: url('fonts/NotoSansCJKkr-Regular-2350.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/NotoSansCJKkr-Regular-2350.woff') format('woff'); /* Pretty Modern Browsers */
+  font-style: 400;
+}
+@font-face {
+  font-family: 'NotoSans';
+  src: url('fonts/NotoSansCJKkr-Medium-2350.eot'); /* IE9 Compat Modes */
+  src: url('fonts/NotoSansCJKkr-Medium-2350.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/NotoSansCJKkr-Medium-2350.woff') format('woff'); /* Pretty Modern Browsers */
+  font-style: 600;
+}
+@font-face {
+  font-family: 'SourceCodePro';
+  src: url('fonts/SourceCodePro-Light.eot'); /* IE9 Compat Modes */
+  src: url('fonts/SourceCodePro-Light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/SourceCodePro-Light.woff') format('woff'); /* Pretty Modern Browsers */
+  font-style: 200;
+}
+@font-face {
+  font-family: 'SourceCodePro';
+  src: url('fonts/SourceCodePro-Regular.eot'); /* IE9 Compat Modes */
+  src: url('fonts/SourceCodePro-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/SourceCodePro-Regular.woff') format('woff'); /* Pretty Modern Browsers */
+  font-style: 400;
+}
+@font-face {
+  font-family: 'SourceCodePro';
+  src: url('fonts/SourceCodePro-Medium.eot'); /* IE9 Compat Modes */
+  src: url('fonts/SourceCodePro-Medium.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/SourceCodePro-Medium.woff') format('woff'); /* Pretty Modern Browsers */
+  font-style: 600;
+}
+
+
+body {
+	color:#252525;
+	font-family: NotoSans;
+	font-size:18px;
+	line-height: 24px;
+	-webkit-font-smoothing: antialiased;
+}
+
+.content {
+	width: 650px;
+	margin: 150px auto 0 auto;
+}
+
+h1, h2 {
+	color: #a40097;
+	margin: 1em 0;
+}
+h1 {
+	font-weight: 600;
+}
+
+ul {
+	margin: 1em 0;
+	list-style-type: circle;
+}
+li {
+	margin: 0 0 0 1em;
+}
+p {
+	margin: 1em 0;
+}
+p.source {
+	font-size: 75%;
+	color:#959595;
+}
+p.source a {
+	color:#959595;
+	text-decoration:none;
+}
+p.source a:hover {
+	text-decoration:underline;	
+}
