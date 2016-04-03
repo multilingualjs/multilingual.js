@@ -2,6 +2,8 @@
   var regexs = {
     en: "[A-Za-z]+",
     ko: "[가-힣]+",
+    jp: "[\u3040-\u309F\u30A0-\u30FF]+",
+    cn: "[\u4E00-\u9FBF]+",
     num: "[0-9]+",
     punct: "[\(\).,“”\-]+"
   }
@@ -16,7 +18,6 @@
   MultiLingual.prototype = {
     init: function(){
       var final_regex = this.compose_regex();
-      // var result = final_regex.exec(this.containers[0].innerHTML);
      
       var configuration = this.configuration;
 
@@ -52,7 +53,7 @@
         if (typeof config == "string"){
           final_regex_str += "(" + regexs[config] + ")";
         } else {
-          final_regex_str += "(" + config.charset + ")";
+          final_regex_str += "([" + config.charset + "]+)";
         }
         
         if (i < this.configuration.length - 1) {
