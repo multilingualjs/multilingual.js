@@ -47,7 +47,7 @@ table {
 	border-spacing: 0;
 }
 
-/* fonts */
+/* ===== fonts ===== */
 @font-face {
   font-family: 'NotoSans';
   src: url('fonts/NotoSansCJKkr-Regular-2350.eot'); /* IE9 Compat Modes */
@@ -84,28 +84,23 @@ table {
   font-style: 600;
 }
 
-
+/* ===== default styles ===== */
 body {
 	color:#252525;
-	font-family: NotoSans;
-	font-size:18px;
-	line-height: 24px;
+	font-family: NotoSans, Helvetica, Arial, sans-serif;
+	font-size:16px;
+	line-height: 23px;
 	-webkit-font-smoothing: antialiased;
 }
-
 .content {
 	width: 650px;
 	margin: 150px auto 0 auto;
 }
-
 h1, h2 {
 	color: #a40097;
 	margin: 1em 0;
-}
-h1 {
 	font-weight: 600;
 }
-
 ul {
 	margin: 1em 0;
 	list-style-type: circle;
@@ -126,4 +121,25 @@ p.source a {
 }
 p.source a:hover {
 	text-decoration:underline;	
+}
+
+/* ===== multilingual styles ===== */
+.ml-en, {
+	/* specific style for 'en', English */
+	font-family: SourceCodePro, Courier, monospace;
+	font-size:1.1em;
+}
+.ml-ko {
+	/* specific style for 'ko', Korean */
+
+}
+.ml-parenthesis {
+	/* specific style for 'en', English */
+	font-family: SourceCodePro, Courier, monospace;
+	font-size:1.1em;
+	position:relative;
+	top:-0.05em;
+	letter-spacing: -0.1em;
+	margin-left:-0.1em;
+	color:red;
 }

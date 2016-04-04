@@ -8,10 +8,21 @@
 
   <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
   <script src="../src/jquery.multilingual.js"></script>
-  <script src="./test.js"></script>
+  <script>
+  $(document).ready(function(e){
+    $(".content").multilingual([
+      "en", {
+        className: "ml-parenthesis",
+        charset: '!@#$%^&*\(\).,“”\-'
+      }
+    ]);
+  });
+  </script>
   
+  <div class="nav">
+  </div>
   <div class="content">
-    <h1>1.2 시작하기 - 짧게 보는 Git의 역사</h1>
+    <h2>1.2 시작하기 - 짧게 보는 Git의 역사</h1>
     <p>
       우리네 삶의 삼라만상처럼 Git 또한 창조적 파괴와 활활 타오르는 갈등 속에서 시작됐다.
     </p>
@@ -19,7 +30,7 @@
       Linux 커널은 굉장히 규모가 큰 오픈소스 프로젝트다. Linux 커널의 삶 대부분은(1991–2002) Patch와 단순 압축 파일로만 관리했다. 2002년에 드디어 Linux 커널은 BitKeeper라고 불리는 상용 DVCS를 사용하기 시작했다.
     </p>
     <p>
-      2005년에 커뮤니티가 만드는 Linux 커널과 이익을 추구하는 회사가 개발한 BitKeeper의 관계는 틀어졌다. BitKeeper의 무료 사용이 제고된 것이다. 이 사건은 Linux 개발 커뮤니티(특히 Linux 창시자 리누스 토발즈)가 자체 도구를 만드는 계기가 됐다. Git은 BitKeeper를 사용하면서 배운 교훈을 기초로 아래와 같은 목표를 세웠다.
+      2005년에 커뮤니티가 만드는 Linux 커널과 &ldquo;이익을 추구&rdquo; 하는 회사가 개발한 BitKeeper의 관계는 틀어졌다. BitKeeper의 무료 사용이 제고된 것이다. 이 사건은 Linux 개발 커뮤니티(특히 Linux 창시자 리누스 토발즈)가 자체 도구를 만드는 계기가 됐다. Git은 BitKeeper를 사용하면서 배운 교훈을 기초로 아래와 같은 목표를 세웠다.
       <ul>
         <li>빠른 속도</li>
         <li>단순한 구조</li>
@@ -29,7 +40,7 @@
       </ul>
     </p>
     <p>
-      Git은 2005년 탄생하고 나서 아직도 초기 목표를 그대로 유지하고 있다. 그러면서도 사용하기 쉽게 진화하고 성숙했다. Git은 미친 듯이 빨라서 대형 프로젝트에 사용하기도 좋다. Git은 동시다발적인 브랜치에도 끄떡없는 슈퍼 울트라 브랜칭 시스템이다(Chapter 3 참고).
+      Git은 2005년 탄생하고 나서 아직도 초기 목표를 그대로 유지하고 있다. 그러면서도 사용하기 쉽게 진화하고 성숙했다. Git은 미친 듯이 빨라서 대형 프로젝트에 사용하기도 좋다. Git은 동시다발적인 브랜치에도 끄떡없는 슈퍼 울트라 브랜칭 시스템이다(Chapter 3 참고).!@#$%^&*\(\).,“”\-
     </p>
     <p class="source">
       &mdash; <a href="https://git-scm.com/book/ko/v2/" target="_blank">https://git-scm.com/book/ko/v2/</a>
