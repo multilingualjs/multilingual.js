@@ -71,6 +71,12 @@
         charset = charset.replace(/\&gt;/, "");
       }
 
+      if (charset.match(/>/) != null || charset.match(/\&emdash;/) != null){
+        html_escaped_chars.push("&emdash;");
+        charset = charset.replace(/>/, "");
+        charset = charset.replace(/\&emdash;/, "");
+      }
+
 
       if (html_escaped_chars.length > 0) {
         final_str = "([" + charset + "]|" + html_escaped_chars.join("|") + "+)";
