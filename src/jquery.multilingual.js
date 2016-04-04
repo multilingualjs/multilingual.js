@@ -48,6 +48,7 @@
     },
 
     compute_custom_regex: function (charset) {
+      charset = this.escape_regex_str(charset);
       
       var html_escaped_chars = [];
       var final_str = "";
