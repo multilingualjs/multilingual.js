@@ -48,6 +48,7 @@ table {
 }
 
 /* ===== fonts ===== */
+
 @font-face {
   font-family: 'NotoSans';
   src: url('fonts/NotoSansCJKkr-Regular-2350.eot'); /* IE9 Compat Modes */
@@ -124,22 +125,23 @@ p.source a:hover {
 }
 
 /* ===== multilingual styles ===== */
-.ml-en, {
+.ml-en, .ml-num {
 	/* specific style for 'en', English */
-	font-family: SourceCodePro, Courier, monospace;
-	font-size:1.1em;
+	font-family: 'Roboto Mono', Courier, monospace;
+	font-size:1.075em;
+	letter-spacing: -0.02em;
+	font-weight: 400;
 }
 .ml-ko {
 	/* specific style for 'ko', Korean */
-
 }
 .ml-parenthesis {
 	/* specific style for 'en', English */
 	font-family: SourceCodePro, Courier, monospace;
-	font-size:1.1em;
+	font-size:1.075em;
 	position:relative;
 	top:-0.05em;
-	letter-spacing: -0.1em;
-	margin-left:-0.1em;
-	color:red;
+	letter-spacing: -0.075em;
+	margin-left:-0.075em;
+	/*color:red;*/
 }
