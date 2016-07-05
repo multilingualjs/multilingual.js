@@ -5,7 +5,7 @@
     jp: "[\u3040-\u309F\u30A0-\u30FF]+",
     cn: "[\u4E00-\u9FBF]+",
     num: "[0-9]+",
-    punct: "[\(\).,“”\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
+    punct: "[\(\).,<>“”\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
   }
 
   function MultiLingual(params){
@@ -17,94 +17,100 @@
 
   MultiLingual.prototype = {
     init: function(){
-      var final_regex = this.compose_regex();
+      var finalRegex = this.composeRegex();
      
       var configuration = this.configuration;
 
       for (var i = 0, len = this.containers.length; i < len; i++){
         var container = this.containers[i];
-        container.innerHTML = container.innerHTML.replace(final_regex, function(){
+        
+        container.innerHTML = this.htmlDecode(container.innerHTML).replace(finalRegex, function(){
           for (var i = 1; i < arguments.length; i++) {
             if (arguments[i] != undefined) {
               var config = configuration[i - 1];
-              var class_name;
+              var className;
 
               if (typeof config == "string"){
-                class_name = "ml-" + config;
+                className = "ml-" + config;
               } else {
-                class_name = config.className;
+                className = config.className;
               }
 
-              return "<span class='" + class_name + "'>" + arguments[i] + "</span>";
+              return "<span class='" + className + "'>" + arguments[i] + "</span>";
             }
           }
         });
       }
 
     },
+
+    htmlDecode: function(input){
+      var doc = new DOMParser().parseFromString(input, "text/html");
+      return doc.documentElement.textContent;
+    },
     
-    escape_regex_str: function(str) {
+    escapeRegexStr: function(str) {
       return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     },
 
-    compute_custom_regex: function (charset) {
-      charset = this.escape_regex_str(charset);
+    computeCustomRegex: function (charset) {
+      charset = this.escapeRegexStr(charset);
       
-      var html_escaped_chars = [];
-      var final_str = "";
+      var htmlEscapedChars = [];
+      var finalStr = "";
 
       if (charset.match(/\&/) != null || charset.match(/\&amp;/) != null){
-        html_escaped_chars.push("&amp;");
+        htmlEscapedChars.push("&amp;");
         charset = charset.replace(/\&/, "");
         charset = charset.replace(/\&amp;/, "");
       }
 
       if (charset.match(/</) != null || charset.match(/\&lt;/) != null){
-        html_escaped_chars.push("&lt;");
+        htmlEscapedChars.push("&lt;");
         charset = charset.replace(/</, "");
         charset = charset.replace(/\&lt;/, "");
       }
 
       if (charset.match(/>/) != null || charset.match(/\&gt;/) != null){
-        html_escaped_chars.push("&gt;");
+        htmlEscapedChars.push("&gt;");
         charset = charset.replace(/>/, "");
         charset = charset.replace(/\&gt;/, "");
       }
 
       if (charset.match(/>/) != null || charset.match(/\&emdash;/) != null){
-        html_escaped_chars.push("&emdash;");
+        htmlEscapedChars.push("&emdash;");
         charset = charset.replace(/>/, "");
         charset = charset.replace(/\&emdash;/, "");
       }
 
 
-      if (html_escaped_chars.length > 0) {
-        final_str = "([" + charset + "]|" + html_escaped_chars.join("|") + "+)";
+      if (htmlEscapedChars.length > 0) {
+        finalStr = "([" + charset + "]|" + htmlEscapedChars.join("|") + "+)";
       } else {
-        final_str = "([" + charset + "]+)";
+        finalStr = "([" + charset + "]+)";
       }
-      return final_str;
+      return finalStr;
     },
 
 
-    compose_regex: function(){
-      var final_regex_str = "(\?![^<>&]*>)";
+    composeRegex: function(){
+      var finalRegexStr = "(\?![^<>&]*>)";
 
       for (var i = 0, len = this.configuration.length; i < len; i++){
         var config = this.configuration[i];
 
         if (typeof config == "string"){
-          final_regex_str += "(" + regexs[config] + ")";
+          finalRegexStr += "(" + regexs[config] + ")";
         } else {
-          final_regex_str += this.compute_custom_regex(config.charset);
+          finalRegexStr += this.computeCustomRegex(config.charset);
         }
         
         if (i < this.configuration.length - 1) {
-          final_regex_str += "|";
+          finalRegexStr += "|";
         }
       }
 
-      return new RegExp(final_regex_str, "gm");
+      return new RegExp(finalRegexStr, "gm");
     }
   }
 
