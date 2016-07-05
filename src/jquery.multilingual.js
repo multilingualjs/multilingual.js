@@ -5,7 +5,7 @@
     jp: "[\u3040-\u309F\u30A0-\u30FF]+",
     cn: "[\u4E00-\u9FBF]+",
     num: "[0-9]+",
-    punct: "[\(\).,<>“”\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
+    punct: "[\(\).,“”\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
   }
 
   function MultiLingual(params){
@@ -23,8 +23,7 @@
 
       for (var i = 0, len = this.containers.length; i < len; i++){
         var container = this.containers[i];
-        
-        container.innerHTML = this.htmlDecode(container.innerHTML).replace(finalRegex, function(){
+        container.innerHTML = container.innerHTML.replace(/&nbsp;/g, " ").replace(finalRegex, function(){
           for (var i = 1; i < arguments.length; i++) {
             if (arguments[i] != undefined) {
               var config = configuration[i - 1];
@@ -43,12 +42,6 @@
       }
 
     },
-
-    htmlDecode: function(input){
-      var doc = new DOMParser().parseFromString(input, "text/html");
-      return doc.documentElement.textContent;
-    },
-    
     escapeRegexStr: function(str) {
       return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     },
@@ -99,7 +92,7 @@
       for (var i = 0, len = this.configuration.length; i < len; i++){
         var config = this.configuration[i];
 
-        if (typeof config == "string"){
+        if (typeof config == "string"){ // ml-en 등 미리 정해진 프리셋의 경우 
           finalRegexStr += "(" + regexs[config] + ")";
         } else {
           finalRegexStr += this.computeCustomRegex(config.charset);

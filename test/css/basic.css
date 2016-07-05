@@ -2,6 +2,11 @@ body {
   font-family: 'Noto Sans', sans-serif;
 }
 
+.container1 {
+	margin-bottom:30px;
+}
+
+
 div {
   font-family: Arial, sans-serif;
 }
