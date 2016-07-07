@@ -23,7 +23,7 @@
 
       for (var i = 0, len = this.containers.length; i < len; i++){
         var container = this.containers[i];
-        container.innerHTML = container.innerHTML.replace(/&nbsp;/g, " ").replace(finalRegex, function(){
+        container.innerHTML = this.unescapeRegexStr(container.innerHTML).replace(finalRegex, function(){
           for (var i = 1; i < arguments.length; i++) {
             if (arguments[i] != undefined) {
               var config = configuration[i - 1];
@@ -40,8 +40,12 @@
           }
         });
       }
-
     },
+
+    unescapeRegexStr: function(input) {
+      return input.replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+    },
+
     escapeRegexStr: function(str) {
       return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     },

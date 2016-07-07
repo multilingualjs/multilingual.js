@@ -14,3 +14,42 @@ div {
 p {
   font-family: Times, serif;
 }
+
+ul{    
+width: 100%;
+   border-top: 1px solid #000;
+   margin-top: 0;
+   height: inherit;
+   position: relative;
+padding: 15px 0;
+   z-index: 9960;
+   text-align: center;
+list-style: none;
+   margin: 0;
+   border: 0;
+   font-size: 100%;
+   font: inherit;
+   vertical-align: baseline;
+}
+
+
+li{
+	width: 100%;
+   margin: 5px 0;
+font-size: 17px;
+   line-height: 27px;
+   display: inline-block;
+   padding: 0;
+   border: 0;
+   vertical-align: baseline;
+}
+
+li a {
+   padding-bottom: 9px;
+font-size: 15px;
+   line-height: 22px;
+   letter-spacing: 0.05em;
+   border-bottom: none;
+   color: #000;
+   text-decoration: none;
+}
