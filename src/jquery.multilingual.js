@@ -5,7 +5,7 @@
     jp: "[\u3040-\u309F\u30A0-\u30FF]+",
     cn: "[\u4E00-\u9FBF]+",
     num: "[0-9]+",
-    punct: "[\(\).,“”\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
+    punct: "[\(\).,“”\"\'\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
   }
 
   function MultiLingual(params){
@@ -43,7 +43,7 @@
     },
 
     unescapeRegexStr: function(input) {
-      return input.replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+      return input.replace(/&nbsp;/g, " ")//;.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
     },
 
     escapeRegexStr: function(str) {
