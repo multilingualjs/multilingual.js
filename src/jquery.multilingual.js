@@ -43,7 +43,7 @@
     },
 
     unescapeRegexStr: function(input) {
-      return input.replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+      return input.replace(/&nbsp;/g, " ").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
     },
 
     escapeRegexStr: function(str) {
