@@ -21,6 +21,13 @@ li {
 	display: inline-block;
 	margin-right: 1em;
 }
+li.en { color: red; }
+li.ko { color: blue; }
+li.jp { color: green; }
+li.cn { color: orange; }
+li.num { color: violet; }
+li.punct { color: teal; }
+li.parentheses { color: brown; }
 
 /* ===== multilingual styles ===== */
 .ml-en {
