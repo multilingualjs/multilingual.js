@@ -5,7 +5,7 @@
     jp: "[\u3040-\u309F\u30A0-\u30FF]+",
     cn: "[\u4E00-\u9FBF]+",
     num: "[0-9]+",
-    punct: "[\(\).,（）。、·，“”\"\'\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
+    punct: "[\(\).,（）。、·，;:“”\"\'\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
   }
 
   function MultiLingual(params){
