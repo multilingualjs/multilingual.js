@@ -5,7 +5,7 @@
     jp: "[\u3040-\u309F\u30A0-\u30FF]+",
     cn: "[\u4E00-\u9FBF]+",
     num: "[0-9]+",
-    punct: "[\(\).,“”\"\'\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
+    punct: "[\(\).,（）。、·，“”\"\'\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
   }
 
   function MultiLingual(params){
@@ -23,6 +23,8 @@
 
       for (var i = 0, len = this.containers.length; i < len; i++){
         var container = this.containers[i];
+
+        debugger;
         container.innerHTML = this.unescapeRegexStr(container.innerHTML).replace(finalRegex, function(){
           for (var i = 1; i < arguments.length; i++) {
             if (arguments[i] != undefined) {
