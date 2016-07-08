@@ -86,7 +86,7 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 ```javascript
      $(".content").multilingual([
       "en", {
-        className: "ml-parenthesis", /* 클래스 이름은 어떤 것이든 가능하다. Class name can be anything */
+        className: "ml-parentheses", /* 클래스 이름은 어떤 것이든 가능하다. Class name can be anything */
         charset: '()' /* ml-parenthesis 클래스 안에 포함될 문자세트를 지정해준다. characters to be selected, within '' */
       }
     ]);
@@ -102,12 +102,12 @@ body {
   font-size: 16px;
   line-height: 23px;
 }
-.ml-en, .ml-punct .ml-parenthesis {
+.ml-en, .ml-punct .ml-parentheses {
   /* shared styles for 'en', 'punct', and parentheses */
   font-family: SourceCodePro, Courier, monospace;
   font-size: 1.1em;
 }
-.ml-parenthesis {
+.ml-parentheses {
   /* specific style for parentheses */
   /* shifting baseline */
   position:relative;
@@ -127,7 +127,7 @@ body {
 CSS3 표준에서 글줄을 손쉽게 조절할수 있는 방법은 없으므로, 편법에 의존할 수 밖에 없다.
 
 ```CSS
-.ml-parenthesis {
+.ml-parentheses {
   /* shifting baseline */
   position:relative;
   top: -0.05em;

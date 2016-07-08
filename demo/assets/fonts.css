@@ -1,0 +1,51 @@
+/* ===== fonts ===== */
+
+@font-face {
+  font-family: 'NotoSans';
+  src: url('fonts/NotoSansCJKkr-Regular-2350.eot'); /* IE9 Compat Modes */
+  src: url('fonts/NotoSansCJKkr-Regular-2350.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/NotoSansCJKkr-Regular-2350.woff') format('woff'); /* Pretty Modern Browsers */
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'NotoSans';
+  src: url('fonts/NotoSansCJKkr-Medium-2350.eot'); /* IE9 Compat Modes */
+  src: url('fonts/NotoSansCJKkr-Medium-2350.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/NotoSansCJKkr-Medium-2350.woff') format('woff'); /* Pretty Modern Browsers */
+  font-weight: 600;
+}
+@font-face {
+  font-family: 'SourceCodePro';
+  src: url('fonts/SourceCodePro-Light.eot'); /* IE9 Compat Modes */
+  src: url('fonts/SourceCodePro-Light.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/SourceCodePro-Light.woff') format('woff'); /* Pretty Modern Browsers */
+  font-weight: 200;
+}
+@font-face {
+  font-family: 'SourceCodePro';
+  src: url('fonts/SourceCodePro-Regular.eot'); /* IE9 Compat Modes */
+  src: url('fonts/SourceCodePro-Regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/SourceCodePro-Regular.woff') format('woff'); /* Pretty Modern Browsers */
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'SourceCodePro';
+  src: url('fonts/SourceCodePro-Medium.eot'); /* IE9 Compat Modes */
+  src: url('fonts/SourceCodePro-Medium.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/SourceCodePro-Medium.woff') format('woff'); /* Pretty Modern Browsers */
+  font-weight: 600;
+}
+@font-face {
+  font-family: 'LiberationMono';
+  src: url('fonts/LiberationMono-Regular-webfont.eot'); /* IE9 Compat Modes */
+  src: url('fonts/LiberationMono-Regular-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/LiberationMono-Regular-webfont.woff') format('woff'); /* Pretty Modern Browsers */
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'LiberationMono';
+  src: url('fonts/LiberationMono-Bold-webfont.eot'); /* IE9 Compat Modes */
+  src: url('fonts/LiberationMono-Bold-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('fonts/LiberationMono-Bold-webfont.woff') format('woff'); /* Pretty Modern Browsers */
+  font-weight: 600;
+}

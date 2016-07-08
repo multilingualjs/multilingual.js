@@ -1,71 +1,47 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Tests</title>
-  <link href="assets/style.css" rel="stylesheet" />
+  <title>multilingual.js Demo</title>
   <link href='https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,600' rel='stylesheet' type='text/css'>
+  <link href="assets/reset.css" rel="stylesheet" />
+  <link href="assets/fonts.css" rel="stylesheet" />
+  <link href="assets/style.css" rel="stylesheet" />
 </head>
 <body>
   <script src="https://cdn.rawgit.com/jquery/jquery/2.1.4/dist/jquery.min.js"></script>
   <script src="../src/jquery.multilingual.js"></script>
   <script>
   $(document).ready(function(e){
-    $(".content").multilingual([
-      "en", "num", {
-        className: "ml-parenthesis",
+    $(".bodytext").multilingual([
+      "en", "ko", "jp", "cn", "num", "punct",  {
+        className: "ml-parentheses",
         charset: '()'
       }
     ]);
   });
   </script>
-  
-  <div class="nav">
-  </div>
   <div class="content">
-    <p>
-    xhtml:license - 저작물에 대한 라이선스의 값입니다. 권리자가 CCL을 적용하게 될 경우 반드시 라이선스 값이 특정되어야 하는 것은 당연한 바, 6개의 라이선스 유형 중 하나에 해당하는   URL이 그 값이 됩니다. xhtml은 XHTML 워킹그룹의 네임스페이스 정책에 따른 용어라는 의미로 htttp://www.w3.org/1999/xhtml/vocab#의 단축된 표현입니다.
-    </p>
-    <p>
-    필수적인 속성으로 지정해주어야 할 것은 저작물에 적용된 라이선스의 값입니다. 따라서 모든 CCL의 메타데이터에는 최소한 라이선스 값을 기술하는 1개의 RDF 트리플이 반드시 포함됩니다.
-    </p>
-    <p>
-    저작물의 좀 더 효율적인 이용을 위해서는 필수적인 라이선스 정보 외에 부가 정보가 추가되는 게 좋습니다. 다음과 같은 정보들이 여기에 해당합니다. CC 홈페이지의 라이선스 선택메뉴에는 이러한 정보들이 선택적 기재사항으로 제시되어 있습니다.
-    </p>
-    <p>
-    모나리자(Mona Lisa) 또는 라 조콘다(La Gioconda, La Joconde)는 16세기 르네상스 시대에 레오나르도 다 빈치가 그린 초상화로, 현재 프랑스 파리 루브르 박물관에 전시되어 있다. "모나"(mona)는 유부녀 이름 앞에 붙이는 이탈리아어 경칭이고, "리자"(Lisa)는 초상화의 모델이 된 여인의 이름이다. 즉, 한국어로 하면 "리자 여사"라는 뜻이 된다. 모나리자의 다른 명칭인 "라 조콘다"는 한국어로 "조콘도(Giocondo)의 부인"이라는 뜻이 된다.
-    </p>
-    <p>
-    이 작품은 희미하게 미소짓고 있는 여인을 그린 초상으로, '스푸마토'(sfumato) 기법을 사용하여 엷은 안개가 덮인 듯한 효과를 주고 있다. 구도는 당시에 가장 기본적인 초상화 구도였던 피라미드의 형태를 띠고 있다. 또한 인물을 배경보다 높게 배치하는 방식은 오늘날 화가들이 흔히 사용하는 방법이지만 르네상스 시대에는 드문 방식을 사용하였다.[1]
-    </p>
-    <p>
-    레오나르도 다빈치는 1502년에 모나리자를 그리기 시작했는데, 조르지오 바사리의 말에 의하면 미완성작으로 남겨둔지 4년이 지난 후에서 다시 그리기 시작했다고 한다.
-    </p>
-    -->
-    <!--
-    <h2>1.2 시작하기 - 짧게 보는 Git의 역사</h1>
-    <p>
-      우리네 삶의 삼라만상처럼 Git 또한 창조적 파괴와 활활 타오르는 갈등 속에서 시작됐다.
-    </p>
-    <p>
-      Linux 커널은 굉장히 규모가 큰 오픈소스 프로젝트다. Linux 커널의 삶 대부분은(1991–2002) Patch와 단순 압축 파일로만 관리했다. 2002년에 드디어 Linux 커널은 BitKeeper라고 불리는 상용 DVCS를 사용하기 시작했다.
-    </p>
-    <p>
-      2005년에 커뮤니티가 만드는 Linux 커널과 &ldquo;이익을 추구&rdquo; 하는 회사가 개발한 BitKeeper의 관계는 틀어졌다. BitKeeper의 무료 사용이 제고된 것이다. 이 사건은 Linux 개발 커뮤니티(특히 Linux 창시자 리누스 토발즈)가 자체 도구를 만드는 계기가 됐다. Git은 BitKeeper를 사용하면서 배운 교훈을 기초로 아래와 같은 목표를 세웠다.
-      <ul>
-        <li>빠른 속도</li>
-        <li>단순한 구조</li>
-        <li>비선형적인 개발(수천 개의 동시 다발적인 브랜치)</li>
-        <li>완벽한 분산</li>
-        <li>Linux 커널 같은 대형 프로젝트에도 유용할 것(속도나 데이터 크기 면에서)</li>
-      </ul>
-    </p>
-    <p>
-      Git은 2005년 탄생하고 나서 아직도 초기 목표를 그대로 유지하고 있다. 그러면서도 사용하기 쉽게 진화하고 성숙했다. Git은 미친 듯이 빨라서 대형 프로젝트에 사용하기도 좋다. Git은 동시다발적인 브랜치에도 끄떡없는 슈퍼 울트라 브랜칭 시스템이다(Chapter 3 참고).!@#$%^&*\(\).,“”\-
-    </p>
-    <p class="source">
-      &mdash; <a href="https://git-scm.com/book/ko/v2/" target="_blank">https://git-scm.com/book/ko/v2/</a>
-    </p>
-    -->
+    <ul>
+      <li class="en">ml-en</li>
+      <li class="ko">ml-ko</li>
+      <li class="jp">ml-jp</li>
+      <li class="cn">ml-cn</li>
+      <li class="punct">ml-punct</li>
+      <li class="parentheses">custom:ml-parentheses</li>
+    </ul>
+    <div class="bodytext">
+      <p>
+      Quantum mechanics (QM; also known as quantum physics or quantum theory), including quantum field theory, is a fundamental branch of physics concerned with processes involving, for example, atoms and photons. Systems such as these which obey quantum mechanics can be in a quantum superposition of different states, unlike in classical physics.
+      </p>
+      <p>
+      양자역학(量子力學, Quantum Mechanics)은 분자, 원자, 전자와 같은 작은 크기를 갖는 계의 물리학을 연구하는 분야이다. 19세기 중반까지의 실험은 뉴턴의 고전역학으로 설명할 수 있었다. 그러나, 19세기 후반부터 20세기 초반까지 이루어진 전자, 양성자, 중성자 등의 아원자입자에 관련된 실험들의 결과는 고전역학으로 설명을 시도할 경우 모순이 발생하여 이를 해결하기 위한 새로운 역학 체계가 필요하게 되었다. 이 양자역학은 플랑크의 양자 가설을 계기로 하여 슈뢰딩거, 하이젠베르크, 디랙 등에 의해 만들어진 전적으로 20세기에 이루어진 학문이다.
+      </p>
+      <p>
+      量子力学(りょうしりきがく、英: Quantum mechanics)は、一般相対性理論と同じく現代物理学の根幹を成す理論として知られ、主として分子や原子、あるいはそれを構成する電子など、微視的な物理現象を記述する。 量子力学自身は前述のミクロな系における力学を記述する理論だが、取り扱う系をそうしたミクロな系の集まりとして解析することによって、ニュートン力学に代表される古典論では説明が困難であった巨視的な現象についても記述することができる。たとえば量子統計力学はそのような応用例の一つである。従って、生物や宇宙のようなあらゆる自然現象もその記述の対象となり得る。</p>
+      <p>
+      量子力学是描写微观物质的一个物理学分支，与相对论一起被认为是现代物理学的两大基本支柱，许多物理学理论和科学，如原子物理学、固体物理学、核物理学和粒子物理学以及其它相关的學科，都是以其为基础。19世纪末，經典力學和經典电动力学在描述微观系统时的不足與矛盾越来越明显。量子力学是在20世纪初，由马克斯·普朗克、尼尔斯·玻尔、沃纳·海森堡、埃尔温·薛定谔、沃尔夫冈·泡利、路易·德布罗意、马克斯·玻恩、恩里科·费米、保罗·狄拉克、阿尔伯特·爱因斯坦等一大群物理学家所共同创立。透过量子力学，人们对物质的结构以及其相互作用的见解被根本地改变，同时，许多现象也得以真正地被解释。
+      </p>
+    </div>
   </div>
 
 </body>
