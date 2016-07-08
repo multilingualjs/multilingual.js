@@ -1,6 +1,6 @@
 # multilingual.js
 
-multilingual.js는 어도비 인디자인의 합성글꼴 기능처럼, HTML/CSS 환경에서 보다 섬세하게 다국어 섞어쓰기를 제어하기 위한 오픈소스 자바스크립트 라이브러리이다.
+multilingual.js는 []어도비 인디자인의 합성글꼴 기능](https://helpx.adobe.com/incopy/using/using-fonts.html#composite_fonts)처럼, HTML/CSS 환경에서 보다 섬세하게 다국어 섞어쓰기를 제어하기 위한 오픈소스 자바스크립트 라이브러리이다.
 
 이 플러그인은 HTML문서 안에서 특정 문자세트로 표기된 단어들을 정규식(Regular Expression)으로 골라내어 그 단어들을  `<span>` 태그로 감싸고, 언어 및 부호에 따라 별도의 클래스 이름을 부여한다. 기본으로 지원되는 문자세트는 영문(`en`), 한글(`ko`), 중문(`cn`), 일문(`jp`), 숫자(`num`), 문장부호(`punct`)가 있고, 별도로 낱자들을 골라내어 별도의 클래스 이름을 지정하는 것도 가능하다.
 
@@ -15,9 +15,9 @@ HTML의 head 태그 안에 스타일시트 파일을 삽입한다.
     <link href="multilingual.css" rel="stylesheet" />
 
 HTML의 body 태그가 끝나기 전에 multilingual.js 파일을 삽입한다.
-
-    <script type="text/javascript" src="jquery.multilingual.js"></script>
-
+```HTML
+<script type="text/javascript" src="jquery.multilingual.js"></script>
+```
 #### 다운로드
 npm과 기타등등
 
@@ -37,13 +37,14 @@ npm과 기타등등
 위의 예시에서는 페이지가 로딩될 때마다 `content` 클래스를 가진 요소 안의 모든 내용을 검색하여, 영문(`en`)과 숫자(`num`)을 골라내어 각각 의 단어/글자에 `ml-en` 또는  `ml-num` 클래스 이름을 할당한다. 이렇게 처리된 문서의 HTML 구조는 다음과 같다.
 
 원본:
-
-    <p>모든 CCL의 메타데이터에는 최소한 license 값을 기술하는 1개의 RDF 트리플이 반드시 포함됩니다.</p>
+```HTML
+<p>모든 CCL의 메타데이터에는 최소한 license 값을 기술하는 1개의 RDF 트리플이 반드시 포함됩니다.</p>
+```
 
 처리후:
-
+```HTML
     <p>모든 <span class="ml-en">CCL</span>의 메타데이터에는 최소한 <span class="ml-en">license</span> 값을 기술하는 <span class="ml-num">1</span>개의 <span class="ml-en">RDF</span> 트리플이 반드시 포함됩니다.</p>
-
+```
 처리후에는 각각의 문자세트가 독자적인 클래스 이름으로 구별되어 있기 때문에, 각 클래스 이름에 해당하는 CSS 스타일을 적용해 주는것으로, 섞어쓰기의 세부적인 사항들을 제어할 수 있다.
 
 ```CSS
@@ -82,14 +83,14 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 #### 커스텀 문자세트
 기본 문자세트 이외에도 특정 글자들을 선택하여 클래스이름을 지정할 수 있다. 이를테면 영문 폰트와 별개로 괄호만 스타일링하고 싶을 때에는 다음과 같이 초기화 배열 안에 오브젝트로 옵션을 지정해 주고, 지정한 클래스 이름 (`className`) 을 CSS에서 선언하면 된다.
 
-
+```javascript
      $(".content").multilingual([
       "en", {
         className: "ml-parenthesis", /* 클래스 이름은 어떤 것이든 가능하다. Class name can be anything */
         charset: '()' /* ml-parenthesis 클래스 안에 포함될 문자세트를 지정해준다. characters to be selected, within '' */
       }
     ]);
-
+```
 
 ## 사용예시
 
