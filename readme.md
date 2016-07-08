@@ -43,7 +43,7 @@ npm과 기타등등
 
 처리후:
 ```HTML
-    <p>모든 <span class="ml-en">CCL</span>의 메타데이터에는 최소한 <span class="ml-en">license</span> 값을 기술하는 <span class="ml-num">1</span>개의 <span class="ml-en">RDF</span> 트리플이 반드시 포함됩니다.</p>
+<p>모든 <span class="ml-en">CCL</span>의 메타데이터에는 최소한 <span class="ml-en">license</span> 값을 기술하는 <span class="ml-num">1</span>개의 <span class="ml-en">RDF</span> 트리플이 반드시 포함됩니다.</p>
 ```
 처리후에는 각각의 문자세트가 독자적인 클래스 이름으로 구별되어 있기 때문에, 각 클래스 이름에 해당하는 CSS 스타일을 적용해 주는것으로, 섞어쓰기의 세부적인 사항들을 제어할 수 있다.
 
