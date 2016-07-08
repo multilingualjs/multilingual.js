@@ -17,31 +17,46 @@
 
   MultiLingual.prototype = {
     init: function(){
-      var finalRegex = this.composeRegex();
+      this.finalRegex = this.composeRegex();
      
-      var configuration = this.configuration;
-
       for (var i = 0, len = this.containers.length; i < len; i++){
         var container = this.containers[i];
-
-        debugger;
-        container.innerHTML = this.unescapeRegexStr(container.innerHTML).replace(finalRegex, function(){
-          for (var i = 1; i < arguments.length; i++) {
-            if (arguments[i] != undefined) {
-              var config = configuration[i - 1];
-              var className;
-
-              if (typeof config == "string"){
-                className = "ml-" + config;
-              } else {
-                className = config.className;
-              }
-
-              return "<span class='" + className + "'>" + arguments[i] + "</span>";
-            }
-          }
-        });
+        this.recursiveChange(container);
       }
+    },
+
+    recursiveChange: function(dom){
+
+      if (dom.childNodes.length > 0) {
+        for (var i = 0; i < dom.childNodes.length; i++) {
+          this.recursiveChange(dom.childNodes[i]);
+        }
+      } else {
+        if (dom.nodeType === 3) {
+          var configuration = this.configuration;
+
+          dom.innerHTML = dom.innerHTML.replace(this.finalRegex, function(){
+            for (var i = 1; i < arguments.length; i++) {
+              if (arguments[i] != undefined) {
+                var config = configuration[i - 1];
+                var className;
+
+                if (typeof config == "string"){
+                  className = "ml-" + config;
+                } else {
+                  className = config.className;
+                }
+
+                return "<span class='" + className + "'>" + arguments[i] + "</span>";
+              }
+            }
+          });
+        } 
+      }
+    }, 
+
+    regexChange: function(argument) {
+    
     },
 
     unescapeRegexStr: function(input) {
