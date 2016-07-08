@@ -25,15 +25,15 @@ npm과 기타등등
 
 설치가 완료되면, 자바스크립트에서 아래와 같이 설정하고 초기화할 수 있다.
 
-
-    <script>
-      $(document).ready(function(e){
-        $(".content").multilingual([
-          "en", "num"
-        ]);
-      });
-    </script>
-
+```javascript
+<script>
+  $(document).ready(function(e){
+    $(".content").multilingual([
+      "en", "num"
+    ]);
+  });
+</script>
+```
 위의 예시에서는 페이지가 로딩될 때마다 `content` 클래스를 가진 요소 안의 모든 내용을 검색하여, 영문(`en`)과 숫자(`num`)을 골라내어 각각 의 단어/글자에 `ml-en` 또는  `ml-num` 클래스 이름을 할당한다. 이렇게 처리된 문서의 HTML 구조는 다음과 같다.
 
 원본:
@@ -46,23 +46,23 @@ npm과 기타등등
 
 처리후에는 각각의 문자세트가 독자적인 클래스 이름으로 구별되어 있기 때문에, 각 클래스 이름에 해당하는 CSS 스타일을 적용해 주는것으로, 섞어쓰기의 세부적인 사항들을 제어할 수 있다.
 
-
-    /* example css for multilingual.js */
-    p {
-      font-family: NotoSans, Helvetica, Arial, sans-serif;
-      font-size:16px;
-      line-height: 23px;
-    }
-    .ml-en, .ml-num {
-      font-family: LiberationMono, Courier, monospace;
-      letter-spacing: -0.02em;
-      position:relative;
-      top:-0.05em;
-    }
-    .ml-num {
-      color: gray;
-    }
-
+```CSS
+/* example css for multilingual.js */
+p {
+  font-family: NotoSans, Helvetica, Arial, sans-serif;
+  font-size:16px;
+  line-height: 23px;
+}
+.ml-en, .ml-num {
+  font-family: LiberationMono, Courier, monospace;
+  letter-spacing: -0.02em;
+  position:relative;
+  top:-0.05em;
+}
+.ml-num {
+  color: gray;
+}
+```
 
 
 ## 옵션
@@ -95,26 +95,27 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 
  multilingual.js는 아래의 예시처럼  `body` 등 HTML의 기본요소에 타이포그래피의 기본이 되는 속성들을 우선 선언하고, `ml-en` 또는 `ml-num` 등 필요한 클래스 이름에 선택적으로 추가 속성을 선언하여 오버라이드할 것을 권한다.
 
-
-    body {
-      font-family: NotoSans, Helvetica, Arial, sans-serif;
-      font-size: 16px;
-      line-height: 23px;
-    }
-    .ml-en, .ml-punct .ml-parenthesis {
-      /* shared styles for 'en', 'punct', and parentheses */
-      font-family: SourceCodePro, Courier, monospace;
-      font-size: 1.1em;
-    }
-    .ml-parenthesis {
-      /* specific style for parentheses */
-      /* shifting baseline */
-      position:relative;
-      top: -0.05em;
-      /* adjust spacing before and after character */
-      letter-spacing: -0.1em;
-      margin-left:-0.1em;
-    }
+```CSS
+body {
+  font-family: NotoSans, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 23px;
+}
+.ml-en, .ml-punct .ml-parenthesis {
+  /* shared styles for 'en', 'punct', and parentheses */
+  font-family: SourceCodePro, Courier, monospace;
+  font-size: 1.1em;
+}
+.ml-parenthesis {
+  /* specific style for parentheses */
+  /* shifting baseline */
+  position:relative;
+  top: -0.05em;
+  /* adjust spacing before and after character */
+  letter-spacing: -0.1em;
+  margin-left:-0.1em;
+}
+```
 
 #### 글자 크기 및 그 외 속성의 조절
 글자의 크기는 기본으로 설정된 폰트 크기를 기준으로 상대값으로 ( `em`  또는 `%` 등) 작성한다. `font-size: 1.1em;` 은 `font-size: 110%;` 와 동일한 선언으로, 위의 예시에서는 글자크기가 `17.6px` 로 표시된다.
@@ -124,13 +125,13 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 #### 글줄 (베이스라인)의 조절 ###
 CSS3 표준에서 글줄을 손쉽게 조절할수 있는 방법은 없으므로, 편법에 의존할 수 밖에 없다.
 
-    .ml-parenthesis {
-      /* shifting baseline */
-      position:relative;
-      top: -0.05em;
-    }
-
-[그림6 :글줄 조절]
+```CSS
+.ml-parenthesis {
+  /* shifting baseline */
+  position:relative;
+  top: -0.05em;
+}
+```
 
 ## 데모
 
