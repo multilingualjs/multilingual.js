@@ -15,8 +15,6 @@
     this.init();
   }
 
-
-
   MultiLingual.prototype = {
     init: function(){
       var finalRegex = this.composeRegex();
