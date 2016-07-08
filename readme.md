@@ -1,6 +1,6 @@
 # multilingual.js
 
-multilingual.js는 []어도비 인디자인의 합성글꼴 기능](https://helpx.adobe.com/incopy/using/using-fonts.html#composite_fonts)처럼, HTML/CSS 환경에서 보다 섬세하게 다국어 섞어쓰기를 제어하기 위한 오픈소스 자바스크립트 라이브러리이다.
+multilingual.js는 [어도비 인디자인의 합성글꼴 기능](https://helpx.adobe.com/incopy/using/using-fonts.html#composite_fonts)처럼, HTML/CSS 환경에서 보다 섬세하게 다국어 섞어쓰기를 제어하기 위한 오픈소스 자바스크립트 라이브러리이다.
 
 이 플러그인은 HTML문서 안에서 특정 문자세트로 표기된 단어들을 정규식(Regular Expression)으로 골라내어 그 단어들을  `<span>` 태그로 감싸고, 언어 및 부호에 따라 별도의 클래스 이름을 부여한다. 기본으로 지원되는 문자세트는 영문(`en`), 한글(`ko`), 중문(`cn`), 일문(`jp`), 숫자(`num`), 문장부호(`punct`)가 있고, 별도로 낱자들을 골라내어 별도의 클래스 이름을 지정하는 것도 가능하다.
 
