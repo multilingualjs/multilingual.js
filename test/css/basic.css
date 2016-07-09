@@ -6,6 +6,14 @@ body {
 	margin-bottom:30px;
 }
 
+.ml-en { color: red; }
+.ml-ko { color: blue; }
+.ml-jp { color: green; }
+.ml-cn { color: orange; }
+.ml-num { color: violet; }
+.ml-punct { color: teal; }
+.ml-parentheses { color: brown; }
+
 
 div {
   font-family: Arial, sans-serif;

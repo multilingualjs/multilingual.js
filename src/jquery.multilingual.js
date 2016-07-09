@@ -1,11 +1,11 @@
 (function ( $ ) {
   var regexs = {
     en: "[A-Za-z]+",
-    ko: "[가-힣]+",
+    ko: "[ㄱ-ㅎ가-힣]+",
     jp: "[\u3040-\u309F\u30A0-\u30FF]+",
     cn: "[\u4E00-\u9FBF]+",
     num: "[0-9]+",
-    punct: "[\(\).,（）。、·，;:“”\"\'\-]|&quot;|&amp;|&lt;|&gt;|&emdash;|&endash;+"
+    punct: "[\(\).,（）。、·，;:」“”\"\'\-<>\&]+"
   }
 
   function MultiLingual(params){
@@ -21,21 +21,22 @@
      
       for (var i = 0, len = this.containers.length; i < len; i++){
         var container = this.containers[i];
-        this.recursiveChange(container);
+
+        this.recursiveChange(this.containers[0], container);
       }
     },
 
-    recursiveChange: function(dom){
-
+    recursiveChange: function(parent, dom){
+      // debugger;
       if (dom.childNodes.length > 0) {
-        for (var i = 0; i < dom.childNodes.length; i++) {
-          this.recursiveChange(dom.childNodes[i]);
+        for (var i = dom.childNodes.length - 1; i >= 0; i--) {
+          this.recursiveChange(dom, dom.childNodes[i]);
         }
       } else {
         if (dom.nodeType === 3) {
           var configuration = this.configuration;
 
-          dom.innerHTML = dom.innerHTML.replace(this.finalRegex, function(){
+          var domStr = dom.textContent.replace(this.finalRegex, function(){
             for (var i = 1; i < arguments.length; i++) {
               if (arguments[i] != undefined) {
                 var config = configuration[i - 1];
@@ -51,13 +52,16 @@
               }
             }
           });
+
+          var newDom = $.parseHTML(domStr);
+          for (var i = 0; i < newDom.length; i++) {
+            parent.insertBefore(newDom[i], dom);    
+          }
+          
+          dom.remove();
         } 
       }
     }, 
-
-    regexChange: function(argument) {
-    
-    },
 
     unescapeRegexStr: function(input) {
       return input.replace(/&nbsp;/g, " ").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -70,39 +74,7 @@
     computeCustomRegex: function (charset) {
       charset = this.escapeRegexStr(charset);
       
-      var htmlEscapedChars = [];
-      var finalStr = "";
-
-      if (charset.match(/\&/) != null || charset.match(/\&amp;/) != null){
-        htmlEscapedChars.push("&amp;");
-        charset = charset.replace(/\&/, "");
-        charset = charset.replace(/\&amp;/, "");
-      }
-
-      if (charset.match(/</) != null || charset.match(/\&lt;/) != null){
-        htmlEscapedChars.push("&lt;");
-        charset = charset.replace(/</, "");
-        charset = charset.replace(/\&lt;/, "");
-      }
-
-      if (charset.match(/>/) != null || charset.match(/\&gt;/) != null){
-        htmlEscapedChars.push("&gt;");
-        charset = charset.replace(/>/, "");
-        charset = charset.replace(/\&gt;/, "");
-      }
-
-      if (charset.match(/>/) != null || charset.match(/\&emdash;/) != null){
-        htmlEscapedChars.push("&emdash;");
-        charset = charset.replace(/>/, "");
-        charset = charset.replace(/\&emdash;/, "");
-      }
-
-
-      if (htmlEscapedChars.length > 0) {
-        finalStr = "([" + charset + "]|" + htmlEscapedChars.join("|") + "+)";
-      } else {
-        finalStr = "([" + charset + "]+)";
-      }
+      var finalStr = "([" + charset + "]+)";
       return finalStr;
     },
 
