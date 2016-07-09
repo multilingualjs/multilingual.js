@@ -46,7 +46,7 @@ jQuery의 경우
 
 npm을 통해 사용할 경우 
 ```javascript
-var MultiLingual = require('Multilingual');
+var MultiLingual = require('multilingual.js');
 
 var ml = new MultiLingual({
   "en", "num"
