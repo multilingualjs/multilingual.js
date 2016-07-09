@@ -13,14 +13,19 @@ p {
 	width: 700px;
 	margin: 2em auto 0 auto;
 }
-ul {
-	font-family: LiberationMono, Courier, monospace;
-	margin: 4em auto 0 auto;
+h1, h2, h3, ul {
+	font-family: LiberationMono, Courier, monospace;	
+	text-align: center;
 }
+h1 { margin: 3em 0 0 0; }
+h2, h3, h3 a { color:gray; }
+h3 { margin: 5em auto;}
+ul { margin: 2em auto; }
 li {
 	display: inline-block;
 	margin-right: 1em;
 }
+li.subtitle { color: gray; margin-bottom:1em; }
 li.en { color: brown; }
 li.ko { color: indigo; }
 li.jp { color: crimson; }
