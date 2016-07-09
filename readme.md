@@ -18,8 +18,11 @@ HTML의 body 태그가 끝나기 전에 multilingual.js 파일을 삽입한다.
 ```HTML
 <script type="text/javascript" src="jquery.multilingual.js"></script>
 ```
-#### 다운로드
-npm과 기타등등
+#### 다운로드 및 설치
+
+```html
+<script src="dist/jquery.multilingual.js"></script>
+
 
 ## 사용하기
 
@@ -74,11 +77,11 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 | 문자의 범위  | 문자세트의 이름 |
 | ------------- |:-------------:|
 | English `[a-zA-Z]+`                          | `'en'` |
-| Korean `[가-힣]+`                             | `'ko'` |
+| Korean `[ㄱ-ㅎ가-힣]+`                             | `'ko'` |
 | Japanese `[\u3040-\u309F\u30A0-\u30FF]+`     | `'jp'` |
 | Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` |
 | Numeric `[0-9]+`                             | `'num'` |
-| Punctuations `[\(\).,“”‘’\-]\|&amp;\|&lt;\|&gt;\|&emdash;\|&endash;+`     | `'punct'` |
+| Punctuations `[\(\).,（）。、·，;:」“”\"\'\-<>\&]+`     | `'punct'` |
 
 #### 커스텀 문자세트
 기본 문자세트 이외에도 특정 글자들을 선택하여 클래스이름을 지정할 수 있다. 이를테면 영문 폰트와 별개로 괄호만 스타일링하고 싶을 때에는 다음과 같이 초기화 배열 안에 오브젝트로 옵션을 지정해 주고, 지정한 클래스 이름 (`className`) 을 CSS에서 선언하면 된다.
