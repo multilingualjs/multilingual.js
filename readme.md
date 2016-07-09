@@ -4,6 +4,8 @@ multilingual.js는 [어도비 인디자인의 합성글꼴 기능](https://helpx
 
 이 플러그인은 HTML문서 안에서 특정 문자세트로 표기된 단어들을 정규식(Regular Expression)으로 골라내어 그 단어들을  `<span>` 태그로 감싸고, 언어 및 부호에 따라 별도의 클래스 이름을 부여한다. 기본으로 지원되는 문자세트는 영문(`en`), 한글(`ko`), 중문(`cn`), 일문(`jp`), 숫자(`num`), 문장부호(`punct`)가 있고, 별도로 낱자들을 골라내어 별도의 클래스 이름을 지정하는 것도 가능하다.
 
+[![NPM](https://nodei.co/npm/multilingual.js.png?downloads=true)](https://nodei.co/npm/multilingual.js/)
+
 
 ## 설치하기
 
@@ -14,20 +16,24 @@ HTML의 head 태그 안에 스타일시트 파일을 삽입한다.
 
     <link href="multilingual.css" rel="stylesheet" />
 
-HTML의 body 태그가 끝나기 전에 multilingual.js 파일을 삽입한다.
-```HTML
-<script type="text/javascript" src="jquery.multilingual.js"></script>
-```
-#### 다운로드 및 설치
+### 자바스크립트 파일 설치
 
+## jQuery
 ```HTML
-<script src="dist/jquery.multilingual.js"></script>
+<script src="jquery.multilingual.min.js"></script>
 ```
+
+## npm
+```HTML
+npm install multilingual.js
+```
+
 
 ## 사용하기
 
 설치가 완료되면, 자바스크립트에서 아래와 같이 설정하고 초기화할 수 있다.
 
+jQuery의 경우
 ```javascript
 <script>
   $(document).ready(function(e){
@@ -37,6 +43,16 @@ HTML의 body 태그가 끝나기 전에 multilingual.js 파일을 삽입한다.
   });
 </script>
 ```
+
+npm을 통해 사용할 경우 
+```javascript
+var MultiLingual = require('Multilingual');
+
+var ml = new MultiLingual({
+  "en", "num"
+});
+```
+
 위의 예시에서는 페이지가 로딩될 때마다 `content` 클래스를 가진 요소 안의 모든 내용을 검색하여, 영문(`en`)과 숫자(`num`)을 골라내어 각각 의 단어/글자에 `ml-en` 또는  `ml-num` 클래스 이름을 할당한다. 이렇게 처리된 문서의 HTML 구조는 다음과 같다.
 
 원본:
