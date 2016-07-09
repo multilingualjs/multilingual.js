@@ -49,7 +49,8 @@ npm을 통해 사용할 경우
 var MultiLingual = require('multilingual.js');
 
 var ml = new MultiLingual({
-  "en", "num"
+  containers: document.getElementsByClassName("content"), // 배열 형태를 띈 dom 요소를 불러옵니다. $(".content") 와 같은 형태 
+  configuration: ["en", "num"]
 });
 ```
 
