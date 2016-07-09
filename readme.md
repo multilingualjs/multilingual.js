@@ -20,9 +20,9 @@ HTML의 body 태그가 끝나기 전에 multilingual.js 파일을 삽입한다.
 ```
 #### 다운로드 및 설치
 
-```html
+```HTML
 <script src="dist/jquery.multilingual.js"></script>
-
+```
 
 ## 사용하기
 
