@@ -1,8 +1,11 @@
+var MultiLingual = require("../");
+
 $(document).ready(function(e){
-  $(".container1").multilingual([
-    "en", "ko", "num", "punct", "cn", "jp", {
-      className: "ml-custom",
-      charset: '◆〓。「☆QWER'
-    }
-  ]);
+
+	var multilingual = new MultiLingual({
+		containers: document.getElementsByClassName("container1"),
+		configuration: [
+    	"en", "ko", "num", "punct", "cn"
+  	]
+  });
 });

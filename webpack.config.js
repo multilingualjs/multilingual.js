@@ -4,11 +4,11 @@ var PROD = JSON.parse(process.env.PROD_ENV || '0');
 
 var config  = {
   entry: {
-  	"jquery.multilingual": "./src/jquery.multilingual.js",
-  	"multilingual": ["./src/multilingual.js"]
+  	"./dist/jquery.multilingual": "./src/jquery.multilingual.js",
+  	"./test/js/test": ["./test/test.js"]
   },
   output: {
-  	path: path.join(__dirname, "dist"),
+  	path: "./",
     filename: PROD ? "[name].min.js" : "[name].js"
   },
   plugins: PROD ? [

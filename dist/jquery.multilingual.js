@@ -71,7 +71,7 @@
 	  punct: "[（）().\&,;:-<>@%*，、。」]+"
 	}
 
-	var parseHTML = __webpack_require__(3);
+	var parseHTML = __webpack_require__(2);
 
 	function MultiLingual(params){
 	  this.containers = params.containers;
@@ -167,14 +167,13 @@
 	module.exports = MultiLingual;
 
 /***/ },
-/* 2 */,
-/* 3 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var rsingleTag = __webpack_require__(4);
-	var buildFragment = __webpack_require__(7);
-	var support = __webpack_require__(5);
-	var merge = __webpack_require__(6);
+	var rsingleTag = __webpack_require__(3);
+	var buildFragment = __webpack_require__(4);
+	var support = __webpack_require__(13);
+	var merge = __webpack_require__(7);
 
 	var parseHTML = function( data, context, keepScripts ) {
 		if ( typeof data !== "string" ) {
@@ -221,56 +220,22 @@
 	module.exports = parseHTML;
 
 /***/ },
-/* 4 */
+/* 3 */
 /***/ function(module, exports) {
 
 	module.exports = /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i;
 
 /***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	var support = {};
-
-	support.createHTMLDocument = ( function() {
-		var body = document.implementation.createHTMLDocument( "" ).body;
-		body.innerHTML = "<form></form><form></form>";
-		return body.childNodes.length === 2;
-	} )();
-
-	module.exports = support;
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	var merge = function( first, second ) {
-		var len = +second.length,
-			j = 0,
-			i = first.length;
-
-		for ( ; j < len; j++ ) {
-			first[ i++ ] = second[ j ];
-		}
-
-		first.length = i;
-
-		return first;
-	}
-
-	module.exports = merge;
-
-/***/ },
-/* 7 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var rhtml = /<|&#?\w+;/;
 	var rtagName = /<([\w:]+)/;
 	var rscriptType = /^$|\/(?:java|ecma)script/i;
-	var wrapMap = __webpack_require__(8);
-	var getAll = __webpack_require__(9);
-	var setGlobalEval = __webpack_require__(11);
-	var merge = __webpack_require__(6);
+	var wrapMap = __webpack_require__(5);
+	var getAll = __webpack_require__(6);
+	var setGlobalEval = __webpack_require__(9);
+	var merge = __webpack_require__(7);
 	var inArray = function( elem, arr, i ) {
 		return arr == null ? -1 : indexOf.call( arr, elem, i );
 	};
@@ -372,7 +337,7 @@
 	module.exports = buildFragment;
 
 /***/ },
-/* 8 */
+/* 5 */
 /***/ function(module, exports) {
 
 	var wrapMap = {
@@ -400,11 +365,11 @@
 	module.exports = wrapMap;
 
 /***/ },
-/* 9 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var merge = __webpack_require__(6);
-	var nodeName = __webpack_require__(10);
+	var merge = __webpack_require__(7);
+	var nodeName = __webpack_require__(8);
 
 	function getAll( context, tag ) {
 
@@ -424,7 +389,27 @@
 	module.exports = getAll;
 
 /***/ },
-/* 10 */
+/* 7 */
+/***/ function(module, exports) {
+
+	var merge = function( first, second ) {
+		var len = +second.length,
+			j = 0,
+			i = first.length;
+
+		for ( ; j < len; j++ ) {
+			first[ i++ ] = second[ j ];
+		}
+
+		first.length = i;
+
+		return first;
+	}
+
+	module.exports = merge;
+
+/***/ },
+/* 8 */
 /***/ function(module, exports) {
 
 	module.exports = function( elem, name ) {
@@ -433,10 +418,10 @@
 
 
 /***/ },
-/* 11 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var dataPriv = __webpack_require__(12);
+	var dataPriv = __webpack_require__(10);
 
 	function setGlobalEval( elems, refElements ) {
 		var i = 0,
@@ -455,15 +440,15 @@
 
 
 /***/ },
-/* 12 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Data = __webpack_require__(13);
+	var Data = __webpack_require__(11);
 
 	module.exports = new Data();
 
 /***/ },
-/* 13 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var rnotwhite = ( /\S+/g );
@@ -479,7 +464,7 @@
 		return owner.nodeType === 1 || owner.nodeType === 9 || !( +owner.nodeType );
 	};
 
-	var camelCase = __webpack_require__(14);
+	var camelCase = __webpack_require__(12);
 	var expando = ( "" + Math.random() ).replace( /\D/g, "" );
 	var isEmptyObject = function( obj ) {
 		var name;
@@ -644,12 +629,26 @@
 	module.exports = Data;
 
 /***/ },
-/* 14 */
+/* 12 */
 /***/ function(module, exports) {
 
 	module.exports = function( string ) {
 		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
 	}
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	var support = {};
+
+	support.createHTMLDocument = ( function() {
+		var body = document.implementation.createHTMLDocument( "" ).body;
+		body.innerHTML = "<form></form><form></form>";
+		return body.childNodes.length === 2;
+	} )();
+
+	module.exports = support;
 
 /***/ }
 /******/ ]);
