@@ -14,7 +14,7 @@
     "composite",
     "fonts"
   ],
-  "devDependencies": {
+  "dependencies": {
     "jquery": "~2.1.4"
   },
   "author": "Wonyoung So <mail@wonyoung.so> (http://wonyoung.so/), E Roon Kang <eroonkang@gmail.com>",

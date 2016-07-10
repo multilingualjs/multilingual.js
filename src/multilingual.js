@@ -4,8 +4,10 @@ var regexs = {
   jp: "[\u3040-\u309F\u30A0-\u30FF]+",
   cn: "[\u4E00-\u9FBF]+",
   num: "[0-9]+",
-  punct: "[（）.\&,;:-<>@%*，、。」]+"
+  punct: "[（）().\&,;:-<>@%*，、。」]+"
 }
+
+var parseHTML = require("./parseHTML/parseHTML");
 
 function MultiLingual(params){
   this.containers = params.containers;
@@ -50,15 +52,16 @@ MultiLingual.prototype.recursiveChange = function(parent, dom){
         }
       });
 
-      var newDom = this.parseHTML(domStr);
+      var newDom = parseHTML(domStr);
       for (var i = 0; i < newDom.length; i++) {
-        parent.insertBefore(newDom[i], dom);    
+        parent.insertBefore(newDom[i], dom);   
       }
       
       dom.remove();
     } 
   }
 }
+
 
 MultiLingual.prototype.unescapeRegexStr = function(input) {
   return input.replace(/&nbsp;/g, " ").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -67,19 +70,6 @@ MultiLingual.prototype.unescapeRegexStr = function(input) {
 MultiLingual.prototype.escapeRegexStr = function(str) {
   return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
 };
-
-MultiLingual.prototype.parseHTML = function(string) {
-  const context = document.implementation.createHTMLDocument();
-
-  // Set the base href for the created document so any parsed elements with URLs
-  // are based on the document's URL
-  const base = context.createElement('base');
-  base.href = document.location.href;
-  context.head.appendChild(base);
-
-  context.body.innerHTML = string;
-  return context.body.children;
-}
 
 
 MultiLingual.prototype.computeCustomRegex = function (charset) {
