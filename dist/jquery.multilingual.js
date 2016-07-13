@@ -64,7 +64,7 @@
 
 	var regexs = {
 	  en: "[A-Za-z]+",
-	  ko: "[ㄱ-ㅎ가-힣]+",
+	  ko: "[ㄱ-ㅎ가-힣ㅏ-ㅣ]+",
 	  jp: "[\u3040-\u309F\u30A0-\u30FF]+",
 	  cn: "[\u4E00-\u9FBF]+",
 	  num: "[0-9]+",
@@ -165,6 +165,7 @@
 	};
 
 	module.exports = MultiLingual;
+
 
 /***/ },
 /* 2 */
