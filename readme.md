@@ -94,7 +94,7 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 | 문자의 범위  | 문자세트의 이름 |
 | ------------- |:-------------:|
 | English `[a-zA-Z]+`                          | `'en'` |
-| Korean `[ㄱ-ㅎ가-힣]+`                             | `'ko'` |
+| Korean `[ㄱ-ㅎ가-힣ㅏ-ㅣ]+`                             | `'ko'` |
 | Japanese `[\u3040-\u309F\u30A0-\u30FF]+`     | `'jp'` |
 | Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` |
 | Numeric `[0-9]+`                             | `'num'` |
