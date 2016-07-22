@@ -14,7 +14,9 @@ multilingual.js는 [어도비 인디자인의 합성글꼴 기능](https://helpx
 
 HTML의 head 태그 안에 스타일시트 파일을 삽입한다.
 
-    <link href="multilingual.css" rel="stylesheet" />
+```HTML
+<link href="multilingual.css" rel="stylesheet" />
+```
 
 ### 자바스크립트 파일 설치
 
@@ -44,12 +46,12 @@ jQuery의 경우
 </script>
 ```
 
-npm을 통해 사용할 경우 
+npm을 통해 사용할 경우
 ```javascript
 var MultiLingual = require('multilingual.js');
 
 var ml = new MultiLingual({
-  containers: document.getElementsByClassName("content"), // 배열 형태를 띈 dom 요소를 불러옵니다. $(".content") 와 같은 형태 
+  containers: document.getElementsByClassName("content"), // 배열 형태를 띈 dom 요소를 불러옵니다. $(".content") 와 같은 형태
   configuration: ["en", "num"]
 });
 ```
@@ -91,15 +93,16 @@ p {
 #### 기본 문자세트
 multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 
-| 문자의 범위  | 문자세트의 이름 |
-| ------------- |:-------------:|
-| English `[a-zA-Z]+`                          | `'en'` |
-| Korean `[ㄱ-ㅎ가-힣ㅏ-ㅣ]+`                             | `'ko'` |
-| Japanese `[\u3040-\u309F\u30A0-\u30FF]+`     | `'jp'` |
-| Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` |
-| Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `'ar'` |
-| Numeric `[0-9]+`                             | `'num'` |
-| Punctuations `[\(\).,（）。、·，;:」“”\"\'\-<>\&]+`     | `'punct'` |
+
+| 문자의 범위  | 문자세트의 이름 | 클래스이름 |
+| ------------- |:-------------:|:-------------:|
+| English `[a-zA-Z]+`                          | `'en'` | `ml-en`|
+| Korean `[ㄱ-ㅎ가-힣ㅏ-ㅣ]+`                     | `'ko'` | `ml-ko` |
+| Japanese `[\u3040-\u309F\u30A0-\u30FF]+`     | `'jp'` | `ml-jp` |
+| Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` | `ml-cn` |
+| Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `ml-ar` |
+| Numeric `[0-9]+`                             | `'num'` | `ml-num`|
+| Punctuations `[\(\).,（）。、·，;:」“”\"\'\-<>\&]+` | `'punct'` | `ml-punct`|
 
 #### 커스텀 문자세트
 기본 문자세트 이외에도 특정 글자들을 선택하여 클래스이름을 지정할 수 있다. 이를테면 영문 폰트와 별개로 괄호만 스타일링하고 싶을 때에는 다음과 같이 초기화 배열 안에 오브젝트로 옵션을 지정해 주고, 지정한 클래스 이름 (`className`) 을 CSS에서 선언하면 된다.
@@ -107,8 +110,8 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 ```javascript
      $(".content").multilingual([
       "en", {
-        className: "ml-parentheses", /* 클래스 이름은 어떤 것이든 가능하다. Class name can be anything */
-        charset: '()' /* ml-parenthesis 클래스 안에 포함될 문자세트를 지정해준다. characters to be selected, within '' */
+        className: "ml-parentheses", /* 클래스 이름은 어떤 것이든 가능하다. */
+        charset: '()' /* ml-parenthesis 클래스 안에 포함될 문자세트를 지정해준다. */
       }
     ]);
 ```
@@ -162,4 +165,183 @@ multilingual.js의 온전한 데모는 http://multilingualjs.github.io 에서 �
 
 #### 추후 개선사항
 
-동적으로 컨텐츠가 추가될 경우에 이미 <span>태그로 감싸져 있는 컨텐츠들에 한번 더 <span>을  적용하게되는 문제가 있어 정규식의 개선이 필요하다.
+- 동적으로 컨텐츠가 추가될 경우에 이미 `<span>`태그로 감싸져 있는 컨텐츠들에 한번 더 `<span>`을 적용하게되는 문제가 있어 정규식의 개선이 필요하다.
+
+---
+
+_이 프로젝트에 대한 보다 자세한 소개는 [한국타이포그라피학회](https://www.facebook.com/krtypography/?pnref=story)에서 발행하는 «글짜씨 13: 기술과 타이포그래피» 에서 읽어보실 수 있습니다.  
+번역: 김한솔, 번역감수: 구자은, 고아침_
+
+---
+
+# multilingual.js
+
+multilingual.js is an open-source JavaScript library that allows for detailed control over multilingual typesetting in HTML/CSS settings, in the manner of [Adobe InDesign’s Composite Font](https://helpx.adobe.com/incopy/using/using-fonts.html#composite_fonts) functionality.
+
+This library selects words displayed in specific character sets in an HTML document using regular expressions. Then, it wraps those words with `<span>` tag and assigns a particular class name according to the language and symbol. The character sets supported by default include English(`en`), Hangeul(`ko`), Chinese characters(`cn`), Japanese characters(`jp`), numerals(`num`), and punctuations(`punct`). It is also possible to specify a separate class name for specific letters.
+
+[![NPM](https://nodei.co/npm/multilingual.js.png?downloads=true)](https://nodei.co/npm/multilingual.js/)
+
+## Installation
+
+#### Download
+Install by downloading the latest version at: https://github.com/multilingualjs/multilingual.js/releases
+
+Insert the stylesheet file inside the HTML’s `<head>` tag.
+
+```HTML
+<link href="multilingual.css" rel="stylesheet" />
+```
+
+### Install Javascript
+
+## jQuery
+```HTML
+<script src="jquery.multilingual.min.js"></script>
+```
+
+## npm
+```HTML
+npm install multilingual.js
+```
+
+
+## In Use
+
+After installation, one can initialize and configure the plug-in within JavaScript as seen below.
+
+When using jQuery:
+```javascript
+<script>
+  $(document).ready(function(e){
+    $(".content").multilingual([
+      "en", "num"
+    ]);
+  });
+</script>
+```
+
+When using npm:
+```javascript
+var MultiLingual = require('multilingual.js');
+
+var ml = new MultiLingual({
+  containers: document.getElementsByClassName("content"), // 배열 형태를 띈 dom 요소를 불러옵니다. $(".content") 와 같은 형태
+  configuration: ["en", "num"]
+});
+```
+
+In the example above, when the page loads, the script looks at all elements within the class name content in order to find Roman Alphabets(`en`) and numerals(`num`), and assign each word or letter to either the `ml-en` class or the `ml-num` class. The  resulting HTML structure of the so treated document is as follows;
+
+Original:
+```HTML
+<p>모든 CCL의 메타데이터에는 최소한 license 값을 기술하는 1개의 RDF 트리플이 반드시 포함됩니다.</p>
+```
+
+Processed:
+```HTML
+<p>모든 <span class="ml-en">CCL</span>의 메타데이터에는 최소한 <span class="ml-en">license</span> 값을 기술하는 <span class="ml-num">1</span>개의 <span class="ml-en">RDF</span> 트리플이 반드시 포함됩니다.</p>
+```
+After processing, because each character set is assigned with individual class names, detailed control of multilingual typesetting can be achieved by simply applying CSS styles relevant to each class name.
+
+```CSS
+/* example css for multilingual.js */
+p {
+  font-family: NotoSans, Helvetica, Arial, sans-serif;
+  font-size:16px;
+  line-height: 23px;
+}
+.ml-en, .ml-num {
+  font-family: LiberationMono, Courier, monospace;
+  letter-spacing: -0.02em;
+  position:relative;
+  top:-0.05em;
+}
+.ml-num {
+  color: gray;
+}
+```
+
+
+## Options
+
+#### Predefined character sets
+The character sets supported by multilingual.js are shown below.
+
+| Range of Letters  | Character Set | Class Name Given |
+| ------------- |:-------------:|:-------------:|
+| English `[a-zA-Z]+`                          | `'en'` | `ml-en`|
+| Korean `[ㄱ-ㅎ가-힣ㅏ-ㅣ]+`                     | `'ko'` | `ml-ko` |
+| Japanese `[\u3040-\u309F\u30A0-\u30FF]+`     | `'jp'` | `ml-jp` |
+| Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` | `ml-cn` |
+| Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `ml-ar` |
+| Numeric `[0-9]+`                             | `'num'` | `ml-num`|
+| Punctuations `[\(\).,（）。、·，;:」“”\"\'\-<>\&]+` | `'punct'` | `ml-punct`|
+
+#### Custom character set
+In addition to the basic character set, it is possible to select specific characters and designate a class name. For example, if a user wants to style parentheses separately from Roman Alphabets, it can be done by specifying the characters and their className in the initial array as an object:
+
+```javascript
+     $(".content").multilingual([
+      "en", {
+        className: "ml-parentheses", /* Class name can be anything */
+        charset: '()' /*  characters to be selected, within '' */
+      }
+    ]);
+```
+
+## Usage Examples
+
+multilingual.js recommends to declare the basic attributes of typography to the basic elements of HTML such as `body` and selectively declare the additional attributes to the necessary class names such as `ml-en` or `ml-num` to override.
+
+```CSS
+body {
+  font-family: NotoSans, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 23px;
+}
+.ml-en, .ml-punct .ml-parentheses {
+  /* shared styles for 'en', 'punct', and parentheses */
+  font-family: SourceCodePro, Courier, monospace;
+  font-size: 1.1em;
+}
+.ml-parentheses {
+  /* specific style for parentheses */
+  /* shifting baseline */
+  position:relative;
+  top: -0.05em;
+  /* adjust spacing before and after character */
+  letter-spacing: -0.1em;
+  margin-left:-0.1em;
+}
+```
+
+#### Control of text size and other attributes
+The size of the text is written in a relative value (`em` or `%` , etc.) based on the text size of the default font. `font-size: 1.1em;` is the same statement as `font- size: 110%;` and therefore the text size for the above example above is `17.6px`.
+
+The basic attributes of typography for CSS3 — `font size`, `line-height`, `letter-spacing`, `font-weight`, etc—are all usable. We recommend using relative units to override the values inherited, since if the properties are defined in absolute terms such as `px` or `pt` , the character cannot adjust itself to the changing size of the text.
+
+#### Baseline shift ###
+Since there is not an easy way for baseline shift in standard CSS3, there is no other choice but to rely on workarounds.
+
+```CSS
+.ml-parentheses {
+  /* shifting baseline */
+  position:relative;
+  top: -0.05em;
+}
+```
+
+## Demo
+
+The demonstration of multilingual.js is available at http:// multilingualjs.github.io.
+
+
+#### Future improvements
+
+- Currently, dynamically adding content will result in content already wrapped `<span>` tags being wrapped again with the same tag. The regular expressions need to be improved in order to solve this problem.
+
+---
+
+_The project more throughly documented at «LetterSeed 13: Technology and Typography», a journal of typography published by [Korean Society of Typography](https://www.facebook.com/krtypography/?pnref=story).  
+Translation: Hansol Kim, English supervision: Jaeun Ku, Achim Koh_
