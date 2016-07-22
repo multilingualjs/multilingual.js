@@ -97,6 +97,7 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 | Korean `[ㄱ-ㅎ가-힣ㅏ-ㅣ]+`                             | `'ko'` |
 | Japanese `[\u3040-\u309F\u30A0-\u30FF]+`     | `'jp'` |
 | Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` |
+| Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `'ar'` |
 | Numeric `[0-9]+`                             | `'num'` |
 | Punctuations `[\(\).,（）。、·，;:」“”\"\'\-<>\&]+`     | `'punct'` |
 

@@ -3,9 +3,11 @@ var regexs = {
   ko: "[ㄱ-ㅎ가-힣ㅏ-ㅣ]+",
   jp: "[\u3040-\u309F\u30A0-\u30FF]+",
   cn: "[\u4E00-\u9FBF]+",
+  ar: "[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+",
   num: "[0-9]+",
-  punct: "[（）().\&,;:-<>@%*，、。」]+"
+  punct: "[（）().\^\\-&,;:<>@%*，、。」]+"
 }
+
 
 var parseHTML = require("./parseHTML/parseHTML");
 
