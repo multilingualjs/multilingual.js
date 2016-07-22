@@ -100,7 +100,7 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 | Korean `[ㄱ-ㅎ가-힣ㅏ-ㅣ]+`                     | `'ko'` | `ml-ko` |
 | Japanese `[\u3040-\u309F\u30A0-\u30FF]+`     | `'jp'` | `ml-jp` |
 | Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` | `ml-cn` |
-| Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `ml-ar` |
+| Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `'ar'`  |   | `ml-ar` |
 | Numeric `[0-9]+`                             | `'num'` | `ml-num`|
 | Punctuations `[\(\).,（）。、·，;:」“”\"\'\-<>\&]+` | `'punct'` | `ml-punct`|
 
@@ -274,7 +274,7 @@ The character sets supported by multilingual.js are shown below.
 | Korean `[ㄱ-ㅎ가-힣ㅏ-ㅣ]+`                     | `'ko'` | `ml-ko` |
 | Japanese `[\u3040-\u309F\u30A0-\u30FF]+`     | `'jp'` | `ml-jp` |
 | Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` | `ml-cn` |
-| Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `ml-ar` |
+| Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `'ar'`  |   | `ml-ar` |
 | Numeric `[0-9]+`                             | `'num'` | `ml-num`|
 | Punctuations `[\(\).,（）。、·，;:」“”\"\'\-<>\&]+` | `'punct'` | `ml-punct`|
 
