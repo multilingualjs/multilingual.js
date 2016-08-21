@@ -1,6 +1,6 @@
 {
   "name": "multilingual.js",
-  "version": "0.1.4",
+  "version": "0.1.41",
   "description": "A javascript library for multilingual typesetting",
   "main": "index.js",
   "repository": {
