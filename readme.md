@@ -102,7 +102,7 @@ multilingual.js가 지원하는 기본 문자세트는 다음과 같다.
 | Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` | `ml-cn` |
 | Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `'ar'`  | `ml-ar` |
 | Numeric `[0-9]+`                             | `'num'` | `ml-num`|
-| Punctuations `[\(\).,（）。、·，;:」“”\"\'\-<>\&]+` | `'punct'` | `ml-punct`|
+| Punctuations `[（）().#\^\\-&,;:<>@%*，、。」]+` | `'punct'` | `ml-punct`|
 
 #### 커스텀 문자세트
 기본 문자세트 이외에도 특정 글자들을 선택하여 클래스이름을 지정할 수 있다. 이를테면 영문 폰트와 별개로 괄호만 스타일링하고 싶을 때에는 다음과 같이 초기화 배열 안에 오브젝트로 옵션을 지정해 주고, 지정한 클래스 이름 (`className`) 을 CSS에서 선언하면 된다.
@@ -276,7 +276,7 @@ The character sets supported by multilingual.js are shown below.
 | Chinese `[\u4E00-\u9FBF]+`                   | `'cn'` | `ml-cn` |
 | Arabic `[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+`  | `'ar'`  | `ml-ar` |
 | Numeric `[0-9]+`                             | `'num'` | `ml-num`|
-| Punctuations `[\(\).,（）。、·，;:」“”\"\'\-<>\&]+` | `'punct'` | `ml-punct`|
+| Punctuations `[（）().#\^\\-&,;:<>@%*，、。」]+` | `'punct'` | `ml-punct`|
 
 #### Custom character set
 In addition to the basic character set, it is possible to select specific characters and designate a class name. For example, if a user wants to style parentheses separately from Roman Alphabets, it can be done by specifying the characters and their className in the initial array as an object:

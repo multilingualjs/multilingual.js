@@ -5,7 +5,7 @@ var regexs = {
   cn: "[\u4E00-\u9FBF]+",
   ar: "[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufc3f]|[\ufe70-\ufefc]+",
   num: "[0-9]+",
-  punct: "[（）().\^\\-&,;:<>@%*，、。」]+"
+  punct: "[（）().#\^\\-&,;:<>@%*，、。」]+"
 }
 
 
@@ -20,7 +20,7 @@ function MultiLingual(params){
 
 MultiLingual.prototype.init = function(){
   this.finalRegex = this.composeRegex();
- 
+  
   for (var i = 0, len = this.containers.length; i < len; i++){
     var container = this.containers[i];
 
@@ -28,13 +28,36 @@ MultiLingual.prototype.init = function(){
   }
 };
 
+MultiLingual.prototype.isUnique = function(className){
+
+  for (var i = 0, len = this.configuration.length; i < len; i++){
+    var config = this.configuration[i];
+    var dupClassName;
+
+    if (typeof config == "string"){ 
+      dupClassName = "ml-" + config;
+    } else {
+      dupClassName = config.className;
+    }
+    
+    if (className.indexOf(dupClassName) > -1) {
+      return false;
+    }
+  }
+
+
+  return true;
+}
+
 MultiLingual.prototype.recursiveChange = function(parent, dom){
   if (dom.childNodes.length > 0) {
     for (var i = dom.childNodes.length - 1; i >= 0; i--) {
       this.recursiveChange(dom, dom.childNodes[i]);
     }
   } else {
-    if (dom.nodeType === 3) {
+    if (dom.nodeType === 3 && this.isUnique(dom.parentElement.className)) {
+      // debugger;
+      // console.log(dom.className);
       var configuration = this.configuration;
 
       var domStr = dom.textContent.replace(this.finalRegex, function(){
