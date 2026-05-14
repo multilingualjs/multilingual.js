@@ -64,14 +64,14 @@ Commit `599b040`:
 
 In rough priority order:
 
-1. **Replace TreeWalker with recursive traversal** — removes `bind(this)` friction.
-2. **Simplify `wrap()` selector handling** — collapse to `querySelectorAll`.
-3. **Drop `wrapMultilingualText` and `isInitialized`** if no longer justified.
-4. **Re-evaluate Arabic space handling** (see Known Issues) once segmentation logic is simpler.
+1. **Simplify `wrap()` selector handling** — collapse to `querySelectorAll`.
+2. **Drop `wrapMultilingualText` and `isInitialized`** if no longer justified.
+3. **Re-evaluate Arabic space handling** (see Known Issues) once segmentation logic is simpler.
 
 ## Done
 
-- ✅ **Unicode ranges → `\p{Script=...}` regex** (commit pending). `SCRIPT_PATTERNS` lives at module scope; `detectScript` is now 8 lines. Order: kana before Han so Japanese isn't swallowed by `chinese`. File 437 → 381 lines (−55).
+- ✅ **Unicode ranges → `\p{Script=...}` regex** (`f66a245`). `SCRIPT_PATTERNS` at module scope; `detectScript` is 8 lines. Order: kana before Han so Japanese isn't swallowed by `chinese`. File 437 → 381 (−55).
+- ✅ **TreeWalker → recursive traversal**. `processElement` is now a 9-line recursive function; `bind(this)` gone. Snapshots `childNodes` before recursing so `processTextNode`'s DOM mutations don't break iteration. The `data-script` and `skipElements` guards now live on the recursive function itself. Dropped debug log for text-node count (the `wrap()` element-count log remains). File 381 → 359 (−22).
 
 ## Known Issues (carried over from HISTORY.md)
 

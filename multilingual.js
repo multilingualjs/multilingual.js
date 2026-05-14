@@ -237,44 +237,22 @@ class Multilingual {
     }
 
     /**
-     * Recursively process all text nodes in an element
+     * Recursively walk an element and process all eligible text nodes.
+     * Snapshots childNodes before iterating so that DOM mutations from
+     * processTextNode don't break the walk.
      */
     processElement(element) {
-        // Skip if element is in the skip list
-        if (this.config.skipElements.includes(element.tagName.toLowerCase())) {
-            return;
+        if (element.nodeType === Node.TEXT_NODE) {
+            return this.processTextNode(element);
         }
-        
-        // Get all text nodes (not just direct children)
-        const walker = document.createTreeWalker(
-            element,
-            NodeFilter.SHOW_TEXT,
-            {
-                acceptNode: function(node) {
-                    // Skip text nodes that are already inside our spans
-                    if (node.parentElement && 
-                        (node.parentElement.hasAttribute('data-script') || 
-                         this.config.skipElements.includes(node.parentElement.tagName.toLowerCase()))) {
-                        return NodeFilter.FILTER_REJECT;
-                    }
-                    return NodeFilter.FILTER_ACCEPT;
-                }.bind(this)  // Bind 'this' context to access this.config
-            }
-        );
+        if (element.nodeType !== Node.ELEMENT_NODE) return;
 
-        const textNodes = [];
-        let node;
-        while (node = walker.nextNode()) {
-            textNodes.push(node);
-        }
+        const tag = element.tagName.toLowerCase();
+        if (this.config.skipElements.includes(tag)) return;
+        if (element.hasAttribute('data-script')) return;
 
-        if (this.config.debug) {
-            console.log(`Processing ${textNodes.length} text nodes in element:`, element);
-        }
-
-        // Process text nodes in reverse order to avoid issues with DOM modification
-        for (let i = textNodes.length - 1; i >= 0; i--) {
-            this.processTextNode(textNodes[i]);
+        for (const child of [...element.childNodes]) {
+            this.processElement(child);
         }
     }
 
