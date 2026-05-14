@@ -77,11 +77,18 @@ None on the v2.1 simplification track. Possible next moves:
   - **Bugfix as side effect**: `glyphOverrides` for punctuation now actually works. Previously, characters listed in `glyphOverrides` that were also matched by `\p{P}` would hit the whitespace branch first and inherit a neighbor script, ignoring the user's override.
 - ✅ **README cleanup**: dropped "TreeWalker API" from the browser-support list (no longer required).
 
-- ✅ **Config naming + trimming** (this pass).
+- ✅ **Config naming + trimming**.
   - `autoWrap` → `autoInit`. `autoWrapSelector` → `selector`. `autoWrapDelay` → `delay`. (Previous names were awkward because `init()` is already the explicit call — the "auto" is about wrapping on init, not about init itself; `autoInit` reads correctly.)
   - Removed `minSegmentLength` (no realistic use case; `1` covered everything).
   - Removed `cssClasses.wrapper` (redundant — every span already has `data-script` and the `ml-xx` short class, providing two CSS-target paths).
   - Updated [index.html](index.html), [example-new-api.html](example-new-api.html), and [README.md](README.md) to match. (HISTORY.md left as-is — it's a frozen v2.0 record.)
+
+- ✅ **Further config trim + examples rewrite** (this pass).
+  - **Dropped `preserveWhitespace`** entirely. The `false` branch produced arbitrary results: whitespace/punctuation fell back to `'latin'` and could visually drift to the wrong neighbor (e.g. `"안녕, hello"` would emit `<span ko>안녕</span><span en>, hello</span>`, attaching `, ` to Latin only because Latin happens to be the fallback). The `true` (inheritance) behavior was the only semantically defensible one — now it's the only behavior.
+  - **Dropped `cssClasses.scriptSpecific`**. Library already exposes two CSS-target paths (`data-script` attribute + `ml-xx` class). Adding a third just renames the same target — no new capability.
+  - **Flattened `cssClasses.useShortNames` → top-level `useShortNames`** since `cssClasses` no longer has multiple keys.
+  - **Kept `languageOverrides`** — it has a real BCP-47 justification (Traditional vs Simplified Chinese, hyphenation, screen-reader pronunciation, font fallbacks via `[lang^="zh-Hant"]`). Improved its rationale in `examples.html`.
+  - **Renamed `example-new-api.html` → `examples.html`** (API is no longer "new"). Rewrote as a feature gallery instead of an API-style gallery: each section demos one config option with before/after columns. Sections now: default behavior, `glyphOverrides`, `languageOverrides`, `useShortNames`, `skipElements`.
 
 ## SCRIPT_PATTERNS coverage
 
@@ -93,8 +100,9 @@ Within the 10 supported scripts (Latin, Korean, Japanese kana, Chinese Han, Arab
 
 ## Final Metrics
 
-- `multilingual.js`: 437 → 272 lines (−165, −38%).
+- `multilingual.js`: 437 → 260 lines (−177, −40%).
 - Empty/stale files: −4 (`config-examples.js`, `examples.html`, `multilingual-wrapper.js`, `configuration-demo.html`).
+- Config surface: 11 options → 7.
 
 ## Known Issues (carried over from HISTORY.md)
 

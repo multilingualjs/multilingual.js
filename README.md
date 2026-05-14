@@ -9,7 +9,7 @@ A lightweight JavaScript library that detects writing systems in multilingual te
 - **Explicit initialization** — Library is inert until you call `Multilingual.init()` or `Multilingual.wrap()`
 - **CSS-friendly output** with `lang` attributes, `data-script` attributes, and short class names (`ml-ko`, `ml-en`, …)
 - **Glyph overrides** — Force specific characters to a script
-- **Smart whitespace handling** — Spaces and punctuation inherit script from surrounding text
+- **Smart whitespace handling** — Spaces and punctuation always inherit script from surrounding text
 
 ## Quick Start
 
@@ -40,10 +40,7 @@ Multilingual.init({
     '،؛؟': 'arabic',
   },
 
-  cssClasses: {
-    useShortNames: true,
-    scriptSpecific: { korean: 'korean-script' },
-  },
+  languageOverrides: { chinese: 'zh-TW' },
 });
 ```
 
@@ -71,12 +68,10 @@ ml.wrap(document.querySelector('.article'));
 | `autoInit` | boolean | `false` | If true, `init()` schedules a wrap of `selector` after `delay` ms. |
 | `selector` | string | `'body'` | CSS selector for the auto-init wrap. |
 | `delay` | number | `100` | ms to wait before the auto-init wrap. |
-| `preserveWhitespace` | boolean | `true` | Whitespace/punctuation joins the surrounding script's segment. |
 | `glyphOverrides` | object | `{}` | Map of character strings to script names (e.g. `'()': 'latin'`). |
-| `languageOverrides` | object | `{}` | Override the `lang` attribute per script (e.g. `chinese: 'zh-TW'`). |
+| `languageOverrides` | object | `{}` | Override the BCP-47 `lang` attribute per script (e.g. `chinese: 'zh-TW'`). |
 | `skipElements` | string[] | `['script','style','noscript','template']` | Tag names to skip during traversal. |
-| `cssClasses.useShortNames` | boolean | `true` | Emit `ml-ko` / `ml-en` / … classes. |
-| `cssClasses.scriptSpecific` | object | `{}` | Optional per-script class overrides. |
+| `useShortNames` | boolean | `true` | Emit `ml-ko` / `ml-en` / … classes on each span. |
 | `debug` | boolean | `false` | Verbose console logging. |
 
 ## Output

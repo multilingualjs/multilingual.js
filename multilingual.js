@@ -10,9 +10,6 @@ const DEFAULT_CONFIG = {
     selector: 'body',
     delay: 100,
 
-    // Attach whitespace and punctuation to the surrounding script's segment.
-    preserveWhitespace: true,
-
     // Force specific characters to a script. Examples:
     //   '()[]{}': 'latin',  '،؛؟': 'arabic',  '。、': 'japanese'
     glyphOverrides: {},
@@ -23,11 +20,8 @@ const DEFAULT_CONFIG = {
     // Elements whose contents are not processed.
     skipElements: ['script', 'style', 'noscript', 'template'],
 
-    // CSS class behavior.
-    cssClasses: {
-        useShortNames: true,          // Emit ml-ko / ml-en / ... shortcuts
-        scriptSpecific: {}            // Optional { korean: 'my-ko', ... }
-    },
+    // Emit short class names (ml-ko, ml-en, ...) on each span.
+    useShortNames: true,
 
     debug: false
 };
@@ -126,7 +120,7 @@ class Multilingual {
     segmentText(text) {
         const tagged = [...text].map(char => {
             if (this.glyphOverrideMap[char]) return { char, script: this.glyphOverrideMap[char] };
-            if (this.config.preserveWhitespace && /[\s\p{P}]/u.test(char)) return { char, script: null };
+            if (/[\s\p{P}]/u.test(char)) return { char, script: null };
             return { char, script: this.detectScript(char) };
         });
 
@@ -155,16 +149,10 @@ class Multilingual {
      * Wrap text segments with spans
      */
     wrapSegments(segments) {
-        const { useShortNames, scriptSpecific = {} } = this.config.cssClasses;
         return segments.map(({ text, script, lang }) => {
             if (!text.trim()) return text; // whitespace-only segment, no wrap
-
-            const classes = [
-                useShortNames && this.scriptToShortClass[script],
-                scriptSpecific[script],
-            ].filter(Boolean);
-
-            const classAttr = classes.length ? ` class="${classes.join(' ')}"` : '';
+            const cls = this.config.useShortNames ? this.scriptToShortClass[script] : null;
+            const classAttr = cls ? ` class="${cls}"` : '';
             return `<span lang="${lang}" data-script="${script}"${classAttr}>${text}</span>`;
         }).join('');
     }

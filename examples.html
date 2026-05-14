@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual — Configuration Examples</title>
+    <script src="multilingual.js"></script>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 24px;
+            line-height: 1.6;
+            color: #1a1a1a;
+        }
+        h1 { margin-bottom: 4px; }
+        h1 + p { color: #666; margin-top: 0; }
+        h2 {
+            margin-top: 48px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .lead { color: #666; margin-top: -8px; }
+
+        .example { margin: 16px 0 24px; }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 8px 0;
+        }
+        .row .col {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            background: #fafafa;
+            font-size: 15px;
+        }
+        .row .col .label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 0.04em;
+            margin-bottom: 6px;
+        }
+        pre {
+            background: #f4f4f4;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+        code { font-family: 'SF Mono', Menlo, Consolas, monospace; }
+
+        /* Default short-class styling */
+        .ml-en { background: #fff3e0; padding: 0 2px; border-radius: 3px; border: 1px solid #ff9800; }
+        .ml-ko { background: #e8f4fd; padding: 0 2px; border-radius: 3px; border: 1px solid #2196F3; }
+        .ml-ja { background: #fce4ec; padding: 0 2px; border-radius: 3px; border: 1px solid #e91e63; }
+        .ml-zh { background: #f3e5f5; padding: 0 2px; border-radius: 3px; border: 1px solid #9c27b0; }
+        .ml-ar { background: #e8f5e8; padding: 0 2px; border-radius: 3px; border: 1px solid #4caf50; direction: rtl; unicode-bidi: embed; }
+    </style>
+</head>
+<body>
+
+<h1>Multilingual — Examples</h1>
+<p>Each section shows what a single configuration option does, with input on the left and the wrapped output on the right.</p>
+
+<h2>How to use</h2>
+<p class="lead">Two patterns. Pick whichever fits.</p>
+
+<pre><code>// Pattern A — set defaults and auto-wrap on load
+Multilingual.init({ autoInit: true, selector: '#content' });
+
+// Pattern B — wrap on demand
+Multilingual.wrap('#content', { /* per-call config */ });</code></pre>
+
+<h2>1. Default behavior</h2>
+<p class="lead">No options — each writing system is detected and wrapped automatically. Whitespace and punctuation inherit the surrounding script.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">Input</div><div id="e1-in">Hello 안녕하세요 こんにちは 你好 مرحبا</div></div>
+        <div class="col"><div class="label">Output</div><div id="e1-out">Hello 안녕하세요 こんにちは 你好 مرحبا</div></div>
+    </div>
+</div>
+
+<h2>2. <code>glyphOverrides</code></h2>
+<p class="lead">Force specific characters to a script regardless of their Unicode block. Useful for brackets you want rendered in your Latin font even when surrounded by Korean, or for Arabic punctuation that should always group with Arabic.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">no override — parens inherit Korean</div><div id="e2-off">인용문 (사람 이름) 끝.</div></div>
+        <div class="col"><div class="label">{'()[]{}': 'latin'}</div><div id="e2-on">인용문 (사람 이름) 끝.</div></div>
+    </div>
+</div>
+
+<h2>3. <code>languageOverrides</code></h2>
+<p class="lead">Override the BCP-47 <code>lang</code> attribute emitted for a script. Browsers use <code>lang</code> for hyphenation rules, screen-reader pronunciation, and font fallbacks — so a Traditional-Chinese site usually wants <code>zh-TW</code> or <code>zh-Hant</code>, not the generic <code>zh</code>. Inspect the spans to see the attribute change.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">default (lang="zh")</div><div id="e3-default">量子力学</div></div>
+        <div class="col"><div class="label">{chinese: 'zh-TW'}</div><div id="e3-tw">量子力学</div></div>
+    </div>
+</div>
+
+<h2>4. <code>useShortNames</code></h2>
+<p class="lead">When <code>true</code> (default), each span gets an <code>ml-xx</code> class for easy CSS targeting. When <code>false</code>, only <code>lang</code> and <code>data-script</code> are emitted — use this if you target solely via the data attribute. (The right column has no styling because the demo CSS only targets <code>.ml-xx</code>.)</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">useShortNames: true</div><div id="e4-on">Hello 안녕</div></div>
+        <div class="col"><div class="label">useShortNames: false</div><div id="e4-off">Hello 안녕</div></div>
+    </div>
+</div>
+
+<h2>5. <code>skipElements</code></h2>
+<p class="lead">Tag names whose contents are skipped during traversal. Defaults to <code>['script','style','noscript','template']</code>. Add <code>'code'</code> to leave inline code blocks untouched.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">default (code is wrapped)</div><div id="e5-default">Inline <code>print('안녕')</code> in prose.</div></div>
+        <div class="col"><div class="label">skipElements: [..., 'code']</div><div id="e5-skip">Inline <code>print('안녕')</code> in prose.</div></div>
+    </div>
+</div>
+
+<script>
+    Multilingual.wrap('#e1-out');
+
+    Multilingual.wrap('#e2-off');
+    Multilingual.wrap('#e2-on', { glyphOverrides: { '()[]{}': 'latin' } });
+
+    Multilingual.wrap('#e3-default');
+    Multilingual.wrap('#e3-tw', { languageOverrides: { chinese: 'zh-TW' } });
+
+    Multilingual.wrap('#e4-on');
+    Multilingual.wrap('#e4-off', { useShortNames: false });
+
+    Multilingual.wrap('#e5-default');
+    Multilingual.wrap('#e5-skip', {
+        skipElements: ['script', 'style', 'noscript', 'template', 'code']
+    });
+</script>
+
+</body>
+</html>
