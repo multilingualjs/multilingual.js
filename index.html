@@ -1,120 +1,259 @@
-<html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Mechanics</title>
-    
+    <title>Multilingual</title>
     <script src="multilingual.js"></script>
-    <script>
-        // Initialize the multilingual library with configuration
-        Multilingual.init({
-            autoInit: true,
-            selector: '#content',
-            delay: 50,
-            debug: false,
-
-            // Example glyph overrides - specify script for specific characters
-            glyphOverrides: {
-                '()[]{}': 'latin',    // Treat parentheses and brackets as Latin
-                '،؛؟': 'arabic',      // Arabic punctuation stays with Arabic
-            },
-        });
-    </script>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            max-width: 800px;
+            font-family: system-ui, sans-serif;
+            max-width: 760px;
             margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
+            padding: 24px;
+            line-height: 1.6;
+            color: #1a1a1a;
         }
-        span {
-            border-radius: 4px;
+        h1 { margin-bottom: 4px; font-size: 2.2em; }
+        h1 + p.tagline { color: #666; margin: 0 0 32px; font-size: 1.05em; }
+        h2 {
+            margin-top: 56px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
         }
-        
-        /* Style different writing systems */
-        span[data-script="korean"], .multilingual-segment[data-script="korean"], .ml-ko {
-            background-color: #e8f4fd;
-            border: 1px solid #2196F3;
-            padding: 0 2px;
+        h3 { margin-top: 32px; font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 1.05em; }
+        .lead { color: #666; margin-top: -8px; }
+        a { color: #0366d6; }
+
+        pre {
+            background: #f6f8fa;
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 13px;
+            overflow-x: auto;
+            line-height: 1.5;
         }
-        
-        span[data-script="japanese"], .multilingual-segment[data-script="japanese"], .ml-ja {
-            background-color: #fce4ec;
-            border: 1px solid #e91e63;
-            padding: 0 2px;
+        code { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 0.92em; }
+        p code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; }
+
+        table { border-collapse: collapse; margin: 16px 0; font-size: 14px; width: 100%; }
+        th, td { border-bottom: 1px solid #eee; padding: 8px 10px; text-align: left; vertical-align: top; }
+        th { background: #fafafa; font-weight: 600; }
+        td:first-child code { white-space: nowrap; }
+
+        .example { margin: 16px 0 24px; }
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 8px 0;
         }
-        
-        span[data-script="chinese"], .multilingual-segment[data-script="chinese"], .ml-zh {
-            background-color: #f3e5f5;
-            border: 1px solid #9c27b0;
-            padding: 0 2px;
+        .col {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            background: #fafafa;
+            font-size: 15px;
         }
-        
-        span[data-script="arabic"], .multilingual-segment[data-script="arabic"], .ml-ar {
-            background-color: #e8f5e8;
-            border: 1px solid #4caf50;
-            padding: 0 2px;
-            direction: rtl;
+        .col .label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 0.04em;
+            margin-bottom: 6px;
         }
-        
-        span[data-script="latin"], .multilingual-segment[data-script="latin"], .ml-en {
-            background-color: #fff3e0;
-            border: 1px solid #ff9800;
-            padding: 0 2px;
-        }
-        
-        .controls {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 5px;
-        }
-        
-        button {
-            margin: 5px;
-            padding: 8px 16px;
-            border: none;
+
+        /* Default script styling (used everywhere) */
+        .ml-en { background: #fff3e0; padding: 0 2px; border-radius: 3px; border: 1px solid #ff9800; }
+        .ml-ko { background: #e8f4fd; padding: 0 2px; border-radius: 3px; border: 1px solid #2196F3; }
+        .ml-ja { background: #fce4ec; padding: 0 2px; border-radius: 3px; border: 1px solid #e91e63; }
+        .ml-zh { background: #f3e5f5; padding: 0 2px; border-radius: 3px; border: 1px solid #9c27b0; }
+        .ml-ar { background: #e8f5e8; padding: 0 2px; border-radius: 3px; border: 1px solid #4caf50; direction: rtl; unicode-bidi: embed; }
+
+        /* Category styling (only relevant when separate* flags are on) */
+        .ml-space { background: #eceff1; padding: 0 2px; border-radius: 3px; border: 1px solid #90a4ae; min-width: 0.4em; display: inline-block; }
+        .ml-punct { background: #ffcdd2; padding: 0 2px; border-radius: 3px; border: 1px solid #e53935; }
+        .ml-num   { background: #c8e6c9; padding: 0 2px; border-radius: 3px; border: 1px solid #43a047; font-variant-numeric: tabular-nums; }
+
+        /* Make lang attribute visible for the languageOverrides example */
+        #lang-demo [data-script="chinese"]::after {
+            content: " " attr(lang);
+            font-size: 0.7em;
+            color: #555;
+            background: #fff;
+            border: 1px solid #ccc;
             border-radius: 3px;
-            background: #007acc;
-            color: white;
-            cursor: pointer;
+            margin-left: 4px;
+            padding: 0 4px;
+            vertical-align: middle;
         }
-        
-        button:hover {
-            background: #005fa3;
+
+        /* Complex sample */
+        #sample {
+            margin-top: 12px;
+            padding: 20px;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            background: #fff;
         }
+        #sample h3 { font-family: inherit; font-size: 1.2em; margin-top: 24px; }
+        #sample h3:first-child { margin-top: 0; }
+        #sample p { margin: 0 0 14px; }
     </style>
 </head>
 <body>
-    <h1>Multilingual Text Demo</h1>
-    
-    <div class="controls">
-        <button onclick="location.reload()">Reload Page</button>
-    </div>
 
-    <div id="content">
-        <h2>Quantum Mechanics in Multiple Languages</h2>
-        
-        <p>Quantum mechanics (QM; also known as quantum physics or quantum theory), including quantum field theory, is a fundamental branch of physics concerned with processes involving, for example, atoms and photons. Systems such as these which obey quantum mechanics can be in a quantum superposition of different states, unlike in classical physics.</p>
-        
-        <p>양자역학(量子力學, Quantum Mechanics)은 분자, 원자, 전자와 같은 작은 크기를 갖는 계의 물리학을 연구하는 분야이다. 19세기 중반까지의 실험은 뉴턴의 고전역학으로 설명할 수 있었다. 그러나, 19세기 후반부터 20세기 초반까지 이루어진 전자, 양성자, 중성자 등의 아원자입자에 관련된 실험들의 결과는 고전역학으로 설명을 시도할 경우 모순이 발생하여 이를 해결하기 위한 새로운 역학 체계가 필요하게 되었다. 이 양자역학은 플랑크의 양자 가설을 계기로 하여 슈뢰딩거, 하이젠베르크, 디랙 등에 의해 만들어진 전적으로 20세기에 이루어진 학문이다.</p>
-        
-        <p>量子力学（りょうしりきがく、英: Quantum mechanics）は、一般相対性理論と同じく現代物理学の根幹を成す理論として知られ、主として分子や原子、あるいはそれを構成する電子など、微視的な物理現象を記述する。 量子力学自身は前述のミクロな系における力学を記述する理論だが、取り扱う系をそうしたミクロな系の集まりとして解析することによって、ニュートン力学に代表される古典論では説明が困難であった巨視的な現象についても記述することができる。たとえば量子統計力学はそのような応用例の一つである。従って、生物や宇宙のようなあらゆる自然現象もその記述の対象となり得る。</p>
-        
-        <p>量子力学是描写微观物质的一个物理学分支，与相对论一起被认为是现代物理学的两大基本支柱，许多物理学理论和科学，如原子物理学、固体物理学、核物理学和粒子物理学以及其它相关的學科，都是以其为基础。19世纪末，經典力學和經典电动力学在描述微观系统时的不足與矛盾越来越明显。量子力学是在20世纪初，由马克斯·普朗克、尼尔斯·玻尔、沃纳·海森堡、埃尔温·薛定谔、沃尔夫冈·泡利、路易·德布罗意、马克斯·玻恩、恩里科·费米、保罗·狄拉克、阿尔伯特·爱因斯坦等一大群物理学家所共同创立。透过量子力学，人们对物质的结构以及其相互作用的见解被根本地改变，同时，许多现象也得以真正地被解释。</p>
-        
-        <p>مکانیک کوانتومی شاخه‌ای بنیادی از فیزیک نظری است که با پدیده‌های فیزیکی در مقیاس میکروسکوپی سر و کار دارد. در این مقیاس، کُنِش‌های فیزیکی در حد و اندازه‌های ثابت پلانک هستند. مقدار عددی ثابت پلانک نیز بسیار کوچک و برابر است با ۶.۶۲۶×۱۰⁻³⁴ ژول ثانیه.</p>
-        
-        <h3>Mixed Language Example</h3>
-        <p>This sentence mixes English with 한국어 Korean text and some 日本語 Japanese characters, plus 中文 Chinese, and even عربي Arabic script in one paragraph to test the detection algorithm.</p>
-    </div>
+<h1>Multilingual</h1>
+<p class="tagline">A lightweight library that detects writing systems in mixed-language text and wraps each segment in a <code>&lt;span&gt;</code> so you can style each script with CSS.</p>
 
-    <script>
-        console.log('Multilingual text will be automatically wrapped when the page loads');
-    </script>
+<h2>What &amp; why</h2>
+<p>Web pages that mix multiple languages — say English with Korean and Arabic — face a typography problem. CSS <code>font-family</code> applies per element, but a single paragraph might need <em>Noto Sans KR</em> for the Korean parts, a different size for the Arabic parts, and <code>direction: rtl</code> just where the Arabic actually appears. Without per-segment markup, you can't target any of this.</p>
+<p>Multilingual walks the DOM, detects each character's script via Unicode property escapes (<code>\p{Script=Hangul}</code>, <code>\p{Script=Arabic}</code>, …), and wraps consecutive same-script runs in <code>&lt;span lang="…" data-script="…" class="ml-…"&gt;</code>. Then you target each script in CSS the normal way.</p>
+
+<pre><code>&lt;script src="multilingual.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  // Set defaults and auto-wrap on load
+  Multilingual.init({ autoInit: true, selector: '#content' });
+
+  // Or wrap on demand
+  Multilingual.wrap('#content', { /* per-call config */ });
+&lt;/script&gt;</code></pre>
+
+<h2>Try it</h2>
+<p class="lead">A paragraph with five writing systems. Each segment below is wrapped automatically — the colored boxes come from the page's CSS targeting <code>.ml-en</code>, <code>.ml-ko</code>, etc.</p>
+<p id="try-it">Hello — and 안녕하세요, こんにちは, 你好, مرحبا. One sentence, five scripts, all detected at the character level.</p>
+
+<h2>Configuration</h2>
+<p class="lead">Each option does one thing. Click through the side-by-side comparisons to see what changes.</p>
+
+<h3 id="opt-separate"><code>separateSpace</code> / <code>separatePunct</code> / <code>separateNum</code></h3>
+<p>By default, spaces and punctuation merge into the surrounding script's span, and digits join the Latin segment. Set any of these to <code>true</code> to give that category its own span with class <code>ml-space</code> / <code>ml-punct</code> / <code>ml-num</code> — useful when you want typographic control (tabular numbers, styled punctuation, visible spaces). Separated categories don't propagate during inheritance, so a stray space next to a separated comma still attaches to the nearest real script.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">all default</div><div id="e-sep-default">안녕 hello, 123!</div></div>
+        <div class="col"><div class="label">separateSpace: true</div><div id="e-sep-space">안녕 hello, 123!</div></div>
+    </div>
+    <div class="row">
+        <div class="col"><div class="label">separatePunct: true</div><div id="e-sep-punct">안녕 hello, 123!</div></div>
+        <div class="col"><div class="label">separateNum: true</div><div id="e-sep-num">안녕 hello, 123!</div></div>
+    </div>
+    <div class="row">
+        <div class="col"><div class="label">all three</div><div id="e-sep-all">안녕 hello, 123!</div></div>
+        <div class="col"></div>
+    </div>
+</div>
+
+<h3 id="opt-glyph"><code>glyphOverrides</code></h3>
+<p>Force specific characters to a script regardless of their Unicode block. Useful for brackets you want rendered in your Latin font even when surrounded by Korean, or for Arabic punctuation that should always group with Arabic.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">no override — parens inherit Korean</div><div id="e-glyph-off">인용문 (사람 이름) 끝.</div></div>
+        <div class="col"><div class="label">{'()[]{}': 'latin'}</div><div id="e-glyph-on">인용문 (사람 이름) 끝.</div></div>
+    </div>
+</div>
+
+<h3 id="opt-lang"><code>languageOverrides</code></h3>
+<p>Override the BCP-47 <code>lang</code> attribute emitted for a script. Browsers use <code>lang</code> for hyphenation rules, screen-reader pronunciation, and font fallbacks — so a Traditional-Chinese site usually wants <code>zh-TW</code> or <code>zh-Hant</code>, not the generic <code>zh</code>. (Each span below shows its <code>lang</code> in a small label.)</p>
+<div class="example" id="lang-demo">
+    <div class="row">
+        <div class="col"><div class="label">default</div><div id="e-lang-default">量子力学</div></div>
+        <div class="col"><div class="label">{chinese: 'zh-TW'}</div><div id="e-lang-tw">量子力学</div></div>
+    </div>
+</div>
+
+<h3 id="opt-short"><code>useShortNames</code></h3>
+<p>When <code>true</code> (default), each span gets an <code>ml-xx</code> class for easy CSS targeting. When <code>false</code>, only <code>lang</code> and <code>data-script</code> are emitted — use this if you target solely via the data attribute. (The right column has no styling because the demo CSS only targets <code>.ml-xx</code>.)</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">useShortNames: true</div><div id="e-short-on">Hello 안녕</div></div>
+        <div class="col"><div class="label">useShortNames: false</div><div id="e-short-off">Hello 안녕</div></div>
+    </div>
+</div>
+
+<h3 id="opt-skip"><code>skipElements</code></h3>
+<p>Tag names whose contents are skipped during traversal. Defaults to <code>['script','style','noscript','template']</code>. Add <code>'code'</code> to leave inline code blocks untouched.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">default (code is wrapped)</div><div id="e-skip-default">Inline <code>print('안녕')</code> in prose.</div></div>
+        <div class="col"><div class="label">skipElements: [..., 'code']</div><div id="e-skip-on">Inline <code>print('안녕')</code> in prose.</div></div>
+    </div>
+</div>
+
+<h2>All options</h2>
+<table>
+    <tr><th>Option</th><th>Default</th><th>Description</th></tr>
+    <tr><td><code>autoInit</code></td><td><code>false</code></td><td>When true, <code>init()</code> schedules a wrap of <code>selector</code> after <code>delay</code> ms.</td></tr>
+    <tr><td><code>selector</code></td><td><code>'body'</code></td><td>CSS selector for the auto-init wrap.</td></tr>
+    <tr><td><code>delay</code></td><td><code>100</code></td><td>ms to wait before the auto-init wrap.</td></tr>
+    <tr><td><code>separateSpace</code></td><td><code>false</code></td><td>Give whitespace its own segments with class <code>ml-space</code>.</td></tr>
+    <tr><td><code>separatePunct</code></td><td><code>false</code></td><td>Give punctuation its own segments with class <code>ml-punct</code>.</td></tr>
+    <tr><td><code>separateNum</code></td><td><code>false</code></td><td>Give digits their own segments with class <code>ml-num</code>.</td></tr>
+    <tr><td><code>glyphOverrides</code></td><td><code>{}</code></td><td>Map of character strings to script names (e.g. <code>'()': 'latin'</code>).</td></tr>
+    <tr><td><code>languageOverrides</code></td><td><code>{}</code></td><td>Override the BCP-47 <code>lang</code> attribute per script.</td></tr>
+    <tr><td><code>skipElements</code></td><td><code>['script','style','noscript','template']</code></td><td>Tag names to skip during traversal.</td></tr>
+    <tr><td><code>useShortNames</code></td><td><code>true</code></td><td>Emit <code>ml-ko</code> / <code>ml-en</code> / … classes.</td></tr>
+    <tr><td><code>debug</code></td><td><code>false</code></td><td>Console logging.</td></tr>
+</table>
+
+<h2>Complex sample</h2>
+<p class="lead">A real-world document — five languages, mixed scripts within paragraphs, nested headings, parenthesized Latin inside CJK, Arabic-Indic digits inside Arabic, and an inline <code>&lt;code&gt;</code> block that should pass through untouched.</p>
+
+<pre><code>Multilingual.wrap('#sample', {
+  glyphOverrides:    { '()[]{}': 'latin', '،؛؟': 'arabic' },
+  languageOverrides: { chinese: 'zh-CN' },
+  separateNum:       true,
+  skipElements:      ['script', 'style', 'noscript', 'template', 'code'],
+});</code></pre>
+
+<div id="sample">
+    <h3>Quantum Mechanics in five languages</h3>
+
+    <p>Quantum mechanics (QM; also known as quantum physics or quantum theory), including quantum field theory, is a fundamental branch of physics. Systems that obey quantum mechanics can exist in a superposition of different states. Definition lifted verbatim from the standard <code>en.wikipedia.org/wiki/Quantum_mechanics</code> opening — note the inline code stays unwrapped.</p>
+
+    <p>양자역학(量子力學, Quantum Mechanics)은 분자, 원자, 전자와 같은 작은 크기를 갖는 계의 물리학을 연구하는 분야이다. 19세기 중반까지의 실험은 뉴턴의 고전역학으로 설명할 수 있었지만, 20세기 초부터의 실험은 새로운 역학 체계를 요구했다.</p>
+
+    <p>量子力学（りょうしりきがく、英: Quantum mechanics）は、現代物理学の根幹を成す理論として知られ、分子や原子、それを構成する電子など、微視的な物理現象を記述する。1900年代に登場した。</p>
+
+    <p>量子力学是描写微观物质的一个物理学分支，与相对论一起被认为是现代物理学的两大基本支柱。19世纪末，經典力學在描述微观系统时的不足越来越明显；20世纪初，由普朗克、玻尔、海森堡、薛定谔等物理学家共同创立。</p>
+
+    <p>مکانیک کوانتومی شاخه‌ای بنیادی از فیزیک نظری است که با پدیده‌های فیزیکی در مقیاس میکروسکوپی سر و کار دارد. مقدار عددی ثابت پلانک تقریباً ۶٫۶۲۶×۱۰⁻³⁴ ژول-ثانیه است.</p>
+
+    <h3>Mixed within one sentence</h3>
+    <p>This sentence mixes English with 한국어 Korean, some 日本語 Japanese, 中文 Chinese, and عربي Arabic, plus numbers like 1900 and Arabic-Indic ۱۹۰۰ — all detected at the character level.</p>
+</div>
+
+<script>
+    // Try-it (top): default wrap, no options
+    Multilingual.wrap('#try-it');
+
+    // Separation examples
+    Multilingual.wrap('#e-sep-default');
+    Multilingual.wrap('#e-sep-space', { separateSpace: true });
+    Multilingual.wrap('#e-sep-punct', { separatePunct: true });
+    Multilingual.wrap('#e-sep-num',   { separateNum: true });
+    Multilingual.wrap('#e-sep-all',   { separateSpace: true, separatePunct: true, separateNum: true });
+
+    Multilingual.wrap('#e-glyph-off');
+    Multilingual.wrap('#e-glyph-on', { glyphOverrides: { '()[]{}': 'latin' } });
+
+    Multilingual.wrap('#e-lang-default');
+    Multilingual.wrap('#e-lang-tw', { languageOverrides: { chinese: 'zh-TW' } });
+
+    Multilingual.wrap('#e-short-on');
+    Multilingual.wrap('#e-short-off', { useShortNames: false });
+
+    Multilingual.wrap('#e-skip-default');
+    Multilingual.wrap('#e-skip-on', { skipElements: ['script', 'style', 'noscript', 'template', 'code'] });
+
+    // Complex sample: multiple options stacked
+    Multilingual.wrap('#sample', {
+        glyphOverrides:    { '()[]{}': 'latin', '،؛؟': 'arabic' },
+        languageOverrides: { chinese: 'zh-CN' },
+        separateNum:       true,
+        skipElements:      ['script', 'style', 'noscript', 'template', 'code'],
+    });
+</script>
+
 </body>
 </html>

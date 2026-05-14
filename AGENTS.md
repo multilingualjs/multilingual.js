@@ -18,8 +18,7 @@ A lightweight, zero-dependency JavaScript library that detects writing systems i
 | File | Status | Purpose |
 |---|---|---|
 | `multilingual.js` | active | Main library |
-| `index.html` | active | Demo (Quantum Mechanics multilingual text) |
-| `example-new-api.html` | active | API usage examples |
+| `index.html` | active | Single-page demo: overview, configuration examples, options table, complex sample |
 | `README.md` | active | User docs |
 | `HISTORY.md` | reference | Phase-by-phase build log from v1/v2 |
 | `AGENTS.md` | this file | Live working context |
@@ -90,7 +89,18 @@ None on the v2.1 simplification track. Possible next moves:
   - **Kept `languageOverrides`** — it has a real BCP-47 justification (Traditional vs Simplified Chinese, hyphenation, screen-reader pronunciation, font fallbacks via `[lang^="zh-Hant"]`). Improved its rationale in `examples.html`.
   - **Renamed `example-new-api.html` → `examples.html`** (API is no longer "new"). Rewrote as a feature gallery instead of an API-style gallery: each section demos one config option with before/after columns.
 
-- ✅ **Replaced `wrapWhitespace` with three category-separation flags** (this pass).
+- ✅ **Merged `index.html` + `examples.html` into single-page guide** (this pass).
+  - Renamed `separateWhitespace` → `separateSpace` so the option, data-script value (`space`), and class (`ml-space`) are all consistent (matching the pattern that `separatePunct/Num` already had).
+  - Restyled `.ml-space` from a thin dotted outline to a solid grey box, matching the other category boxes. The outline implied "decoration"; the spans are real segments.
+  - Combined index.html (Quantum Mechanics demo) and examples.html (option gallery) into one entry-point page. New structure:
+    1. **Overview** — what the library does and why (per-script CSS in mixed-language pages).
+    2. **Try it** — a single paragraph with 5 scripts, auto-wrapped on load.
+    3. **Configuration** — one h3 per option with before/after columns. The `languageOverrides` example now visualizes the `lang` attribute via `::after` so you don't have to inspect the DOM.
+    4. **All options** — single table matching README.
+    5. **Complex sample** — Quantum Mechanics in 5 languages with `glyphOverrides`, `languageOverrides`, `separateNum`, and `skipElements` all stacked. The inline `<code>` block stays unwrapped; digits like `1900` / `۱۹۰۰` render in green `ml-num` boxes with tabular-nums.
+  - Deleted `examples.html` (content moved into index.html).
+
+- ✅ **Replaced `wrapWhitespace` with three category-separation flags**.
   - User reframed: the option isn't about *visual bleed* but about *typographic control* of three independent character categories. Whitespace, punctuation, and digits are conceptually three separate things, each with its own use case (visible spaces / styled punct / tabular nums). Lumping them under one boolean lost that distinction.
   - Dropped `wrapWhitespace`. Added three independent booleans (default `false`):
     - `separateWhitespace` → spans get `data-script="whitespace"` + `class="ml-space"`
@@ -111,8 +121,9 @@ Within the 10 supported scripts (Latin, Korean, Japanese kana, Chinese Han, Arab
 
 ## Final Metrics
 
-- `multilingual.js`: 437 → 278 lines (−159, −36%).
-- Empty/stale files: −4 (`config-examples.js`, `examples.html`, `multilingual-wrapper.js`, `configuration-demo.html`).
+- `multilingual.js`: 437 → 285 lines (−152, −35%).
+- Demo files collapsed: `index.html` + `example-new-api.html` (later `examples.html`) → single `index.html` covering everything.
+- Empty/stale files removed: `config-examples.js`, `examples.html` (v1), `multilingual-wrapper.js`, `configuration-demo.html`.
 - Config surface: 11 options → 10 (but more orthogonal: each option does one specific thing).
 
 ## Known Issues (carried over from HISTORY.md)
