@@ -1,0 +1,122 @@
+/*
+ * Styles for index.html (the project demo page).
+ * Not part of the library — feel free to edit / replace.
+ */
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px;
+    line-height: 1.65;
+    color: #1a1a1a;
+}
+
+h1 { margin-bottom: 4px; font-size: 2.2em; }
+h1 + p.tagline { color: #666; margin: 0 0 32px; font-size: 1.05em; }
+
+h2 {
+    margin-top: 56px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+}
+
+h3 {
+    margin-top: 32px;
+    font-family: 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 1.05em;
+}
+
+p { margin: 0.7em 0; }
+p.lead { color: #666; margin-top: -8px; }
+
+/* Secondary (English) prose paired with primary (Korean) prose. */
+p.en, li.en {
+    color: #777;
+    font-size: 0.93em;
+    margin-top: -0.4em;
+}
+
+a { color: #0366d6; }
+
+pre {
+    background: #f6f8fa;
+    border-radius: 6px;
+    padding: 12px 14px;
+    font-size: 13px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+code { font-family: 'SF Mono', Menlo, Consolas, monospace; font-size: 0.92em; }
+p code, li code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; }
+
+table { border-collapse: collapse; margin: 16px 0; font-size: 14px; width: 100%; }
+th, td { border-bottom: 1px solid #eee; padding: 8px 10px; text-align: left; vertical-align: top; }
+th { background: #fafafa; font-weight: 600; }
+td:first-child code { white-space: nowrap; }
+
+/* Side-by-side option demos */
+.example { margin: 16px 0 24px; }
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 8px 0;
+}
+.col {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px;
+    background: #fafafa;
+    font-size: 15px;
+}
+.col .label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+/* Default script colors */
+.ml-en { background: #fff3e0; padding: 0 2px; border-radius: 3px; border: 1px solid #ff9800; }
+.ml-ko { background: #e8f4fd; padding: 0 2px; border-radius: 3px; border: 1px solid #2196F3; }
+.ml-ja { background: #fce4ec; padding: 0 2px; border-radius: 3px; border: 1px solid #e91e63; }
+.ml-zh { background: #f3e5f5; padding: 0 2px; border-radius: 3px; border: 1px solid #9c27b0; }
+.ml-ar { background: #e8f5e8; padding: 0 2px; border-radius: 3px; border: 1px solid #4caf50; direction: rtl; unicode-bidi: embed; }
+.ml-ru { background: #fff8e1; padding: 0 2px; border-radius: 3px; border: 1px solid #fbc02d; }
+.ml-el { background: #e0f2f1; padding: 0 2px; border-radius: 3px; border: 1px solid #00897b; }
+.ml-he { background: #ede7f6; padding: 0 2px; border-radius: 3px; border: 1px solid #5e35b1; direction: rtl; unicode-bidi: embed; }
+.ml-th { background: #f1f8e9; padding: 0 2px; border-radius: 3px; border: 1px solid #7cb342; }
+.ml-hi { background: #fff3e0; padding: 0 2px; border-radius: 3px; border: 1px solid #ef6c00; }
+
+/* Category colors (only emitted when separate* flags are on) */
+.ml-space { background: #eceff1; padding: 0 2px; border-radius: 3px; border: 1px solid #90a4ae; min-width: 0.4em; display: inline-block; }
+.ml-punct { background: #ffcdd2; padding: 0 2px; border-radius: 3px; border: 1px solid #e53935; }
+.ml-num   { background: #c8e6c9; padding: 0 2px; border-radius: 3px; border: 1px solid #43a047; font-variant-numeric: tabular-nums; }
+
+/* Surface the lang attribute next to the languageOverrides demo spans */
+#lang-demo [data-script="chinese"]::after {
+    content: " " attr(lang);
+    font-size: 0.7em;
+    color: #555;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-left: 4px;
+    padding: 0 4px;
+    vertical-align: middle;
+}
+
+/* Complex sample container */
+#sample {
+    margin-top: 12px;
+    padding: 20px;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    background: #fff;
+}
+#sample h3 { font-family: inherit; font-size: 1.2em; margin-top: 24px; }
+#sample h3:first-child { margin-top: 0; }
+#sample p { margin: 0 0 14px; }

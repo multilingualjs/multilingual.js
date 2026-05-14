@@ -1,148 +1,150 @@
 # AGENTS.md
 
-Working context for agents continuing this project. Update as decisions are made.
+이 문서는 Multilingual 라이브러리를 사용·통합하려는 AI 에이전트가 라이브러리 동작과 미묘한 결정 사항을 정확히 이해할 수 있도록 작성된 reference입니다. 사용자의 코드를 수정하거나 문서를 만들기 전에 이 문서를 참고하세요.
 
-## Project Goal
+> Reference for AI agents helping users integrate Multilingual. Read this before modifying user code or writing documentation.
 
-A lightweight, zero-dependency JavaScript library that detects writing systems in mixed-language text and wraps each segment in a `<span>` with `lang`, `data-script`, and CSS class attributes. Primary use case: per-script CSS font styling.
+## TL;DR
 
-**Guiding principle:** maximally simple and elegant. Prefer fewer lines, fewer abstractions, fewer config knobs over completeness.
+- 라이브러리는 DOM의 텍스트 노드를 순회하면서, 문자 단위로 Unicode `Script` property를 감지해 연속된 같은 스크립트 글자들을 `<span lang data-script class="ml-…">`로 감싼다.
+- 기본적으로 공백·문장부호·숫자는 주변 스크립트에 흡수되어 같은 span 안에 들어간다.
+- 옵션은 모두 직교적이고, 각자 하나의 일만 한다.
 
-## Current Branch State
+## 동작 알고리즘 · Algorithm
 
-- `main` — v2.0 snapshot (commit `ae1368a`)
-- `v2.1` — active refactor branch (current)
+`segmentText(text)`는 세 단계로 동작합니다:
 
-## File Inventory
+1. **Per-character tagging**. 각 글자에 script 속성을 부여:
+   - `glyphOverrides`에 명시된 글자 → 지정된 스크립트
+   - 공백(`\s`) → `space` (옵션 켰을 때) 또는 `null` (inheritable)
+   - 문장부호(`\p{P}`) → `punctuation` (옵션) 또는 `null`
+   - 숫자(`\p{N}`) → `number` (옵션) 또는 `latin` (fallback)
+   - 그 외 → `\p{Script=...}` 매칭 (Hangul, Han, Hiragana/Katakana, Arabic, …)
+2. **Inheritance fill**. `null` 태그된 글자들이 가장 가까운 **실제 스크립트**(category-pseudo-scripts는 제외)를 상속. 앞쪽을 먼저 보고, 없으면 뒤쪽을 봅니다. 둘 다 없으면 `latin` fallback.
+3. **Grouping**. 연속된 같은 스크립트 글자들을 하나의 segment로 합칩니다.
 
-| File | Status | Purpose |
-|---|---|---|
-| `multilingual.js` | active | Main library |
-| `index.html` | active | Single-page demo: overview, configuration examples, options table, complex sample |
-| `README.md` | active | User docs |
-| `HISTORY.md` | reference | Phase-by-phase build log from v1/v2 |
-| `AGENTS.md` | this file | Live working context |
+`wrapSegments(segments)`는 각 segment를 `<span>`으로 렌더:
+- segment에 script가 있으면 `<span lang="…" data-script="…" class="ml-…">`로 wrap
+- script가 'space'고 텍스트가 공백뿐이면 → 그래도 wrap (사용자가 명시적으로 켰으므로)
+- 다른 script인데 텍스트가 공백뿐이면 → bare text (inheritance로 흘러들어온 trailing 공백이라 wrap 불필요)
+- category-pseudo-scripts (`space`, `punctuation`, `number`)는 `lang` 속성 미부여 (언어가 아니므로 부모 element의 `lang` 자연스럽게 상속)
 
-## Architectural Review (2026-05-14)
+## 사용자에게 안내할 때 주의할 점 · Pitfalls to flag
 
-Evaluated the v2.0 approach against the "simple and elegant" goal:
+### 1. 공백·문장부호의 inheritance가 default
 
-### 1. TreeWalker vs recursive DOM traversal — **switch to recursive**
+`"안녕 hello"`에서 공백은 한국어 span 안에 흡수됩니다. 사용자가 `.ml-ko { background: blue }` 같은 스타일을 주면 공백 위로도 파란 배경이 깔립니다. 이게 의도가 아니라면 (예: 폰트만 바꾸고 시각적 box는 원하지 않음), 이 동작이 기본임을 사용자에게 알려야 합니다. 분리하려면 `separateSpace: true`.
 
-TreeWalker's perf advantage only matters on very deep trees. The current code needs `.bind(this)` inside `acceptNode` (Phase 7 bug fix) — that friction is a code smell. A plain recursive function is ~8 lines, more readable, no binding gymnastics.
+### 2. CJK ambiguity는 해결 불가
 
-### 2. Hardcoded Unicode ranges vs `\p{Script=...}` regex — **switch to regex**
+`量子力学`(일본어 한자 5자) 같은 텍스트는 항상 `chinese`로 분류됩니다. 라이브러리가 일본어 본문임을 알 수 있는 단서가 없기 때문입니다. 우회 방법:
 
-Current code hardcodes ~70 lines of code-point ranges (CJK Extensions A–F, Hangul Jamo Extended A/B, Latin Extended A/B, etc.) — essentially a hand-rolled reimplementation of Unicode's `Script` property. Modern JS supports this natively:
+- 사용자가 직접 `<span lang="ja">…</span>` 같은 wrapper를 텍스트에 명시적으로 둔다 (가장 정확하지만 수고가 듦).
+- `languageOverrides: { chinese: 'ja' }`로 `lang` 속성만 일본어로 보정한다 — 단, `data-script="chinese"`와 `class="ml-zh"`는 그대로이므로 CSS 클래스로 폰트 분기하려면 부족하다.
+- 모든 한자를 일본어 클래스로 받으려면 `glyphOverrides`로 한자 범위를 `japanese`로 매핑 — 단, 중국어 본문이 같이 섞여 있으면 그 한자도 함께 일본어로 분류된다.
+
+### 3. 분리된 카테고리는 inheritance에 참여하지 않음
+
+`separatePunct: true`만 켠 상태에서 `"한국어, 좋아요"`를 wrap하면:
+- `<span ko>한국어</span><span punct>,</span><span ko> 좋아요</span>`
+
+쉼표 뒤 공백이 punct에 붙지 않고 다음 한국어 segment에 attach됩니다. 이는 의도된 동작 — 분리한 카테고리의 스타일이 인접 공백으로 새지 않도록 하기 위함입니다.
+
+### 4. 숫자는 기본 latin
+
+`"가격 1000원"`은 기본 동작에서 `<span ko>가격 </span><span en>1000</span><span ko>원</span>`이 됩니다 — 1000이 latin으로 분류돼 한국어 segment를 둘로 쪼개죠. 사용자가 숫자도 한국어 폰트로 그리고 싶다면 `glyphOverrides: { '0123456789': 'korean' }`로 매핑하거나, `separateNum: true`로 분리해서 별도 스타일링하는 방법이 있습니다.
+
+### 5. `useClassNames: false` 시 데모 스타일 안 보임
+
+기본 데모는 `.ml-xx` 클래스로 스타일을 매기는데, `useClassNames: false`이면 클래스가 없어 스타일이 적용되지 않습니다. 사용자가 attribute selector(`[data-script="korean"]`)로 타깃팅할 때만 이 옵션을 켜세요.
+
+### 6. `skipElements`는 elements를 통째로 건너뜀
+
+`['code']`를 추가하면 `<code>` 내부 텍스트는 wrap되지 않지만, `<code>` 바깥의 같은 텍스트 노드는 그대로 wrap됩니다. 코드 블록 안에 한국어 주석이 있어도 wrap되지 않으므로, 사용자가 코드 안 텍스트도 스타일링하고 싶다면 default에서 빼지 말아야 합니다.
+
+## 옵션 선택 가이드 · When to use which option
+
+- **font-family 분리만 하고 싶다** → 기본 동작 그대로 (옵션 0). `.ml-en { font-family: 'Inter' }` 같은 CSS만 추가.
+- **숫자에 tabular-nums 적용** → `separateNum: true`. `.ml-num { font-variant-numeric: tabular-nums }`.
+- **본문 폰트와 다른 문장부호 폰트** → `separatePunct: true`. `.ml-punct { font-family: 'MyPunct' }`.
+- **번체 중국어 사이트** → `languageOverrides: { chinese: 'zh-TW' }`. 브라우저 하이프네이션·폰트 fallback에 영향.
+- **괄호·따옴표만 영문 폰트로** → `glyphOverrides: { '()[]{}"\'': 'latin' }`. 한국어 본문 사이 괄호가 영문 폰트로 보여 예쁨.
+- **인라인 코드 블록 보존** → `skipElements: [...defaults, 'code']`.
+- **공백 시각화 (디버깅)** → `separateSpace: true`. `.ml-space { background: yellow }`.
+
+## 라이브러리 API 요약 · API surface
 
 ```js
-const SCRIPTS = {
-  latin:    /\p{Script=Latin}/u,
-  korean:   /\p{Script=Hangul}/u,
-  japanese: /[\p{Script=Hiragana}\p{Script=Katakana}]/u,
-  chinese:  /\p{Script=Han}/u,
-  // ...
-};
+// 1) Set defaults globally + optionally auto-wrap on load
+Multilingual.init(config);            // returns Multilingual class for chaining
+
+// 2) One-shot wrap with per-call config
+Multilingual.wrap(target, config);    // target: CSS selector string or Element; returns number of elements wrapped
+
+// 3) Reusable instance
+const ml = new Multilingual(config);
+ml.wrap(target);
 ```
 
-Shorter, auto-handles future Unicode additions, can't miss a block. Browser support already documented as a requirement in README.
+내부 메서드도 있지만(`segmentText`, `wrapSegments`, `detectScript`, `processElement`, `processTextNode`), 보통은 위 세 가지면 충분합니다. 직접 호출이 필요할 때만 노출된 내부 메서드를 사용하세요.
 
-### 3. Other simplification candidates
+## 옵션 전체 · All options
 
-- `wrap()` selector parsing manually handles `#`/`.` prefixes — `querySelectorAll` already does this.
-- `wrapMultilingualText` global function — kept for backward compat. Drop if we're simplifying.
-- `isInitialized` flag — set but never read.
-
-## Cleanup Done (v2.1)
-
-Commit `599b040`:
-- Deleted empty: `config-examples.js`, `examples.html`, `multilingual-wrapper.js`
-- Deleted stale: `configuration-demo.html` (used removed `window.MULTILINGUAL_CONFIG` API)
-
-## Pending Work
-
-None on the v2.1 simplification track. Possible next moves:
-- Validate visually in browser against `index.html` and `example-new-api.html`.
-- Verify the Arabic space handling against any concrete failing case the original user had (HISTORY.md "Phase 5" was vague; couldn't reproduce in this pass).
-- Consider tightening `wrapSegments` (still uses string templates + class concat logic).
-
-## Done
-
-- ✅ **Unicode ranges → `\p{Script=...}` regex** (`f66a245`). `SCRIPT_PATTERNS` at module scope; `detectScript` is 8 lines. Order: kana before Han so Japanese isn't swallowed by `chinese`. File 437 → 381 (−55).
-- ✅ **TreeWalker → recursive traversal** (`d76c38e`). `processElement` is now a 9-line recursive function; `bind(this)` gone. Snapshots `childNodes` before recursing so `processTextNode`'s DOM mutations don't break iteration. The `data-script` and `skipElements` guards now live on the recursive function itself. Dropped debug log for text-node count (the `wrap()` element-count log remains). File 381 → 359 (−22).
-- ✅ **`wrap()` collapsed to `querySelectorAll`**. 30+ lines of `#`/`.`/tag/class-name prefix parsing replaced by `target instanceof Element ? [target] : [...document.querySelectorAll(target)]`. Browsers' native selector engine handles every form.
-- ✅ **Dropped legacy surface**: removed `wrapMultilingualText` global shim and the unused `isInitialized` flag. Removed the duplicate setTimeout block in `static init` (DOMContentLoaded path and immediate path share one `run` closure).
-- ✅ **`segmentText` rewritten as a three-phase tagger** (43 → 27 lines). Phase 1: tag each char with a script or `null` (inheritable). Phase 2: previous-fill nulls. Phase 3: forward-fill any remaining nulls (handles leading whitespace), fallback to `'latin'`. Final pass groups consecutive same-script chars into segments and applies `minSegmentLength`.
-  - **Bugfix as side effect**: `glyphOverrides` for punctuation now actually works. Previously, characters listed in `glyphOverrides` that were also matched by `\p{P}` would hit the whitespace branch first and inherit a neighbor script, ignoring the user's override.
-- ✅ **README cleanup**: dropped "TreeWalker API" from the browser-support list (no longer required).
-
-- ✅ **Config naming + trimming**.
-  - `autoWrap` → `autoInit`. `autoWrapSelector` → `selector`. `autoWrapDelay` → `delay`. (Previous names were awkward because `init()` is already the explicit call — the "auto" is about wrapping on init, not about init itself; `autoInit` reads correctly.)
-  - Removed `minSegmentLength` (no realistic use case; `1` covered everything).
-  - Removed `cssClasses.wrapper` (redundant — every span already has `data-script` and the `ml-xx` short class, providing two CSS-target paths).
-  - Updated [index.html](index.html), [example-new-api.html](example-new-api.html), and [README.md](README.md) to match. (HISTORY.md left as-is — it's a frozen v2.0 record.)
-
-- ✅ **Further config trim + examples rewrite**.
-  - **Initially dropped `preserveWhitespace`** because the `false` branch produced arbitrary fallback-to-latin behavior. Reinstated in the next pass under a better name (see below) once a legitimate use case surfaced.
-  - **Dropped `cssClasses.scriptSpecific`**. Library already exposes two CSS-target paths (`data-script` attribute + `ml-xx` class). Adding a third just renames the same target — no new capability.
-  - **Flattened `cssClasses.useShortNames` → top-level `useShortNames`** since `cssClasses` no longer has multiple keys.
-  - **Kept `languageOverrides`** — it has a real BCP-47 justification (Traditional vs Simplified Chinese, hyphenation, screen-reader pronunciation, font fallbacks via `[lang^="zh-Hant"]`). Improved its rationale in `examples.html`.
-  - **Renamed `example-new-api.html` → `examples.html`** (API is no longer "new"). Rewrote as a feature gallery instead of an API-style gallery: each section demos one config option with before/after columns.
-
-- ✅ **Merged `index.html` + `examples.html` into single-page guide** (this pass).
-  - Renamed `separateWhitespace` → `separateSpace` so the option, data-script value (`space`), and class (`ml-space`) are all consistent (matching the pattern that `separatePunct/Num` already had).
-  - Restyled `.ml-space` from a thin dotted outline to a solid grey box, matching the other category boxes. The outline implied "decoration"; the spans are real segments.
-  - Combined index.html (Quantum Mechanics demo) and examples.html (option gallery) into one entry-point page. New structure:
-    1. **Overview** — what the library does and why (per-script CSS in mixed-language pages).
-    2. **Try it** — a single paragraph with 5 scripts, auto-wrapped on load.
-    3. **Configuration** — one h3 per option with before/after columns. The `languageOverrides` example now visualizes the `lang` attribute via `::after` so you don't have to inspect the DOM.
-    4. **All options** — single table matching README.
-    5. **Complex sample** — Quantum Mechanics in 5 languages with `glyphOverrides`, `languageOverrides`, `separateNum`, and `skipElements` all stacked. The inline `<code>` block stays unwrapped; digits like `1900` / `۱۹۰۰` render in green `ml-num` boxes with tabular-nums.
-  - Deleted `examples.html` (content moved into index.html).
-
-- ✅ **Replaced `wrapWhitespace` with three category-separation flags**.
-  - User reframed: the option isn't about *visual bleed* but about *typographic control* of three independent character categories. Whitespace, punctuation, and digits are conceptually three separate things, each with its own use case (visible spaces / styled punct / tabular nums). Lumping them under one boolean lost that distinction.
-  - Dropped `wrapWhitespace`. Added three independent booleans (default `false`):
-    - `separateWhitespace` → spans get `data-script="whitespace"` + `class="ml-space"`
-    - `separatePunct` → `data-script="punctuation"` + `class="ml-punct"`
-    - `separateNum` → `data-script="number"` + `class="ml-num"`
-  - **Category-pseudo-scripts don't propagate during inheritance.** A `CATEGORY_SCRIPTS` set carries `'whitespace'`, `'punctuation'`, `'number'`. The prev-fill / next-fill passes skip them when looking for a script to inherit, so an unseparated space next to a separated comma still inherits the nearest *real* script (latin/korean/etc.) instead of getting the punct script. Without this rule, `separatePunct: true` on `"한국어, 좋아요"` would put the post-comma space into the punct span; with it, the space stays Korean.
-  - `lang` attribute is omitted for category-pseudo-scripts (they're not languages). `scriptToLang` lookup returns `undefined` → `wrapSegments` skips the `lang=""`.
-  - Digit handling moved out of `detectScript`'s fallback: `\p{N}` is matched explicitly in `segmentText`, mapped to `'number'` or `'latin'` depending on `separateNum`. Cleaner than the implicit "digits fall through" behavior.
-  - Updated `examples.html`: section 2 demos all four states (default + each flag + all three).
-
-## SCRIPT_PATTERNS coverage
-
-Within the 10 supported scripts (Latin, Korean, Japanese kana, Chinese Han, Arabic, Cyrillic, Greek, Hebrew, Thai, Devanagari), `\p{Script=...}` is canonical and complete — no block gaps. Limitations:
-
-- **CJK ambiguity**: Han ideographs always classify as `chinese`. Japanese kanji-only segments will be tagged `chinese` unless Hiragana/Katakana co-occur. Known design limitation.
-- **Combining marks (`Script=Inherited`)**: e.g. U+0300 COMBINING GRAVE — no script-specific match; falls through to `'latin'`. Rare in practice (most scripts use precomposed forms).
-- **Unsupported scripts**: Bengali, Tamil, Tibetan, Khmer, Lao, Georgian, Armenian, Ethiopic, Mongolian, etc. — all fall through to `'latin'`. Intentional scope limit.
-
-## Final Metrics
-
-- `multilingual.js`: 437 → 285 lines (−152, −35%).
-- Demo files collapsed: `index.html` + `example-new-api.html` (later `examples.html`) → single `index.html` covering everything.
-- Empty/stale files removed: `config-examples.js`, `examples.html` (v1), `multilingual-wrapper.js`, `configuration-demo.html`.
-- Config surface: 11 options → 10 (but more orthogonal: each option does one specific thing).
-
-## Known Issues (carried over from HISTORY.md)
-
-- **Arabic (RTL) space handling — unresolved.** Spaces between scripts get classified inconsistently. `lastNonWhitespaceScript` partially helps but doesn't cover all boundary cases. May need a two-pass / lookahead segmentation.
-- **CJK ambiguity.** Han ideographs are assigned to `chinese` by default; Japanese-only detection requires Hiragana/Katakana co-presence in the segment. Acceptable limitation.
-- **Same-script segments separated by whitespace** emit as two `<span>`s. A post-segmentation merge pass would consolidate.
-
-## Decision Log
-
-| Date | Decision | Reason |
+| Option | Default | What it does |
 |---|---|---|
-| 2026-05-14 | Branch v2.1 from v2.0 snapshot for refactor | Preserve working v2.0 on `main` |
-| 2026-05-14 | Delete `configuration-demo.html` instead of rewriting | Easier to rewrite later than maintain stale demo |
-| 2026-05-14 | Commit to Unicode regex over code-point ranges | Elegance + future-proofing |
+| `autoInit` | `false` | `true`면 `init()` 호출 시 `selector`를 `delay`ms 후 자동 wrap |
+| `selector` | `'body'` | auto-init wrap 대상 |
+| `delay` | `100` | auto-init wrap 전 대기 (ms) |
+| `separateSpace` | `false` | 공백을 `<span class="ml-space">`로 분리 |
+| `separatePunct` | `false` | 문장부호를 `<span class="ml-punct">`로 분리 |
+| `separateNum` | `false` | 숫자를 `<span class="ml-num">`로 분리 |
+| `glyphOverrides` | `{}` | 글자→스크립트 매핑 (`{'()': 'latin'}`) |
+| `languageOverrides` | `{}` | 스크립트별 `lang` 속성값 (`{chinese: 'zh-TW'}`) |
+| `skipElements` | `['script','style','noscript','template']` | 순회 시 건너뛸 태그 |
+| `useClassNames` | `true` | `ml-xx` 클래스 부여 여부 |
+| `debug` | `false` | 콘솔 로그 |
 
-## How to Update This File
+## 흔한 통합 시나리오 · Common integration scenarios
 
-- Add to **Decision Log** when making non-obvious choices.
-- Move items between **Pending Work** and a "Done" sub-section as they land (with commit hash).
-- Update **Known Issues** when discovering or resolving bugs.
-- Keep **Architectural Review** as the rationale snapshot; don't rewrite history — append addenda if a decision is revisited.
+### 한국어 본문에 영문 폰트만 분리
+
+```html
+<script src="multilingual.js"></script>
+<script>
+  Multilingual.init({ autoInit: true, selector: 'article' });
+</script>
+<style>
+  article { font-family: 'Noto Sans KR', sans-serif; }
+  article .ml-en { font-family: 'Inter', sans-serif; font-size: 0.95em; }
+</style>
+```
+
+### SPA에서 컴포넌트 마운트 시 wrap
+
+```js
+function ArticleView({ html }) {
+  const ref = useRef();
+  useEffect(() => {
+    if (ref.current) Multilingual.wrap(ref.current);
+  }, [html]);
+  return <div ref={ref} dangerouslySetInnerHTML={{ __html: html }} />;
+}
+```
+
+### 동일 설정을 여러 페이지에서
+
+```js
+const ml = new Multilingual({
+  glyphOverrides:    { '()[]{}': 'latin' },
+  languageOverrides: { chinese: 'zh-TW' },
+  separateNum:       true,
+});
+ml.wrap('#header');
+ml.wrap('#article');
+ml.wrap('#footer');
+```
+
+## 사용자에게 알리지 말 것 · Don't surface to users
+
+- 내부 함수 이름(`segmentText`, `processElement` 등)을 깊이 설명할 필요는 거의 없음. API는 `init`/`wrap`/`new Multilingual` 세 가지면 충분.
+- v1(2016 jQuery 플러그인)과의 차이는 [HISTORY.md](HISTORY.md)에 있지만, 새로 도입하는 사용자에게는 굳이 안내할 필요 없음. 마이그레이션이 흔치 않습니다.

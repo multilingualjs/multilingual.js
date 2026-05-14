@@ -32,7 +32,7 @@ const DEFAULT_CONFIG = {
     skipElements: ['script', 'style', 'noscript', 'template'],
 
     // Emit short class names (ml-ko, ml-en, ...) on each span.
-    useShortNames: true,
+    useClassNames: true,
 
     debug: false
 };
@@ -177,7 +177,7 @@ class Multilingual {
             // " " in a korean span just because it inherited from a neighbor.
             if (script !== 'space' && !text.trim()) return text;
             const lang = this.scriptToLang[script];
-            const cls = this.config.useShortNames ? this.scriptToShortClass[script] : null;
+            const cls = this.config.useClassNames ? this.scriptToShortClass[script] : null;
             const langAttr  = lang ? ` lang="${lang}"` : '';
             const classAttr = cls  ? ` class="${cls}"` : '';
             return `<span${langAttr} data-script="${script}"${classAttr}>${text}</span>`;
