@@ -1,125 +1,248 @@
-<html>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Mechanics</title>
-    
+    <title>Multilingual — 다국어 섞어쓰기 라이브러리</title>
+    <link rel="stylesheet" href="index.css">
     <script src="multilingual.js"></script>
-    <script>
-        // Initialize the multilingual library with configuration
-        Multilingual.init({
-            autoWrap: true,
-            autoWrapSelector: '#content',
-            autoWrapDelay: 50,
-            debug: false,
-            
-            // Example glyph overrides - specify script for specific characters
-            glyphOverrides: {
-                '()[]{}': 'latin',    // Treat parentheses and brackets as Latin
-                '،؛؟': 'arabic',      // Arabic punctuation stays with Arabic
-            },
-            
-            cssClasses: {
-                // wrapper: 'multilingual-segment',
-                // useShortNames: true   // Use ml-ko, ml-en class names
-            }
-        });
-    </script>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        span {
-            border-radius: 4px;
-        }
-        
-        /* Style different writing systems */
-        span[data-script="korean"], .multilingual-segment[data-script="korean"], .ml-ko {
-            background-color: #e8f4fd;
-            border: 1px solid #2196F3;
-            padding: 0 2px;
-        }
-        
-        span[data-script="japanese"], .multilingual-segment[data-script="japanese"], .ml-ja {
-            background-color: #fce4ec;
-            border: 1px solid #e91e63;
-            padding: 0 2px;
-        }
-        
-        span[data-script="chinese"], .multilingual-segment[data-script="chinese"], .ml-zh {
-            background-color: #f3e5f5;
-            border: 1px solid #9c27b0;
-            padding: 0 2px;
-        }
-        
-        span[data-script="arabic"], .multilingual-segment[data-script="arabic"], .ml-ar {
-            background-color: #e8f5e8;
-            border: 1px solid #4caf50;
-            padding: 0 2px;
-            direction: rtl;
-        }
-        
-        span[data-script="latin"], .multilingual-segment[data-script="latin"], .ml-en {
-            background-color: #fff3e0;
-            border: 1px solid #ff9800;
-            padding: 0 2px;
-        }
-        
-        .controls {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 5px;
-        }
-        
-        button {
-            margin: 5px;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 3px;
-            background: #007acc;
-            color: white;
-            cursor: pointer;
-        }
-        
-        button:hover {
-            background: #005fa3;
-        }
-    </style>
 </head>
 <body>
-    <h1>Multilingual Text Demo</h1>
-    
-    <div class="controls">
-        <button onclick="location.reload()">Reload Page</button>
-    </div>
 
-    <div id="content">
-        <h2>Quantum Mechanics in Multiple Languages</h2>
-        
-        <p>Quantum mechanics (QM; also known as quantum physics or quantum theory), including quantum field theory, is a fundamental branch of physics concerned with processes involving, for example, atoms and photons. Systems such as these which obey quantum mechanics can be in a quantum superposition of different states, unlike in classical physics.</p>
-        
-        <p>양자역학(量子力學, Quantum Mechanics)은 분자, 원자, 전자와 같은 작은 크기를 갖는 계의 물리학을 연구하는 분야이다. 19세기 중반까지의 실험은 뉴턴의 고전역학으로 설명할 수 있었다. 그러나, 19세기 후반부터 20세기 초반까지 이루어진 전자, 양성자, 중성자 등의 아원자입자에 관련된 실험들의 결과는 고전역학으로 설명을 시도할 경우 모순이 발생하여 이를 해결하기 위한 새로운 역학 체계가 필요하게 되었다. 이 양자역학은 플랑크의 양자 가설을 계기로 하여 슈뢰딩거, 하이젠베르크, 디랙 등에 의해 만들어진 전적으로 20세기에 이루어진 학문이다.</p>
-        
-        <p>量子力学（りょうしりきがく、英: Quantum mechanics）は、一般相対性理論と同じく現代物理学の根幹を成す理論として知られ、主として分子や原子、あるいはそれを構成する電子など、微視的な物理現象を記述する。 量子力学自身は前述のミクロな系における力学を記述する理論だが、取り扱う系をそうしたミクロな系の集まりとして解析することによって、ニュートン力学に代表される古典論では説明が困難であった巨視的な現象についても記述することができる。たとえば量子統計力学はそのような応用例の一つである。従って、生物や宇宙のようなあらゆる自然現象もその記述の対象となり得る。</p>
-        
-        <p>量子力学是描写微观物质的一个物理学分支，与相对论一起被认为是现代物理学的两大基本支柱，许多物理学理论和科学，如原子物理学、固体物理学、核物理学和粒子物理学以及其它相关的學科，都是以其为基础。19世纪末，經典力學和經典电动力学在描述微观系统时的不足與矛盾越来越明显。量子力学是在20世纪初，由马克斯·普朗克、尼尔斯·玻尔、沃纳·海森堡、埃尔温·薛定谔、沃尔夫冈·泡利、路易·德布罗意、马克斯·玻恩、恩里科·费米、保罗·狄拉克、阿尔伯特·爱因斯坦等一大群物理学家所共同创立。透过量子力学，人们对物质的结构以及其相互作用的见解被根本地改变，同时，许多现象也得以真正地被解释。</p>
-        
-        <p>مکانیک کوانتومی شاخه‌ای بنیادی از فیزیک نظری است که با پدیده‌های فیزیکی در مقیاس میکروسکوپی سر و کار دارد. در این مقیاس، کُنِش‌های فیزیکی در حد و اندازه‌های ثابت پلانک هستند. مقدار عددی ثابت پلانک نیز بسیار کوچک و برابر است با ۶.۶۲۶×۱۰⁻³⁴ ژول ثانیه.</p>
-        
-        <h3>Mixed Language Example</h3>
-        <p>This sentence mixes English with 한국어 Korean text and some 日本語 Japanese characters, plus 中文 Chinese, and even عربي Arabic script in one paragraph to test the detection algorithm.</p>
-    </div>
+<h1>Multilingual</h1>
+<p class="tagline">한 단락 안에 섞인 여러 문자세트를 글자별로 골라내, 각 segment를 <code>&lt;span&gt;</code>으로 감싸 CSS로 따로 스타일링할 수 있게 해 주는 작은 라이브러리.</p>
+<p class="tagline en">A tiny JavaScript library that splits mixed-script text into <code>&lt;span&gt;</code>s so each script can be styled independently in CSS.</p>
 
-    <script>
-        console.log('Multilingual text will be automatically wrapped when the page loads');
-    </script>
+<h2>왜 필요한가 · What &amp; why</h2>
+
+<p>한글 본문 폰트로 영문이나 숫자를 표시하면 보통 못생긴 경우가 많아서, 영문에는 따로 영문 폰트(예: <em>Inter</em>, <em>Helvetica</em>)를 적용하고 싶어집니다. 그런데 한글 폰트와 영문 폰트는 폰트 메트릭(x-height, 베이스라인, advance width)이 달라서, 같은 <code>font-size</code>로 섞어 쓰면 시각적으로 균형이 깨지죠. 그래서 언어별로 <code>font-size</code>나 <code>line-height</code>, baseline을 미세 조정하고 싶지만, CSS의 <code>font-family</code>는 요소 단위로만 적용되니까 한 <code>&lt;p&gt;</code> 안에 섞인 한글과 영문을 따로 타깃팅할 방법이 없습니다.</p>
+<p class="en">Korean body fonts usually render Latin letters and digits poorly, so designers want a dedicated Latin font (e.g. <em>Inter</em>, <em>Helvetica</em>) for those parts. But Korean and Latin faces have different metrics (x-height, baseline, advance width), so mixing them at one <code>font-size</code> looks unbalanced — and CSS's <code>font-family</code> applies per element, so there's no way to target the Latin parts inside a paragraph that also contains Korean.</p>
+
+<p>Multilingual은 텍스트를 문자 단위로 스크립트 감지해서, 연속된 같은 스크립트 글자들을 <code>&lt;span lang="…" data-script="…" class="ml-…"&gt;</code>로 감싸 줍니다. 그러면 <code>.ml-en</code>과 <code>.ml-ko</code>에 각각 다른 <code>font-family</code>, <code>font-size</code>, <code>letter-spacing</code> 등을 줄 수 있어요. 아랍어처럼 RTL 스크립트는 <code>direction: rtl</code>까지 자동 적용 가능합니다.</p>
+<p class="en">Multilingual detects each character's script and wraps consecutive same-script runs in <code>&lt;span&gt;</code>s with <code>lang</code>, <code>data-script</code>, and <code>ml-xx</code> class. Now you can give <code>.ml-en</code> and <code>.ml-ko</code> different fonts, sizes, or letter-spacing. RTL scripts like Arabic can also receive <code>direction: rtl</code> at the segment level.</p>
+
+<pre><code>/* Korean body in Noto Sans KR; Latin parts in Inter, 95% size */
+.ml-ko { font-family: 'Noto Sans KR', sans-serif; }
+.ml-en { font-family: 'Inter', sans-serif; font-size: 0.95em; }
+.ml-ar { font-family: 'Noto Naskh Arabic', serif; direction: rtl; }</code></pre>
+
+<h2>직접 보기 · Try it</h2>
+<p class="lead">아래 문장은 다섯 가지 문자세트가 섞여 있고, 페이지 로드 시 자동으로 감싸졌습니다.</p>
+<p class="en lead">The sentence below mixes five writing systems and was wrapped automatically on load.</p>
+<p id="try-it">Hello — and 안녕하세요, こんにちは, 你好, مرحبا. 한 문장, 다섯 스크립트, 글자 단위 감지.</p>
+
+<h2>설치와 초기화 · Install &amp; init</h2>
+
+<p>단일 파일 <code>multilingual.js</code> 하나만 받아 <code>&lt;script&gt;</code>로 불러오면 됩니다. 의존성 없습니다. 모던 브라우저(Chrome 64+, Firefox 78+, Safari 11.1+)면 동작 — Unicode property escapes(<code>\p{Script=...}</code>)에만 의존합니다.</p>
+<p class="en">A single <code>multilingual.js</code> file, no dependencies. Works in modern browsers (Chrome 64+, Firefox 78+, Safari 11.1+) — relies only on Unicode property escapes.</p>
+
+<pre><code>&lt;script src="multilingual.js"&gt;&lt;/script&gt;</code></pre>
+
+<p>그다음 세 가지 방식 중 하나로 호출합니다.</p>
+<p class="en">Then pick one of three usage patterns.</p>
+
+<h3>1) <code>init()</code> — 페이지 로드 시 자동 wrap</h3>
+<p>전역 설정을 한 번에 정해 두고, <code>autoInit: true</code>로 DOM 준비 후 자동 wrap을 예약하는 방식. 페이지 전체에서 같은 설정을 쓸 때 가장 간단합니다.</p>
+<p class="en">Set defaults once and let <code>autoInit: true</code> schedule a wrap after DOM ready — easiest when the whole page shares one configuration.</p>
+<pre><code>Multilingual.init({
+  autoInit: true,
+  selector: '#content',
+  delay: 100,                         // ms to wait before wrap
+  glyphOverrides: { '()[]{}': 'latin' },
+});</code></pre>
+
+<h3>2) <code>Multilingual.wrap()</code> — 일회성 호출</h3>
+<p>특정 시점에 특정 요소만 감싸고 싶을 때. 두 번째 인자로 그 호출에만 적용할 설정을 줄 수 있습니다.</p>
+<p class="en">For one-off use — wrap a single target now, with optional per-call config as the second argument.</p>
+<pre><code>Multilingual.wrap('#article', {
+  separateNum: true,
+  languageOverrides: { chinese: 'zh-TW' },
+});</code></pre>
+
+<h3>3) <code>new Multilingual()</code> — 재사용 인스턴스</h3>
+<p>같은 설정으로 여러 요소를 감쌀 때 인스턴스를 한 번 만들어 두면 깔끔합니다.</p>
+<p class="en">Build a reusable instance when applying the same config to many targets.</p>
+<pre><code>const ml = new Multilingual({ glyphOverrides: { '()[]{}': 'latin' } });
+ml.wrap('#article');
+ml.wrap('#sidebar');</code></pre>
+
+<p class="lead"><strong>참고:</strong> <code>wrap()</code>은 호출 시점에 DOM이 준비되어 있어야 합니다(요소가 존재해야 함). 페이지 로드와 동시에 자동으로 감싸려면 패턴 1을 쓰세요. 이미 감싸진 영역(<code>data-script</code>가 붙은 span 내부)은 자동으로 건너뛰므로 같은 요소에 <code>wrap()</code>을 여러 번 호출해도 안전합니다.</p>
+<p class="en lead"><strong>Note:</strong> <code>wrap()</code> needs the DOM ready (target must exist). Use pattern 1 for fire-and-forget on page load. Spans with <code>data-script</code> are skipped on re-traversal, so calling <code>wrap()</code> twice on the same element is safe.</p>
+
+<h2>지원하는 문자세트 · Supported scripts</h2>
+<p>현재 다음 10개 스크립트가 자동 감지됩니다. 그 외 문자(공백·문장부호 포함)는 기본적으로 주변 스크립트에 흡수됩니다.</p>
+<p class="en">Ten writing systems are auto-detected. Anything else (spaces, punctuation, etc.) is absorbed into the surrounding script's segment by default.</p>
+
+<table>
+    <tr><th>문자세트 · Script</th><th><code>data-script</code></th><th><code>lang</code></th><th>Class</th></tr>
+    <tr><td>Latin (영문 등)</td><td><code>latin</code></td><td><code>en</code></td><td><code>ml-en</code></td></tr>
+    <tr><td>한글 · Korean (Hangul)</td><td><code>korean</code></td><td><code>ko</code></td><td><code>ml-ko</code></td></tr>
+    <tr><td>가나 · Japanese kana</td><td><code>japanese</code></td><td><code>ja</code></td><td><code>ml-ja</code></td></tr>
+    <tr><td>한자 · Chinese (Han)</td><td><code>chinese</code></td><td><code>zh</code></td><td><code>ml-zh</code></td></tr>
+    <tr><td>아랍 · Arabic</td><td><code>arabic</code></td><td><code>ar</code></td><td><code>ml-ar</code></td></tr>
+    <tr><td>키릴 · Cyrillic</td><td><code>cyrillic</code></td><td><code>ru</code></td><td><code>ml-ru</code></td></tr>
+    <tr><td>그리스 · Greek</td><td><code>greek</code></td><td><code>el</code></td><td><code>ml-el</code></td></tr>
+    <tr><td>히브리 · Hebrew</td><td><code>hebrew</code></td><td><code>he</code></td><td><code>ml-he</code></td></tr>
+    <tr><td>태국 · Thai</td><td><code>thai</code></td><td><code>th</code></td><td><code>ml-th</code></td></tr>
+    <tr><td>데바나가리 · Devanagari</td><td><code>devanagari</code></td><td><code>hi</code></td><td><code>ml-hi</code></td></tr>
+</table>
+
+<p>옵션을 켜면 다음 세 가지 카테고리도 자체 segment로 분리됩니다 (기본은 모두 꺼짐).</p>
+<p class="en">Three character categories can also become their own segments when their flag is enabled (all default off).</p>
+
+<table>
+    <tr><th>카테고리 · Category</th><th>옵션</th><th><code>data-script</code></th><th>Class</th></tr>
+    <tr><td>공백 · Whitespace</td><td><code>separateSpace</code></td><td><code>space</code></td><td><code>ml-space</code></td></tr>
+    <tr><td>문장부호 · Punctuation</td><td><code>separatePunct</code></td><td><code>punctuation</code></td><td><code>ml-punct</code></td></tr>
+    <tr><td>숫자 · Numbers</td><td><code>separateNum</code></td><td><code>number</code></td><td><code>ml-num</code></td></tr>
+</table>
+
+<p>CJK 관련 주의 한 가지: 일본어 한자는 유니코드 상 중국어 한자와 같은 <code>Script=Han</code>이라서, 한자만 단독으로 있는 segment는 항상 <code>chinese</code>로 분류됩니다. 같은 segment 안에 히라가나·가타카나가 같이 있어야 일본어로 인식돼요. <code>languageOverrides</code>로 lang을 보정하거나 <code>glyphOverrides</code>로 개별 문자를 지정할 수 있습니다.</p>
+<p class="en">CJK note: Japanese kanji share Unicode's <code>Script=Han</code> with Chinese hanzi, so standalone kanji classify as <code>chinese</code>; Japanese is only inferred when Hiragana or Katakana co-occurs. Use <code>languageOverrides</code> or <code>glyphOverrides</code> to adjust.</p>
+
+<h2>옵션별 동작 · Configuration</h2>
+<p class="lead">각 옵션은 하나의 일만 합니다. 좌/우 비교로 차이를 확인하세요.</p>
+<p class="en lead">Each option does one thing. The before/after columns show what changes.</p>
+
+<h3 id="opt-separate"><code>separateSpace</code> / <code>separatePunct</code> / <code>separateNum</code></h3>
+<p>기본 동작은 공백·문장부호·숫자가 주변 스크립트에 흡수되는 것입니다. 이 셋 중 하나를 <code>true</code>로 켜면 해당 카테고리가 독립 segment가 되고, 각각 <code>ml-space</code> / <code>ml-punct</code> / <code>ml-num</code> 클래스를 받습니다. 숫자에 <code>tabular-nums</code>를 적용하거나, 문장부호만 다른 폰트로 바꾸거나, 공백을 시각화하고 싶을 때 씁니다.</p>
+<p class="en">By default, spaces / punctuation / digits merge into the surrounding script's span. Turn any flag on to split that category into its own span (with <code>ml-space</code> / <code>ml-punct</code> / <code>ml-num</code>). Useful for tabular numerals, styled punctuation, or visible spaces.</p>
+<p>분리된 카테고리는 inheritance 전파에 참여하지 않습니다. 예: <code>"한국어, 좋아요"</code>에서 <code>separatePunct: true</code>만 켜면 쉼표 다음의 공백은 <code>ml-punct</code>가 아니라 가장 가까운 진짜 스크립트(<code>korean</code>)에 붙어요.</p>
+<p class="en">Separated categories don't propagate during inheritance, so a stray space next to a separated comma still inherits the nearest real script — not the punct script.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">all default</div><div id="e-sep-default">안녕 hello, 123!</div></div>
+        <div class="col"><div class="label">separateSpace: true</div><div id="e-sep-space">안녕 hello, 123!</div></div>
+    </div>
+    <div class="row">
+        <div class="col"><div class="label">separatePunct: true</div><div id="e-sep-punct">안녕 hello, 123!</div></div>
+        <div class="col"><div class="label">separateNum: true</div><div id="e-sep-num">안녕 hello, 123!</div></div>
+    </div>
+    <div class="row">
+        <div class="col"><div class="label">all three</div><div id="e-sep-all">안녕 hello, 123!</div></div>
+        <div class="col"></div>
+    </div>
+</div>
+
+<h3 id="opt-glyph"><code>glyphOverrides</code></h3>
+<p>특정 글자를 강제로 어떤 스크립트로 분류할지 지정합니다. 한글 본문 사이의 괄호를 항상 영문 폰트로 보이게 하거나, 아랍 문장부호(<code>،</code>, <code>؟</code>)를 항상 아랍어 segment에 묶고 싶을 때 유용합니다.</p>
+<p class="en">Force specific characters to a script regardless of Unicode block. Useful for brackets that should render in your Latin font even inside Korean, or Arabic punctuation that should group with Arabic.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">no override — 괄호가 한글에 흡수됨</div><div id="e-glyph-off">인용문 (사람 이름) 끝.</div></div>
+        <div class="col"><div class="label">{'()[]{}': 'latin'}</div><div id="e-glyph-on">인용문 (사람 이름) 끝.</div></div>
+    </div>
+</div>
+
+<h3 id="opt-lang"><code>languageOverrides</code></h3>
+<p>스크립트별 <code>lang</code> 속성값을 바꿉니다. 브라우저는 <code>lang</code>을 하이프네이션, 스크린리더 발음, 폰트 폴백에 사용하므로, 번체 중국어 사이트는 <code>zh-TW</code>나 <code>zh-Hant</code>가 필요합니다 (기본 <code>zh</code>로는 부족). 아래 두 segment 옆 작은 라벨이 실제 <code>lang</code>값입니다.</p>
+<p class="en">Override the BCP-47 <code>lang</code> value emitted for a script. Browsers use <code>lang</code> for hyphenation, screen-reader pronunciation, and font fallback — so a Traditional-Chinese site usually wants <code>zh-TW</code> or <code>zh-Hant</code>, not generic <code>zh</code>. The small labels next to each span below show the actual <code>lang</code>.</p>
+<div class="example" id="lang-demo">
+    <div class="row">
+        <div class="col"><div class="label">default</div><div id="e-lang-default">量子力学</div></div>
+        <div class="col"><div class="label">{chinese: 'zh-TW'}</div><div id="e-lang-tw">量子力学</div></div>
+    </div>
+</div>
+
+<h3 id="opt-classes"><code>useClassNames</code></h3>
+<p>기본값 <code>true</code>면 각 segment에 <code>ml-xx</code> 클래스를 답니다. <code>false</code>면 <code>lang</code>과 <code>data-script</code>만 출력됩니다 — CSS를 attribute selector로만 타깃팅한다면 클래스를 생략할 수 있어요. (아래 오른쪽 칸은 데모 CSS가 <code>.ml-xx</code>만 타깃해서 스타일이 안 보이는 게 정상입니다.)</p>
+<p class="en">Default <code>true</code> emits <code>ml-xx</code> classes. Set <code>false</code> to drop the classes and target spans only via the <code>data-script</code> attribute. The right column has no styling here because the demo CSS targets <code>.ml-xx</code>.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">useClassNames: true</div><div id="e-classes-on">Hello 안녕</div></div>
+        <div class="col"><div class="label">useClassNames: false</div><div id="e-classes-off">Hello 안녕</div></div>
+    </div>
+</div>
+
+<h3 id="opt-skip"><code>skipElements</code></h3>
+<p>순회 중 내용을 건드리지 않을 태그 이름 목록. 기본값은 <code>['script', 'style', 'noscript', 'template']</code>. <code>'code'</code>를 추가하면 인라인 코드 블록도 그대로 둘 수 있습니다.</p>
+<p class="en">Tag names whose contents are left untouched. Default is <code>['script', 'style', 'noscript', 'template']</code>; add <code>'code'</code> to leave inline code alone.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">default (code도 wrap됨)</div><div id="e-skip-default">Inline <code>print('안녕')</code> in prose.</div></div>
+        <div class="col"><div class="label">skipElements: [..., 'code']</div><div id="e-skip-on">Inline <code>print('안녕')</code> in prose.</div></div>
+    </div>
+</div>
+
+<h2>옵션 목록 · All options</h2>
+<table>
+    <tr><th>Option</th><th>Type</th><th>Default</th><th>Description</th></tr>
+    <tr><td><code>autoInit</code></td><td>boolean</td><td><code>false</code></td><td><code>init()</code>이 <code>selector</code>의 wrap을 <code>delay</code>ms 후 자동 예약</td></tr>
+    <tr><td><code>selector</code></td><td>string</td><td><code>'body'</code></td><td>auto-init 대상 CSS selector</td></tr>
+    <tr><td><code>delay</code></td><td>number</td><td><code>100</code></td><td>auto-init wrap 전 대기 ms</td></tr>
+    <tr><td><code>separateSpace</code></td><td>boolean</td><td><code>false</code></td><td>공백을 자체 segment(<code>ml-space</code>)로 분리</td></tr>
+    <tr><td><code>separatePunct</code></td><td>boolean</td><td><code>false</code></td><td>문장부호를 자체 segment(<code>ml-punct</code>)로 분리</td></tr>
+    <tr><td><code>separateNum</code></td><td>boolean</td><td><code>false</code></td><td>숫자를 자체 segment(<code>ml-num</code>)로 분리</td></tr>
+    <tr><td><code>glyphOverrides</code></td><td>object</td><td><code>{}</code></td><td>특정 글자를 강제로 어떤 스크립트로 분류 (예: <code>'()': 'latin'</code>)</td></tr>
+    <tr><td><code>languageOverrides</code></td><td>object</td><td><code>{}</code></td><td>스크립트별 <code>lang</code> 속성값 (BCP-47)</td></tr>
+    <tr><td><code>skipElements</code></td><td>string[]</td><td><code>['script','style','noscript','template']</code></td><td>순회 시 건너뛸 태그 이름</td></tr>
+    <tr><td><code>useClassNames</code></td><td>boolean</td><td><code>true</code></td><td><code>ml-xx</code> 클래스 부여 여부</td></tr>
+    <tr><td><code>debug</code></td><td>boolean</td><td><code>false</code></td><td>콘솔 로그</td></tr>
+</table>
+
+<h2>종합 예시 · Complex sample</h2>
+<p class="lead">다섯 언어의 양자역학 본문에 옵션을 여러 개 쌓아 적용한 예. 본문 안 괄호를 라틴으로 강제, 중국어 lang을 <code>zh-CN</code>으로 지정, 숫자를 분리, 인라인 <code>&lt;code&gt;</code>는 건드리지 않게 설정했습니다.</p>
+<p class="en lead">Quantum-mechanics paragraphs in five languages with several options stacked: parens forced to Latin, Chinese <code>lang</code> set to <code>zh-CN</code>, digits separated, inline <code>&lt;code&gt;</code> left alone.</p>
+
+<pre><code>Multilingual.wrap('#sample', {
+  glyphOverrides:    { '()[]{}': 'latin', '،؛؟': 'arabic' },
+  languageOverrides: { chinese: 'zh-CN' },
+  separateNum:       true,
+  skipElements:      ['script', 'style', 'noscript', 'template', 'code'],
+});</code></pre>
+
+<div id="sample">
+    <h3>Quantum Mechanics</h3>
+
+    <p>Quantum mechanics (QM; also known as quantum physics or quantum theory), including quantum field theory, is a fundamental branch of physics. Systems that obey quantum mechanics can exist in a superposition of different states. Definition lifted verbatim from <code>en.wikipedia.org/wiki/Quantum_mechanics</code> — inline code stays unwrapped.</p>
+
+    <p>양자역학(量子力學, Quantum Mechanics)은 분자, 원자, 전자와 같은 작은 크기를 갖는 계의 물리학을 연구하는 분야이다. 19세기 중반까지의 실험은 뉴턴의 고전역학으로 설명할 수 있었지만, 20세기 초부터의 실험은 새로운 역학 체계를 요구했다.</p>
+
+    <p>量子力学（りょうしりきがく、英: Quantum mechanics）は、現代物理学の根幹を成す理論として知られ、分子や原子、それを構成する電子など、微視的な物理現象を記述する。1900年代に登場した。</p>
+
+    <p>量子力学是描写微观物质的一个物理学分支，与相对论一起被认为是现代物理学的两大基本支柱。19世纪末，經典力學在描述微观系统时的不足越来越明显；20世纪初，由普朗克、玻尔、海森堡、薛定谔等物理学家共同创立。</p>
+
+    <p>مکانیک کوانتومی شاخه‌ای بنیادی از فیزیک نظری است که با پدیده‌های فیزیکی در مقیاس میکروسکوپی سر و کار دارد. مقدار عددی ثابت پلانک تقریباً ۶٫۶۲۶×۱۰⁻³⁴ ژول-ثانیه است.</p>
+
+    <h3>Mixed within one sentence</h3>
+    <p>This sentence mixes English with 한국어 Korean, some 日本語 Japanese, 中文 Chinese, and عربي Arabic, plus numbers like 1900 and Arabic-Indic ۱۹۰۰ — all detected at the character level.</p>
+</div>
+
+<h2>역사 · History</h2>
+<p>이 라이브러리는 2016년 공개된 <a href="https://github.com/multilingualjs/multilingual.js">multilingualjs/multilingual.js</a>의 컨셉을 이어받은 v2입니다. 원본은 어도비 인디자인의 <em>합성글꼴(Composite Fonts)</em> 기능에서 영감을 받아, 한 단락 안에 섞인 여러 문자세트를 글자별로 골라내 따로 스타일링할 수 있게 한 jQuery 플러그인이었습니다. <code>ml-en</code>, <code>ml-ko</code>, <code>ml-num</code>, <code>ml-punct</code> 같은 클래스 이름 규약은 원본에서 그대로 가져왔습니다.</p>
+<p class="en">This is a v2 carrying forward the concept of <a href="https://github.com/multilingualjs/multilingual.js">multilingualjs/multilingual.js</a> (2016) — a jQuery plugin inspired by Adobe InDesign's <em>Composite Fonts</em> feature. The class-name convention (<code>ml-en</code>, <code>ml-ko</code>, <code>ml-num</code>, <code>ml-punct</code>) is inherited from the original.</p>
+
+<p>v2는 같은 컨셉을 유지하면서 현대화했습니다: 의존성 제거, Unicode property escapes 기반 감지, 지원 문자세트 확대(10개 + 카테고리 3개), 단순화된 API, ~270줄. 자세한 변경 이력은 <a href="HISTORY.md">HISTORY.md</a>를 참고하세요.</p>
+<p class="en">v2 is a modernization: zero dependencies, Unicode property escape detection, ten supported scripts plus three categories, a simpler API, and ~270 lines total. See <a href="HISTORY.md">HISTORY.md</a> for the change log.</p>
+
+<script>
+    Multilingual.wrap('#try-it');
+
+    Multilingual.wrap('#e-sep-default');
+    Multilingual.wrap('#e-sep-space', { separateSpace: true });
+    Multilingual.wrap('#e-sep-punct', { separatePunct: true });
+    Multilingual.wrap('#e-sep-num',   { separateNum: true });
+    Multilingual.wrap('#e-sep-all',   { separateSpace: true, separatePunct: true, separateNum: true });
+
+    Multilingual.wrap('#e-glyph-off');
+    Multilingual.wrap('#e-glyph-on', { glyphOverrides: { '()[]{}': 'latin' } });
+
+    Multilingual.wrap('#e-lang-default');
+    Multilingual.wrap('#e-lang-tw', { languageOverrides: { chinese: 'zh-TW' } });
+
+    Multilingual.wrap('#e-classes-on');
+    Multilingual.wrap('#e-classes-off', { useClassNames: false });
+
+    Multilingual.wrap('#e-skip-default');
+    Multilingual.wrap('#e-skip-on', { skipElements: ['script', 'style', 'noscript', 'template', 'code'] });
+
+    Multilingual.wrap('#sample', {
+        glyphOverrides:    { '()[]{}': 'latin', '،؛؟': 'arabic' },
+        languageOverrides: { chinese: 'zh-CN' },
+        separateNum:       true,
+        skipElements:      ['script', 'style', 'noscript', 'template', 'code'],
+    });
+</script>
+
 </body>
 </html>

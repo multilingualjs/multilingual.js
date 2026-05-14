@@ -5,121 +5,68 @@
 
 // Default configuration settings
 const DEFAULT_CONFIG = {
-    // Auto-wrap settings
-    autoWrap: false,                   // Automatically wrap content when initialized (disabled by default)
-    autoWrapSelector: 'body',          // Which element to auto-wrap ('body', '#content', '.article', etc.)
-    autoWrapDelay: 100,               // Delay in ms before auto-wrapping (allows other scripts to load)
-    
-    // Detection settings
-    preserveWhitespace: true,          // Keep whitespace and punctuation with surrounding text
-    minSegmentLength: 1,              // Minimum character length for a segment to be wrapped
-    
-    // Glyph overrides - specify which characters should be treated as specific scripts
-    glyphOverrides: {
-        // Examples:
-        // '()[]{}': 'latin',           // Treat parentheses and brackets as Latin
-        // '،؛؟': 'arabic',             // Arabic punctuation
-        // '。、': 'japanese',          // Japanese punctuation
-    },
-    
-    // Language detection overrides
-    languageOverrides: {
-        // You can override default language codes for specific scripts
-        // latin: 'en',    // Default is 'en'
-        // chinese: 'zh-CN', // Could be 'zh-TW' for Traditional Chinese
-    },
-    
-    // Elements to skip during processing
+    // When `autoInit` is true, init() schedules a wrap of `selector` after `delay` ms.
+    autoInit: false,
+    selector: 'body',
+    delay: 100,
+
+    // When false (default), spaces / punctuation / digits merge into the
+    // surrounding script's span. Set any of these true to give that category
+    // its own segment with its own class (ml-space / ml-punct / ml-num) —
+    // useful for typographic control (tabular numbers, styled punctuation,
+    // visible spaces, etc.). Separated categories don't participate in
+    // inheritance: e.g. with separatePunct on, the space in "Hello, world"
+    // inherits the nearest real script (latin), not the punct script.
+    separateSpace: false,
+    separatePunct: false,
+    separateNum: false,
+
+    // Force specific characters to a script. Examples:
+    //   '()[]{}': 'latin',  '،؛؟': 'arabic',  '。、': 'japanese'
+    glyphOverrides: {},
+
+    // Override the lang attribute emitted for a script (e.g. chinese: 'zh-TW').
+    languageOverrides: {},
+
+    // Elements whose contents are not processed.
     skipElements: ['script', 'style', 'noscript', 'template'],
-    
-    // CSS class names
-    cssClasses: {
-        wrapper: '',                   // Additional class for all wrapped spans
-        useShortNames: true,          // Use ml-ko, ml-en instead of korean-script, latin-script
-        // scriptSpecific: {
-        //     latin: 'custom-latin',
-        //     korean: 'custom-korean',
-        //     // etc.
-        // }
-    },
-    
-    // Debug mode
-    debug: false                      // Set to true for console logging
+
+    // Emit short class names (ml-ko, ml-en, ...) on each span.
+    useClassNames: true,
+
+    debug: false
 };
 
 // Global configuration (set via Multilingual.init())
 let GLOBAL_CONFIG = { ...DEFAULT_CONFIG };
-let isInitialized = false;
+
+// Script detection via Unicode property escapes. Order matters: Hiragana/Katakana
+// are matched before Han so Japanese kana don't fall through to chinese.
+const SCRIPT_PATTERNS = {
+    korean:     /\p{Script=Hangul}/u,
+    japanese:   /[\p{Script=Hiragana}\p{Script=Katakana}]/u,
+    chinese:    /\p{Script=Han}/u,
+    arabic:     /\p{Script=Arabic}/u,
+    cyrillic:   /\p{Script=Cyrillic}/u,
+    greek:      /\p{Script=Greek}/u,
+    hebrew:     /\p{Script=Hebrew}/u,
+    thai:       /\p{Script=Thai}/u,
+    devanagari: /\p{Script=Devanagari}/u,
+    latin:      /\p{Script=Latin}/u,
+};
+
+// Category-pseudo-scripts. Excluded from inheritance propagation so that, e.g.,
+// a separated punct segment doesn't bleed its script onto adjacent whitespace.
+const CATEGORY_SCRIPTS = new Set(['space', 'punctuation', 'number']);
 
 class Multilingual {
     constructor(config = {}) {
         // Merge user config with global config
         this.config = { ...GLOBAL_CONFIG, ...config };
-        
+
         if (this.config.debug) {
             console.log('MultilingualWrapper initialized with config:', this.config);
         }
-        
-        // Unicode ranges for different writing systems
-        this.scriptRanges = {
-            latin: [
-                [0x0041, 0x005A], // A-Z
-                [0x0061, 0x007A], // a-z
-                [0x00C0, 0x00FF], // Latin-1 Supplement
-                [0x0100, 0x017F], // Latin Extended-A
-                [0x0180, 0x024F], // Latin Extended-B
-                [0x1E00, 0x1EFF], // Latin Extended Additional
-            ],
-            korean: [
-                [0xAC00, 0xD7AF], // Hangul Syllables
-                [0x1100, 0x11FF], // Hangul Jamo
-                [0x3130, 0x318F], // Hangul Compatibility Jamo
-                [0xA960, 0xA97F], // Hangul Jamo Extended-A
-                [0xD7B0, 0xD7FF], // Hangul Jamo Extended-B
-            ],
-            japanese: [
-                [0x3040, 0x309F], // Hiragana
-                [0x30A0, 0x30FF], // Katakana
-                [0x31F0, 0x31FF], // Katakana Phonetic Extensions
-            ],
-            chinese: [
-                [0x4E00, 0x9FFF], // CJK Unified Ideographs
-                [0x3400, 0x4DBF], // CJK Extension A
-                [0x20000, 0x2A6DF], // CJK Extension B
-                [0x2A700, 0x2B73F], // CJK Extension C
-                [0x2B740, 0x2B81F], // CJK Extension D
-                [0x2B820, 0x2CEAF], // CJK Extension E
-                [0x2CEB0, 0x2EBEF], // CJK Extension F
-                [0xF900, 0xFAFF], // CJK Compatibility Ideographs
-            ],
-            arabic: [
-                [0x0600, 0x06FF], // Arabic
-                [0x0750, 0x077F], // Arabic Supplement
-                [0x08A0, 0x08FF], // Arabic Extended-A
-                [0xFB50, 0xFDFF], // Arabic Presentation Forms-A
-                [0xFE70, 0xFEFF], // Arabic Presentation Forms-B
-            ],
-            cyrillic: [
-                [0x0400, 0x04FF], // Cyrillic
-                [0x0500, 0x052F], // Cyrillic Supplement
-                [0x2DE0, 0x2DFF], // Cyrillic Extended-A
-                [0xA640, 0xA69F], // Cyrillic Extended-B
-            ],
-            greek: [
-                [0x0370, 0x03FF], // Greek and Coptic
-                [0x1F00, 0x1FFF], // Greek Extended
-            ],
-            hebrew: [
-                [0x0590, 0x05FF], // Hebrew
-                [0xFB1D, 0xFB4F], // Hebrew Presentation Forms
-            ],
-            thai: [
-                [0x0E00, 0x0E7F], // Thai
-            ],
-            devanagari: [
-                [0x0900, 0x097F], // Devanagari
-            ]
-        };
 
         // Language codes for each script
         this.scriptToLang = {
@@ -147,7 +94,10 @@ class Multilingual {
             greek: 'ml-el',
             hebrew: 'ml-he',
             thai: 'ml-th',
-            devanagari: 'ml-hi'
+            devanagari: 'ml-hi',
+            space:       'ml-space',
+            punctuation: 'ml-punct',
+            number:      'ml-num',
         };
 
         // Build glyph override map
@@ -165,78 +115,55 @@ class Multilingual {
      * Detect the writing system of a character
      */
     detectScript(char) {
-        // Check glyph overrides first
         if (this.glyphOverrideMap[char]) {
             return this.glyphOverrideMap[char];
         }
-
-        const charCode = char.codePointAt(0);
-        
-        for (const [script, ranges] of Object.entries(this.scriptRanges)) {
-            for (const [start, end] of ranges) {
-                if (charCode >= start && charCode <= end) {
-                    return script;
-                }
-            }
+        for (const [script, pattern] of Object.entries(SCRIPT_PATTERNS)) {
+            if (pattern.test(char)) return script;
         }
-        
-        // Default to latin for unrecognized characters (numbers, punctuation, etc.)
+        // Default to latin for unrecognized characters (digits, punctuation, etc.)
         return 'latin';
     }
 
     /**
-     * Split text into segments by writing system
+     * Split text into segments by writing system.
+     *
+     *   1. Tag every char. Whitespace / punctuation / digits get either their
+     *      category-script (if separated) or `null` (inheritable). Letters get
+     *      their detected script.
+     *   2. Fill nulls by inheriting the nearest *real* script (skipping over
+     *      separated category-scripts so they don't bleed onto neighbors).
+     *      Leading-only nulls fall back to 'latin'.
+     *   3. Group consecutive same-script chars into segments.
      */
     segmentText(text) {
+        const { separateSpace, separatePunct, separateNum } = this.config;
+
+        const tagged = [...text].map(char => {
+            if (this.glyphOverrideMap[char]) return { char, script: this.glyphOverrideMap[char] };
+            if (/\s/u.test(char))     return { char, script: separateSpace ? 'space'       : null };
+            if (/\p{P}/u.test(char))  return { char, script: separatePunct ? 'punctuation' : null };
+            if (/\p{N}/u.test(char))  return { char, script: separateNum   ? 'number'      : 'latin' };
+            return { char, script: this.detectScript(char) };
+        });
+
+        let prev = null;
+        for (const t of tagged) {
+            if (t.script === null) { if (prev) t.script = prev; }
+            else if (!CATEGORY_SCRIPTS.has(t.script)) prev = t.script;
+        }
+        let next = null;
+        for (let i = tagged.length - 1; i >= 0; i--) {
+            if (tagged[i].script === null) tagged[i].script = next ?? 'latin';
+            else if (!CATEGORY_SCRIPTS.has(tagged[i].script)) next = tagged[i].script;
+        }
+
         const segments = [];
-        let currentSegment = '';
-        let currentScript = null;
-        let lastNonWhitespaceScript = null;
-        
-        for (const char of text) {
-            const isWhitespaceOrPunctuation = /[\s\p{P}]/u.test(char);
-            
-            if (this.config.preserveWhitespace && isWhitespaceOrPunctuation) {
-                // For whitespace/punctuation, inherit script from surrounding text
-                if (currentScript === null && lastNonWhitespaceScript) {
-                    // Start new segment with previous script context
-                    currentScript = lastNonWhitespaceScript;
-                }
-                currentSegment += char;
-                continue;
-            }
-            
-            const charScript = this.detectScript(char);
-            lastNonWhitespaceScript = charScript; // Track last meaningful script
-            
-            if (currentScript === null) {
-                currentScript = charScript;
-                currentSegment += char;
-            } else if (currentScript === charScript) {
-                currentSegment += char;
-            } else {
-                // Script changed, save current segment and start new one
-                if (currentSegment.trim() && currentSegment.trim().length >= this.config.minSegmentLength) {
-                    segments.push({
-                        text: currentSegment,
-                        script: currentScript,
-                        lang: this.scriptToLang[currentScript]
-                    });
-                }
-                currentSegment = char;
-                currentScript = charScript;
-            }
+        for (const { char, script } of tagged) {
+            const last = segments[segments.length - 1];
+            if (last && last.script === script) last.text += char;
+            else segments.push({ text: char, script });
         }
-        
-        // Add the last segment
-        if (currentSegment.trim() && currentSegment.trim().length >= this.config.minSegmentLength) {
-            segments.push({
-                text: currentSegment,
-                script: currentScript,
-                lang: this.scriptToLang[currentScript]
-            });
-        }
-        
         return segments;
     }
 
@@ -244,28 +171,16 @@ class Multilingual {
      * Wrap text segments with spans
      */
     wrapSegments(segments) {
-        return segments.map(segment => {
-            const trimmedText = segment.text.trim();
-            if (!trimmedText) {
-                return segment.text; // Return whitespace as-is
-            }
-            
-            // Build CSS classes
-            let cssClass = this.config.cssClasses.wrapper || '';
-            
-            // Add short class name if enabled
-            if (this.config.cssClasses.useShortNames && this.scriptToShortClass[segment.script]) {
-                cssClass += (cssClass ? ' ' : '') + this.scriptToShortClass[segment.script];
-            }
-            
-            // Add custom script-specific class if provided
-            if (this.config.cssClasses.scriptSpecific && this.config.cssClasses.scriptSpecific[segment.script]) {
-                cssClass += (cssClass ? ' ' : '') + this.config.cssClasses.scriptSpecific[segment.script];
-            }
-            
-            const classAttr = cssClass ? ` class="${cssClass}"` : '';
-            
-            return `<span lang="${segment.lang}" data-script="${segment.script}"${classAttr}>${segment.text}</span>`;
+        return segments.map(({ text, script }) => {
+            // Pure-whitespace segments that inherited a script (rather than being
+            // explicitly tagged 'space') stay as bare text — no point wrapping
+            // " " in a korean span just because it inherited from a neighbor.
+            if (script !== 'space' && !text.trim()) return text;
+            const lang = this.scriptToLang[script];
+            const cls = this.config.useClassNames ? this.scriptToShortClass[script] : null;
+            const langAttr  = lang ? ` lang="${lang}"` : '';
+            const classAttr = cls  ? ` class="${cls}"` : '';
+            return `<span${langAttr} data-script="${script}"${classAttr}>${text}</span>`;
         }).join('');
     }
 
@@ -292,90 +207,40 @@ class Multilingual {
     }
 
     /**
-     * Recursively process all text nodes in an element
+     * Recursively walk an element and process all eligible text nodes.
+     * Snapshots childNodes before iterating so that DOM mutations from
+     * processTextNode don't break the walk.
      */
     processElement(element) {
-        // Skip if element is in the skip list
-        if (this.config.skipElements.includes(element.tagName.toLowerCase())) {
-            return;
+        if (element.nodeType === Node.TEXT_NODE) {
+            return this.processTextNode(element);
         }
-        
-        // Get all text nodes (not just direct children)
-        const walker = document.createTreeWalker(
-            element,
-            NodeFilter.SHOW_TEXT,
-            {
-                acceptNode: function(node) {
-                    // Skip text nodes that are already inside our spans
-                    if (node.parentElement && 
-                        (node.parentElement.hasAttribute('data-script') || 
-                         this.config.skipElements.includes(node.parentElement.tagName.toLowerCase()))) {
-                        return NodeFilter.FILTER_REJECT;
-                    }
-                    return NodeFilter.FILTER_ACCEPT;
-                }.bind(this)  // Bind 'this' context to access this.config
-            }
-        );
+        if (element.nodeType !== Node.ELEMENT_NODE) return;
 
-        const textNodes = [];
-        let node;
-        while (node = walker.nextNode()) {
-            textNodes.push(node);
-        }
+        const tag = element.tagName.toLowerCase();
+        if (this.config.skipElements.includes(tag)) return;
+        if (element.hasAttribute('data-script')) return;
 
-        if (this.config.debug) {
-            console.log(`Processing ${textNodes.length} text nodes in element:`, element);
-        }
-
-        // Process text nodes in reverse order to avoid issues with DOM modification
-        for (let i = textNodes.length - 1; i >= 0; i--) {
-            this.processTextNode(textNodes[i]);
+        for (const child of [...element.childNodes]) {
+            this.processElement(child);
         }
     }
 
     /**
-     * Main method to wrap multilingual text in an element
-     * @param {string|HTMLElement} selector - CSS selector, element ID, class name, or DOM element
+     * Wrap multilingual text in matching elements.
+     * @param {string|Element} target - CSS selector or DOM element
+     * @returns {number} - Number of elements processed
      */
-    wrap(selector) {
-        let elements = [];
-        
-        if (typeof selector === 'string') {
-            // Try different selection methods
-            if (selector.startsWith('#')) {
-                // ID selector
-                const element = document.getElementById(selector.slice(1));
-                if (element) elements = [element];
-            } else if (selector.startsWith('.')) {
-                // Class selector
-                elements = Array.from(document.getElementsByClassName(selector.slice(1)));
-            } else if (selector.includes(' ') || selector.includes('>', '+', '~')) {
-                // Complex CSS selector
-                elements = Array.from(document.querySelectorAll(selector));
-            } else {
-                // Try as tag name first, then as ID, then as class
-                elements = Array.from(document.getElementsByTagName(selector));
-                if (elements.length === 0) {
-                    const byId = document.getElementById(selector);
-                    if (byId) elements = [byId];
-                }
-                if (elements.length === 0) {
-                    elements = Array.from(document.getElementsByClassName(selector));
-                }
-            }
-        } else if (selector instanceof HTMLElement) {
-            elements = [selector];
-        }
+    wrap(target) {
+        const elements = target instanceof Element
+            ? [target]
+            : [...document.querySelectorAll(target)];
 
-        // Process each element
-        elements.forEach(element => {
-            this.processElement(element);
-        });
+        elements.forEach(el => this.processElement(el));
 
         if (this.config.debug) {
             console.log(`Wrapped ${elements.length} elements`);
         }
-
         return elements.length;
     }
 
@@ -385,28 +250,21 @@ class Multilingual {
      * @returns {Multilingual} - Returns the Multilingual class for chaining
      */
     static init(config = {}) {
-        // Update global configuration
         GLOBAL_CONFIG = { ...DEFAULT_CONFIG, ...config };
-        isInitialized = true;
-        
+
         if (GLOBAL_CONFIG.debug) {
-            console.log('Multilingual library initialized with config:', GLOBAL_CONFIG);
+            console.log('Multilingual initialized:', GLOBAL_CONFIG);
         }
 
-        // If autoWrap is enabled, start auto-wrapping
-        if (GLOBAL_CONFIG.autoWrap) {
+        if (GLOBAL_CONFIG.autoInit) {
+            const run = () => setTimeout(
+                () => new Multilingual().wrap(GLOBAL_CONFIG.selector),
+                GLOBAL_CONFIG.delay
+            );
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    setTimeout(() => {
-                        const multilingual = new Multilingual();
-                        multilingual.wrap(GLOBAL_CONFIG.autoWrapSelector);
-                    }, GLOBAL_CONFIG.autoWrapDelay);
-                });
+                document.addEventListener('DOMContentLoaded', run);
             } else {
-                setTimeout(() => {
-                    const multilingual = new Multilingual();
-                    multilingual.wrap(GLOBAL_CONFIG.autoWrapSelector);
-                }, GLOBAL_CONFIG.autoWrapDelay);
+                run();
             }
         }
 
@@ -425,12 +283,5 @@ class Multilingual {
     }
 }
 
-// No automatic initialization - library must be explicitly initialized
-
-// Make Multilingual globally available
+// Library is inert until Multilingual.init() or Multilingual.wrap() is called.
 window.Multilingual = Multilingual;
-
-// Convenience function (kept for backward compatibility)
-window.wrapMultilingualText = function(selector, config = {}) {
-    return Multilingual.wrap(selector, config);
-};

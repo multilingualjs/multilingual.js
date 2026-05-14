@@ -1,343 +1,67 @@
-# Multilingual Library – Development History
-
-This document is a full record of the design decisions, implementation steps, attempted solutions, failures, and improvements made during the development of the Multilingual library. It is intended as a handoff document for continuing development.
-
----
-
-## Project Overview
-
-**Goal:** A lightweight, zero-dependency JavaScript library that detects writing systems in mixed-language text and wraps each segment in a `<span>` with appropriate `lang`, `data-script`, and CSS class attributes. The primary use case is enabling per-script CSS font styling on multilingual web pages.
-
-**Final library name:** `Multilingual`  
-**Main file:** `multilingual.js`  
-**Demo file:** `index.html`  
-**Examples file:** `example-new-api.html`
-
----
-
-## Iteration Log
-
-### Phase 1 – Initial Implementation
-
-**What was built:**
-- A class originally called `MultilingualWrapper` (later renamed).
-- Used Unicode code point ranges to detect writing systems character by character.
-- Supported: Latin, Korean (Hangul), Japanese (Hiragana/Katakana), Chinese (CJK), Arabic, Cyrillic, Greek, Hebrew, Thai, Devanagari.
-- Used the TreeWalker DOM API to traverse all text nodes inside a target element.
-- Each text node was split into segments by detected script, then each segment was replaced with a `<span>` containing:
-  - `lang="..."` attribute (e.g., `lang="ko"`)
-  - `data-script="..."` attribute (e.g., `data-script="korean"`)
-  - CSS class name
-
-**Design decisions:**
-- Pure JavaScript, no dependencies.
-- Character-level detection using Unicode ranges (not `Intl` API or regex-based heuristics).
-- TreeWalker chosen for performance over recursive DOM traversal.
-- Text nodes processed in **reverse order** to avoid DOM mutation issues during iteration.
-
----
-
-### Phase 2 – Library Renamed to "Multilingual"
-
-**What changed:**
-- Class name `MultilingualWrapper` → `Multilingual`.
-- All internal references and public API updated.
-- File name kept as `multilingual.js`.
-
----
-
-### Phase 3 – Short CSS Class Names
-
-**Request:** Use short class names (`ml-ko`, `ml-en`) instead of long names (`korean-script`, `latin-script`).
-
-**What was implemented:**
-- Added a `scriptToShortClass` lookup map in the constructor:
-  ```javascript
-  this.scriptToShortClass = {
-      latin: 'ml-en',
-      korean: 'ml-ko',
-      japanese: 'ml-ja',
-      chinese: 'ml-zh',
-      arabic: 'ml-ar',
-      cyrillic: 'ml-ru',
-      greek: 'ml-el',
-      hebrew: 'ml-he',
-      thai: 'ml-th',
-      devanagari: 'ml-hi'
-  };
-  ```
-- Controlled via `cssClasses.useShortNames: true` in config.
-- Output example:
-  ```html
-  <span lang="ko" data-script="korean" class="ml-ko">안녕하세요</span>
-  ```
-
----
-
-### Phase 4 – Glyph Override System
-
-**Request:** Users should be able to override the auto-detection for specific characters (e.g., force parentheses to be treated as Latin, force Arabic punctuation to be treated as Arabic).
-
-**What was implemented:**
-- Added a `glyphOverrides` config option, where keys are strings of characters and values are script names:
-  ```javascript
-  glyphOverrides: {
-      '()[]{}': 'latin',
-      '،؛؟': 'arabic'
-  }
-  ```
-- In the constructor, each character from all override strings is expanded into `this.glyphOverrideMap` (a flat character → script map):
-  ```javascript
-  this.glyphOverrideMap = {};
-  for (const [glyphs, script] of Object.entries(this.config.glyphOverrides)) {
-      for (const glyph of glyphs) {
-          this.glyphOverrideMap[glyph] = script;
-      }
-  }
-  ```
-- In `detectScript()`, the override map is checked **before** the Unicode ranges:
-  ```javascript
-  if (this.glyphOverrideMap[char]) return this.glyphOverrideMap[char];
-  ```
-
----
-
-### Phase 5 – Arabic Space Handling (Attempted Fix)
-
-**Problem:** Spaces and punctuation between or around Arabic text were being classified as Latin script instead of Arabic, causing incorrect visual grouping and missed styling.
-
-**Root cause:** Spaces and punctuation have no inherent Unicode script, so they defaulted to Latin.
-
-**Attempted fix:**
-- Added `lastNonWhitespaceScript` tracking in `segmentText()`.
-- When a whitespace/punctuation character is encountered and `currentScript` is `null`, the code sets `currentScript = lastNonWhitespaceScript` to inherit context from previous content.
-
-```javascript
-let lastNonWhitespaceScript = null;
-
-for (const char of text) {
-    const isWhitespaceOrPunctuation = /[\s\p{P}]/u.test(char);
-    
-    if (this.config.preserveWhitespace && isWhitespaceOrPunctuation) {
-        if (currentScript === null && lastNonWhitespaceScript) {
-            currentScript = lastNonWhitespaceScript;
-        }
-        currentSegment += char;
-        continue;
-    }
-    
-    const charScript = this.detectScript(char);
-    lastNonWhitespaceScript = charScript;
-    // ...
-}
-```
-
-**Result:** User reported the fix was still not working – Arabic text continued to show Latin-styled spaces. This issue remains **unresolved** as of this handoff.
-
-**Notes for next agent:**
-- The whitespace inheritance logic only handles the case where `currentScript` is `null` at the start of a whitespace run. It does NOT handle trailing spaces after an Arabic segment that are followed by a different-script segment. In that case, the space is appended to the previous segment (correct), but if the whitespace is at a script boundary mid-segment, the logic may break.
-- The lookahead problem: spaces between `"Arabic text" + " " + "Latin text"` are ambiguous. A two-pass or lookahead algorithm may be needed to correctly assign them.
-- Consider merging adjacent same-script segments after splitting, as a post-processing pass.
-
----
-
-### Phase 6 – Configuration System: From Global Config Object to `Multilingual.init()`
-
-**Problem:** The original config system used `window.MULTILINGUAL_CONFIG` set before the `<script>` tag. This was unintuitive and error-prone (order-sensitive).
-
-**Original pattern (replaced):**
-```html
-<script>
-window.MULTILINGUAL_CONFIG = { autoWrap: true, ... };
-</script>
-<script src="multilingual.js"></script>
-```
-
-**New pattern:**
-```html
-<script src="multilingual.js"></script>
-<script>
-Multilingual.init({ autoWrap: true, ... });
-</script>
-```
-
-**What was implemented:**
-- Removed `const MULTILINGUAL_CONFIG = {...}` as the main config object.
-- Replaced with `const DEFAULT_CONFIG` (immutable defaults) and `let GLOBAL_CONFIG` (mutable, set by `init()`).
-- Added `static init(config)` method on the `Multilingual` class:
-  - Merges user config with `DEFAULT_CONFIG` into `GLOBAL_CONFIG`.
-  - Sets `isInitialized = true` flag.
-  - If `autoWrap: true`, schedules wrapping after DOM ready + `autoWrapDelay`.
-  - Returns `Multilingual` class (for chaining).
-- Added `static wrap(selector, config)` for one-shot wrapping without full initialization.
-- Maintained `new Multilingual(config)` instance API for advanced usage.
-- Added `wrapMultilingualText(selector, config)` as a convenience wrapper (backward compat).
-
----
-
-### Phase 7 – Bug Fix: Stale Reference to `MULTILINGUAL_CONFIG`
-
-**Bug:** After renaming the internal config constant, a stale reference to `MULTILINGUAL_CONFIG.skipElements` remained inside the TreeWalker `acceptNode` filter function, causing:
-```
-Uncaught ReferenceError: MULTILINGUAL_CONFIG is not defined
-```
-
-**Fix:** Changed the reference to `this.config.skipElements` and bound the `this` context explicitly:
-```javascript
-{
-    acceptNode: function(node) {
-        if (node.parentElement &&
-            (node.parentElement.hasAttribute('data-script') ||
-             this.config.skipElements.includes(node.parentElement.tagName.toLowerCase()))) {
-            return NodeFilter.FILTER_REJECT;
-        }
-        return NodeFilter.FILTER_ACCEPT;
-    }.bind(this)
-}
-```
-
----
-
-### Phase 8 – Removed Automatic Initialization Entirely
-
-**Decision (explicit):** The library should NOT do anything without an explicit call. The `autoInit()` function that ran on `DOMContentLoaded` was removed.
-
-**Reason:** It was possible for the library to auto-initialize with defaults even if no user config was provided, which was confusing and undesirable.
-
-**What was removed:**
-- The entire `autoInit()` function.
-- The `DOMContentLoaded` / `readyState` auto-run block.
-- All `window.MULTILINGUAL_CONFIG` support (no longer supported, no deprecation warning).
-
-**What was changed:**
-- `autoWrap` default changed from `true` → `false`.
-- `isInitialized` flag retained (used by `init()` to track state).
-
-**Result:** The library is now completely inert until the user explicitly calls:
-- `Multilingual.init({ ... })` — initialize globally with options
-- `Multilingual.wrap(selector, config)` — wrap a specific element once
-- `new Multilingual(config).wrap(selector)` — instance-based usage
-
----
-
-## Current File Structure
-
-```
-multilingual.js          # Main library
-index.html               # Demo page (Quantum Mechanics multilingual text)
-example-new-api.html     # Examples of all initialization methods
-README.md                # User-facing documentation
-HISTORY.md               # This file
-```
-
----
-
-## Current API
-
-### `Multilingual.init(config)`
-Initializes the library globally. Call once after loading the script.
-
-```javascript
-Multilingual.init({
-    autoWrap: true,               // Enable auto-wrapping on init
-    autoWrapSelector: '#content', // Target selector
-    autoWrapDelay: 50,            // ms delay before wrapping
-    debug: false,
-
-    glyphOverrides: {
-        '()[]{}': 'latin',
-        '،؛؟': 'arabic'
-    },
-
-    cssClasses: {
-        wrapper: 'my-class',      // Extra class on all spans
-        useShortNames: true       // ml-ko, ml-ar, etc.
-    }
-});
-```
-
-### `Multilingual.wrap(selector, config)`
-Static method. Wraps a specific element without global initialization.
-
-```javascript
-Multilingual.wrap('#content', { cssClasses: { useShortNames: true } });
-```
-
-### `new Multilingual(config).wrap(selector)`
-Instance-based. Useful for multiple independent configurations.
-
-```javascript
-const ml = new Multilingual({ preserveWhitespace: false });
-ml.wrap(document.querySelector('.article'));
-```
-
----
-
-## Configuration Options Reference
-
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `autoWrap` | boolean | `false` | Wrap on init |
-| `autoWrapSelector` | string | `'body'` | CSS selector to wrap |
-| `autoWrapDelay` | number | `100` | Delay in ms |
-| `preserveWhitespace` | boolean | `true` | Attach spaces to surrounding script |
-| `minSegmentLength` | number | `1` | Skip segments shorter than this |
-| `glyphOverrides` | object | `{}` | Map of character strings to script names |
-| `languageOverrides` | object | `{}` | Override `lang` attribute values per script |
-| `skipElements` | array | `['script','style','noscript','template']` | Tags to skip |
-| `cssClasses.wrapper` | string | `''` | Extra class added to all spans |
-| `cssClasses.useShortNames` | boolean | `true` | Use `ml-ko` style short class names |
-| `cssClasses.scriptSpecific` | object | `{}` | Custom class names per script |
-| `debug` | boolean | `false` | Console logging |
-
----
-
-## Supported Scripts
-
-| Script | `data-script` | `lang` | Short class |
-|---|---|---|---|
-| Latin (English, etc.) | `latin` | `en` | `ml-en` |
-| Korean | `korean` | `ko` | `ml-ko` |
-| Japanese | `japanese` | `ja` | `ml-ja` |
-| Chinese | `chinese` | `zh` | `ml-zh` |
-| Arabic | `arabic` | `ar` | `ml-ar` |
-| Cyrillic | `cyrillic` | `ru` | `ml-ru` |
-| Greek | `greek` | `el` | `ml-el` |
-| Hebrew | `hebrew` | `he` | `ml-he` |
-| Thai | `thai` | `th` | `ml-th` |
-| Devanagari | `devanagari` | `hi` | `ml-hi` |
-
----
-
-## Known Issues / Open Problems
-
-### 1. Arabic (RTL) Space Handling — **Unresolved**
-Spaces and punctuation adjacent to Arabic text are still sometimes classified as Latin. The `lastNonWhitespaceScript` tracking partially helps but does not fully solve the boundary case where a space sits between two different scripts (e.g., Arabic word → space → Latin word). A lookahead or two-pass segmentation algorithm is likely needed.
-
-### 2. Segment Merging
-If a whitespace character is treated as belonging to the previous script, adjacent same-script segments separated by whitespace are currently emitted as two separate `<span>` elements. A post-processing merge pass could consolidate them.
-
-### 3. CJK Ambiguity
-Chinese and Japanese both use CJK Unified Ideographs. The library currently assigns all CJK characters to `chinese`. Japanese CJK is only distinguished when Hiragana or Katakana is present in the same segment. This is a known limitation with no simple character-level fix.
-
-### 4. `wrap()` Name Conflict
-The class has both an instance method `wrap(selector)` and a static method `wrap(selector, config)`. This works in JavaScript but could be confusing. Future refactor could rename the static version to `Multilingual.wrapElement()` or similar.
-
-### 5. `isInitialized` Flag Not Fully Used
-The `isInitialized` flag is set by `static init()` but is not actively enforced anywhere to prevent double-initialization or warn the user. Consider adding a guard or warning if `init()` is called more than once.
-
----
-
-## Explicit Decisions Log
-
-| Decision | Reasoning |
-|---|---|
-| No automatic initialization | Library should be inert without explicit call; avoids surprises in larger apps |
-| `autoWrap: false` by default | Consistent with no-auto-init philosophy |
-| Removed `window.MULTILINGUAL_CONFIG` | Replaced with `Multilingual.init()` — cleaner, load-order independent |
-| Short class names (`ml-ko`) | User preference; shorter to type in CSS |
-| Glyph overrides as character string keys | Easier to write `'()[]{}': 'latin'` than one entry per character |
-| TreeWalker over recursive DOM walk | Performance; handles deep DOM trees efficiently |
-| Process text nodes in reverse order | Prevents index shifting bugs during DOM mutation |
-| `bind(this)` in TreeWalker filter | Required after removing old global reference to `MULTILINGUAL_CONFIG` |
-| Keep `wrapMultilingualText()` convenience function | Backward compatibility |
+# History
+
+## 원본 라이브러리 · The original
+
+[multilingualjs/multilingual.js](https://github.com/multilingualjs/multilingual.js) (2016) — 어도비 인디자인의 *합성글꼴(Composite Fonts)* 기능에서 영감을 받은 jQuery 플러그인. 한국어 본문 속 영문·숫자·문장부호를 정규식으로 골라내 별도 클래스로 감싸 주는 화면 타이포그래피용 도구였습니다.
+
+> A 2016 jQuery plugin inspired by Adobe InDesign's *Composite Fonts* feature. Tagged Latin / numbers / punctuation inside Korean prose with their own classes (`ml-en`, `ml-num`, `ml-punct`) so each could receive its own font and metric adjustments.
+
+원본의 핵심 아이디어와 클래스 이름 규약(`ml-en`, `ml-ko`, `ml-num`, `ml-punct` …)은 v2에서도 그대로 이어집니다.
+
+> v2 keeps the original's core idea and class-name convention.
+
+## v2 (2026) — 재작성 · Rewrite
+
+원본은 jQuery 의존, 한정된 정규식 기반 감지, 다소 복잡해진 옵션 구조였습니다. v2는 같은 컨셉을 유지하면서 다음을 바꿨습니다:
+
+> v2 keeps the same concept and a similar surface area, but reimplements everything as a small modern library:
+
+- **의존성 제거.** 순수 자바스크립트 ~270줄. jQuery 불필요.
+- **Unicode property escapes 기반 감지.** 하드코딩된 코드포인트 범위 대신 `\p{Script=Hangul}` 같은 표준 속성을 사용 — Unicode가 새 블록을 추가해도 자동 대응되고, 빠진 범위가 없습니다.
+- **지원 문자세트 확대.** 영문·한글·한자·가나에 더해 아랍, 키릴, 그리스, 히브리, 태국, 데바나가리. 카테고리 3종(공백·문장부호·숫자)도 옵션으로 분리 가능.
+- **재귀 DOM 순회.** TreeWalker 대신 8줄짜리 재귀 함수.
+- **단순화된 API.** `Multilingual.init()` / `Multilingual.wrap()` / `new Multilingual()` 세 가지 패턴. 옵션은 11개에서 10개로 정리했고 각자 직교적입니다.
+
+## 주요 설계 결정 · Key design decisions
+
+이 라이브러리를 사용·확장할 때 알아 두면 좋은 결정 사항들:
+
+> Decisions worth knowing when using or extending the library:
+
+### Whitespace inheritance (default behavior)
+
+공백과 문장부호는 기본적으로 주변 스크립트에 흡수됩니다. `"안녕 hello"`는 `<span ko>안녕 </span><span en>hello</span>`이 되어, 한국어 span의 배경·테두리·padding이 공백까지 자연스럽게 이어집니다. 이는 시각적 일관성을 위한 기본값입니다.
+
+> Spaces and punctuation inherit the nearest neighbor's script by default. This keeps span styling (backgrounds, borders, padding) continuous across word gaps.
+
+공백·문장부호·숫자를 별도 segment로 분리하고 싶다면 `separateSpace`, `separatePunct`, `separateNum` 옵션을 각각 켜세요.
+
+> Set `separateSpace`, `separatePunct`, or `separateNum` to split a category into its own segments.
+
+### Category scripts don't propagate
+
+분리된 카테고리(`space`, `punctuation`, `number`)는 inheritance 전파에 참여하지 않습니다. 예를 들어 `separatePunct: true`만 켠 상태에서 `"한국어, 좋아요"`를 wrap하면, 쉼표 뒤 공백은 punct가 아닌 가장 가까운 진짜 스크립트(korean)를 상속해 자연스럽게 한국어 span에 묶입니다.
+
+> Category-pseudo-scripts are excluded from inheritance propagation. A stray space next to a separated comma still inherits the nearest *real* script — not the punct script — so styling doesn't bleed.
+
+### CJK ambiguity
+
+일본어 한자(漢字)와 중국어 한자(汉字)는 Unicode 상 둘 다 `Script=Han`이라, 한자만 단독으로 있는 segment는 항상 `chinese`로 분류됩니다. 같은 segment 안에 히라가나·가타카나가 같이 있어야 일본어로 인식됩니다. 알려진 한계이며 문자 단위 감지로는 해결되지 않습니다.
+
+> Japanese kanji and Chinese hanzi share `Script=Han`, so standalone kanji always classifies as `chinese`. Japanese is only inferred when hiragana/katakana co-occurs. Known limitation; not solvable at the per-character level.
+
+### Number handling
+
+숫자는 Unicode 상 `Script=Common`이라 어느 스크립트 패턴에도 매치되지 않지만, 일반적인 본문에서는 latin과 묶이는 게 자연스러워 기본적으로 latin으로 분류합니다. 별도 `ml-num` 클래스로 분리하려면 `separateNum: true`.
+
+> Digits are `Script=Common` in Unicode and don't match any script pattern, so they default to latin (which is usually the right choice for prose). Set `separateNum: true` to split them into their own `ml-num` segments.
+
+### Tag → script mapping is fixed
+
+`korean` → `lang="ko"` 같은 매핑은 라이브러리에 하드코딩되어 있습니다. 변경하려면 `languageOverrides` 옵션을 사용하세요 (예: `{chinese: 'zh-TW'}`로 번체 중국어 지정).
+
+> Script-to-`lang` mapping is hardcoded. Use `languageOverrides` to change emitted lang values (e.g. `{chinese: 'zh-TW'}` for Traditional Chinese).
+
+## License
+
+MIT — 원본 라이브러리도 MIT.
