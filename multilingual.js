@@ -10,14 +10,14 @@ const DEFAULT_CONFIG = {
     selector: 'body',
     delay: 100,
 
-    // When false (default), whitespace / punctuation / digits merge into the
+    // When false (default), spaces / punctuation / digits merge into the
     // surrounding script's span. Set any of these true to give that category
     // its own segment with its own class (ml-space / ml-punct / ml-num) —
     // useful for typographic control (tabular numbers, styled punctuation,
     // visible spaces, etc.). Separated categories don't participate in
     // inheritance: e.g. with separatePunct on, the space in "Hello, world"
     // inherits the nearest real script (latin), not the punct script.
-    separateWhitespace: false,
+    separateSpace: false,
     separatePunct: false,
     separateNum: false,
 
@@ -57,7 +57,7 @@ const SCRIPT_PATTERNS = {
 
 // Category-pseudo-scripts. Excluded from inheritance propagation so that, e.g.,
 // a separated punct segment doesn't bleed its script onto adjacent whitespace.
-const CATEGORY_SCRIPTS = new Set(['whitespace', 'punctuation', 'number']);
+const CATEGORY_SCRIPTS = new Set(['space', 'punctuation', 'number']);
 
 class Multilingual {
     constructor(config = {}) {
@@ -95,7 +95,7 @@ class Multilingual {
             hebrew: 'ml-he',
             thai: 'ml-th',
             devanagari: 'ml-hi',
-            whitespace:  'ml-space',
+            space:       'ml-space',
             punctuation: 'ml-punct',
             number:      'ml-num',
         };
@@ -137,13 +137,13 @@ class Multilingual {
      *   3. Group consecutive same-script chars into segments.
      */
     segmentText(text) {
-        const { separateWhitespace, separatePunct, separateNum } = this.config;
+        const { separateSpace, separatePunct, separateNum } = this.config;
 
         const tagged = [...text].map(char => {
             if (this.glyphOverrideMap[char]) return { char, script: this.glyphOverrideMap[char] };
-            if (/\s/u.test(char))     return { char, script: separateWhitespace ? 'whitespace'  : null };
-            if (/\p{P}/u.test(char))  return { char, script: separatePunct      ? 'punctuation' : null };
-            if (/\p{N}/u.test(char))  return { char, script: separateNum        ? 'number'      : 'latin' };
+            if (/\s/u.test(char))     return { char, script: separateSpace ? 'space'       : null };
+            if (/\p{P}/u.test(char))  return { char, script: separatePunct ? 'punctuation' : null };
+            if (/\p{N}/u.test(char))  return { char, script: separateNum   ? 'number'      : 'latin' };
             return { char, script: this.detectScript(char) };
         });
 
@@ -173,9 +173,9 @@ class Multilingual {
     wrapSegments(segments) {
         return segments.map(({ text, script }) => {
             // Pure-whitespace segments that inherited a script (rather than being
-            // explicitly tagged 'whitespace') stay as bare text — no point wrapping
+            // explicitly tagged 'space') stay as bare text — no point wrapping
             // " " in a korean span just because it inherited from a neighbor.
-            if (script !== 'whitespace' && !text.trim()) return text;
+            if (script !== 'space' && !text.trim()) return text;
             const lang = this.scriptToLang[script];
             const cls = this.config.useShortNames ? this.scriptToShortClass[script] : null;
             const langAttr  = lang ? ` lang="${lang}"` : '';

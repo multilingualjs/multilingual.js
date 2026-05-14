@@ -68,7 +68,7 @@ ml.wrap(document.querySelector('.article'));
 | `autoInit` | boolean | `false` | If true, `init()` schedules a wrap of `selector` after `delay` ms. |
 | `selector` | string | `'body'` | CSS selector for the auto-init wrap. |
 | `delay` | number | `100` | ms to wait before the auto-init wrap. |
-| `separateWhitespace` | boolean | `false` | Give whitespace its own segments with class `ml-space`. |
+| `separateSpace` | boolean | `false` | Give whitespace its own segments with class `ml-space`. |
 | `separatePunct` | boolean | `false` | Give punctuation its own segments with class `ml-punct`. |
 | `separateNum` | boolean | `false` | Give digits their own segments with class `ml-num`. |
 | `glyphOverrides` | object | `{}` | Map of character strings to script names (e.g. `'()': 'latin'`). |
