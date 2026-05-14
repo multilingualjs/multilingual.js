@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual - New API Example</title>
+    
+    <!-- Load the library first -->
+    <script src="multilingual.js"></script>
+    
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .example {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        h2 {
+            margin-top: 0;
+        }
+        
+        /* Style different writing systems */
+        .ml-ko {
+            background-color: #e8f4fd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #2196F3;
+        }
+        
+        .ml-ja {
+            background-color: #fce4ec;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #e91e63;
+        }
+        
+        .ml-zh {
+            background-color: #f3e5f5;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #9c27b0;
+        }
+        
+        .ml-ar {
+            background-color: #e8f5e8;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #4caf50;
+            direction: rtl;
+        }
+        
+        .ml-en {
+            background-color: #fff3e0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            border: 1px solid #ff9800;
+        }
+        
+        .manual-wrap {
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multilingual Library - New API Examples</h1>
+    
+    <div class="example">
+        <h2>Example 1: Auto-wrap with Multilingual.init()</h2>
+        <p><strong>Note:</strong> This library requires explicit initialization. Nothing happens until you call <code>Multilingual.init()</code>.</p>
+        <div id="auto-content">
+            Hello 안녕하세요 こんにちは 你好 مرحبا
+        </div>
+        <script>
+            // Initialize with auto-wrapping
+            Multilingual.init({
+                autoWrap: true,
+                autoWrapSelector: '#auto-content',
+                cssClasses: {
+                    useShortNames: true
+                },
+                debug: true
+            });
+        </script>
+    </div>
+    
+    <div class="example">
+        <h2>Example 2: Manual wrapping with static method</h2>
+        <div class="manual-wrap" id="manual-content">
+            Quantum mechanics 양자역학 量子力学 الفيزياء
+        </div>
+        <button onclick="wrapManual()">Wrap Text</button>
+        <script>
+            function wrapManual() {
+                Multilingual.wrap('#manual-content', {
+                    cssClasses: {
+                        useShortNames: true,
+                        wrapper: 'manual-segment'
+                    },
+                    glyphOverrides: {
+                        '()[]{}': 'latin'
+                    }
+                });
+            }
+        </script>
+    </div>
+    
+    <div class="example">
+        <h2>Example 3: Instance-based approach</h2>
+        <div class="manual-wrap" id="instance-content">
+            Programming 프로그래밍 プログラミング 编程 البرمجة
+        </div>
+        <button onclick="wrapWithInstance()">Wrap with Instance</button>
+        <script>
+            function wrapWithInstance() {
+                const multilingual = new Multilingual({
+                    cssClasses: {
+                        useShortNames: true,
+                        wrapper: 'instance-segment'
+                    },
+                    preserveWhitespace: true,
+                    debug: true
+                });
+                multilingual.wrap('#instance-content');
+            }
+        </script>
+    </div>
+    
+    <div class="example">
+        <h2>Example 4: Multiple configurations</h2>
+        <div id="config1">First: Hello 안녕하세요 world</div>
+        <div id="config2">Second: こんにちは 你好 friends</div>
+        <button onclick="wrapMultiple()">Wrap Both</button>
+        <script>
+            function wrapMultiple() {
+                // Different configurations for different elements
+                Multilingual.wrap('#config1', {
+                    cssClasses: { useShortNames: true, wrapper: 'style1' }
+                });
+                
+                Multilingual.wrap('#config2', {
+                    cssClasses: { useShortNames: true, wrapper: 'style2' },
+                    glyphOverrides: { '()': 'latin' }
+                });
+            }
+        </script>
+    </div>
+    
+    <div class="example">
+        <h2>Example 5: No automatic initialization</h2>
+        <div id="no-init-content">
+            This text: Hello 안녕하세요 こんにちは will NOT be processed automatically.
+        </div>
+        <p>The library requires explicit initialization. Text above remains unwrapped until you manually call a method.</p>
+        <button onclick="initAndWrap()">Initialize and Wrap</button>
+        <script>
+            function initAndWrap() {
+                // This demonstrates that the library doesn't work without explicit calls
+                Multilingual.wrap('#no-init-content', {
+                    cssClasses: { useShortNames: true }
+                });
+            }
+        </script>
+    </div>
+</body>
+</html>

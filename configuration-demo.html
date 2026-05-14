@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual Wrapper - Configuration Examples</title>
+    
+    <!-- EXAMPLE: Configure before loading the library -->
+    <script>
+        window.MULTILINGUAL_CONFIG = {
+            autoWrap: true,
+            autoWrapSelector: '.content',     // Only wrap content areas
+            autoWrapDelay: 100,              // Quick initialization
+            debug: true,                     // Show console logs
+            minSegmentLength: 2,             // Skip very short segments
+            
+            // Custom language codes
+            languageOverrides: {
+                chinese: 'zh-TW',            // Traditional Chinese
+                latin: 'en-US'               // US English
+            },
+            
+            // Add CSS classes to wrapped spans
+            cssClasses: {
+                wrapper: 'multilingual-text',
+                scriptSpecific: {
+                    korean: 'korean-script',
+                    japanese: 'japanese-script',
+                    chinese: 'chinese-script',
+                    arabic: 'arabic-script'
+                }
+            },
+            
+            // Skip these elements
+            skipElements: ['script', 'style', 'code', 'pre', 'button']
+        };
+    </script>
+    
+    <script src="multilingual.js"></script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .config-example {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007acc;
+        }
+        
+        code {
+            background: #e8e8e8;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .content {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        /* Style the wrapped text based on our custom classes */
+        .multilingual-text {
+            padding: 1px 3px;
+            border-radius: 2px;
+        }
+        
+        .korean-script {
+            background-color: #e3f2fd;
+            border-bottom: 2px solid #2196f3;
+        }
+        
+        .japanese-script {
+            background-color: #fce4ec;
+            border-bottom: 2px solid #e91e63;
+        }
+        
+        .chinese-script {
+            background-color: #f3e5f5;
+            border-bottom: 2px solid #9c27b0;
+        }
+        
+        .arabic-script {
+            background-color: #e8f5e8;
+            border-bottom: 2px solid #4caf50;
+            direction: rtl;
+        }
+        
+        span[data-script="latin"] {
+            background-color: #fff3e0;
+            border-bottom: 2px solid #ff9800;
+        }
+        
+        button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #005fa3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multilingual Wrapper Configuration</h1>
+    
+    <div class="config-example">
+        <h3>Current Configuration (set in HTML)</h3>
+        <p>This page uses configuration set directly in the HTML <code>&lt;head&gt;</code> section:</p>
+        <ul>
+            <li><strong>autoWrapSelector:</strong> <code>'.content'</code> (only wrap content areas)</li>
+            <li><strong>debug:</strong> <code>true</code> (check console for logs)</li>
+            <li><strong>Custom CSS classes:</strong> Added for better styling</li>
+            <li><strong>Language overrides:</strong> Chinese → zh-TW, Latin → en-US</li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h2>Sample Multilingual Content</h2>
+        <p>This content will be automatically wrapped when the page loads: English text mixed with 한국어 Korean, 日本語 Japanese, 中文 Chinese, and عربي Arabic text.</p>
+        
+        <p>Notice how each writing system gets its own styling based on the CSS classes we configured!</p>
+    </div>
+
+    <div class="content">
+        <h2>Manual Wrapping Examples</h2>
+        <div id="manual-content">
+            <p>This content starts unwrapped. Use the buttons below to wrap with different configurations.</p>
+            <p>Mixed text: Hello 안녕하세요 こんにちは 你好 مرحبا world!</p>
+        </div>
+        
+        <button onclick="wrapBasic()">Basic Wrap</button>
+        <button onclick="wrapWithClasses()">Wrap with Classes</button>
+        <button onclick="wrapLongOnly()">Long Segments Only</button>
+        <button onclick="resetContent()">Reset</button>
+    </div>
+
+    <div class="config-example">
+        <h3>How to Configure</h3>
+        <p><strong>Method 1:</strong> Set <code>window.MULTILINGUAL_CONFIG</code> before loading the library:</p>
+        <pre><code>&lt;script&gt;
+window.MULTILINGUAL_CONFIG = {
+    autoWrap: true,
+    autoWrapSelector: '.content',
+    debug: true,
+    cssClasses: {
+        wrapper: 'my-multilingual-text'
+    }
+};
+&lt;/script&gt;
+&lt;script src="multilingual-wrapper.js"&gt;&lt;/script&gt;</code></pre>
+        
+        <p><strong>Method 2:</strong> Pass config when calling functions:</p>
+        <pre><code>wrapMultilingualText('#content', {
+    debug: true,
+    minSegmentLength: 3
+});</code></pre>
+    </div>
+
+    <script>
+        const originalContent = document.getElementById('manual-content').innerHTML;
+        
+        function wrapBasic() {
+            resetContent();
+            wrapMultilingualText('#manual-content');
+        }
+        
+        function wrapWithClasses() {
+            resetContent();
+            wrapMultilingualText('#manual-content', {
+                cssClasses: {
+                    wrapper: 'highlight-text',
+                    scriptSpecific: {
+                        korean: 'korean-highlight',
+                        japanese: 'japanese-highlight'
+                    }
+                }
+            });
+        }
+        
+        function wrapLongOnly() {
+            resetContent();
+            wrapMultilingualText('#manual-content', {
+                minSegmentLength: 5,
+                debug: true
+            });
+        }
+        
+        function resetContent() {
+            document.getElementById('manual-content').innerHTML = originalContent;
+        }
+        
+        // Show the current configuration in console
+        console.log('Current configuration:', window.MULTILINGUAL_CONFIG);
+    </script>
+</body>
+</html>
