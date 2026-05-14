@@ -83,12 +83,18 @@ None on the v2.1 simplification track. Possible next moves:
   - Removed `cssClasses.wrapper` (redundant — every span already has `data-script` and the `ml-xx` short class, providing two CSS-target paths).
   - Updated [index.html](index.html), [example-new-api.html](example-new-api.html), and [README.md](README.md) to match. (HISTORY.md left as-is — it's a frozen v2.0 record.)
 
-- ✅ **Further config trim + examples rewrite** (this pass).
-  - **Dropped `preserveWhitespace`** entirely. The `false` branch produced arbitrary results: whitespace/punctuation fell back to `'latin'` and could visually drift to the wrong neighbor (e.g. `"안녕, hello"` would emit `<span ko>안녕</span><span en>, hello</span>`, attaching `, ` to Latin only because Latin happens to be the fallback). The `true` (inheritance) behavior was the only semantically defensible one — now it's the only behavior.
+- ✅ **Further config trim + examples rewrite**.
+  - **Initially dropped `preserveWhitespace`** because the `false` branch produced arbitrary fallback-to-latin behavior. Reinstated in the next pass under a better name (see below) once a legitimate use case surfaced.
   - **Dropped `cssClasses.scriptSpecific`**. Library already exposes two CSS-target paths (`data-script` attribute + `ml-xx` class). Adding a third just renames the same target — no new capability.
   - **Flattened `cssClasses.useShortNames` → top-level `useShortNames`** since `cssClasses` no longer has multiple keys.
   - **Kept `languageOverrides`** — it has a real BCP-47 justification (Traditional vs Simplified Chinese, hyphenation, screen-reader pronunciation, font fallbacks via `[lang^="zh-Hant"]`). Improved its rationale in `examples.html`.
-  - **Renamed `example-new-api.html` → `examples.html`** (API is no longer "new"). Rewrote as a feature gallery instead of an API-style gallery: each section demos one config option with before/after columns. Sections now: default behavior, `glyphOverrides`, `languageOverrides`, `useShortNames`, `skipElements`.
+  - **Renamed `example-new-api.html` → `examples.html`** (API is no longer "new"). Rewrote as a feature gallery instead of an API-style gallery: each section demos one config option with before/after columns.
+
+- ✅ **Reinstated whitespace-mode option as `wrapWhitespace`** (this pass).
+  - User flagged a real use case for the old `preserveWhitespace: false` mode: tight visual spans (background colors, borders, padding) shouldn't bleed across whitespace. Without the option, span styling extends through every inherited space.
+  - Renamed `preserveWhitespace` → `wrapWhitespace`. The new name maps directly to the yes/no question "is whitespace wrapped (inside a span) or left bare?" — and uses the library's own verb (`wrap`).
+  - Cleaned up the semantics: with `wrapWhitespace: false`, neutral chars (whitespace + punctuation without a glyph override) keep `script: null` and emit as bare text between spans — not arbitrary `latin` fallback that could merge with adjacent Latin segments.
+  - `wrapSegments` updated: any segment with `script: null` emits as bare text, regardless of trim() state. Handles standalone punctuation (e.g. `"안녕!"` with `wrapWhitespace: false` → `<span ko>안녕</span>!`).
 
 ## SCRIPT_PATTERNS coverage
 
@@ -100,9 +106,9 @@ Within the 10 supported scripts (Latin, Korean, Japanese kana, Chinese Han, Arab
 
 ## Final Metrics
 
-- `multilingual.js`: 437 → 260 lines (−177, −40%).
+- `multilingual.js`: 437 → 268 lines (−169, −39%).
 - Empty/stale files: −4 (`config-examples.js`, `examples.html`, `multilingual-wrapper.js`, `configuration-demo.html`).
-- Config surface: 11 options → 7.
+- Config surface: 11 options → 8.
 
 ## Known Issues (carried over from HISTORY.md)
 

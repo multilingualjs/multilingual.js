@@ -85,56 +85,68 @@ Multilingual.wrap('#content', { /* per-call config */ });</code></pre>
     </div>
 </div>
 
-<h2>2. <code>glyphOverrides</code></h2>
+<h2>2. <code>wrapWhitespace</code></h2>
+<p class="lead">When <code>true</code> (default), whitespace and punctuation are absorbed into the surrounding script's span — so background colors, borders, and padding extend across spaces. When <code>false</code>, whitespace stays as bare text between spans, keeping each span tight on its script content. Useful when you don't want span styling to bleed into the gaps.</p>
+<div class="example">
+    <div class="row">
+        <div class="col"><div class="label">wrapWhitespace: true (bleeds)</div><div id="e2-true">안녕 hello, مرحبا!</div></div>
+        <div class="col"><div class="label">wrapWhitespace: false (tight)</div><div id="e2-false">안녕 hello, مرحبا!</div></div>
+    </div>
+</div>
+
+<h2>3. <code>glyphOverrides</code></h2>
 <p class="lead">Force specific characters to a script regardless of their Unicode block. Useful for brackets you want rendered in your Latin font even when surrounded by Korean, or for Arabic punctuation that should always group with Arabic.</p>
 <div class="example">
     <div class="row">
-        <div class="col"><div class="label">no override — parens inherit Korean</div><div id="e2-off">인용문 (사람 이름) 끝.</div></div>
-        <div class="col"><div class="label">{'()[]{}': 'latin'}</div><div id="e2-on">인용문 (사람 이름) 끝.</div></div>
+        <div class="col"><div class="label">no override — parens inherit Korean</div><div id="e3-off">인용문 (사람 이름) 끝.</div></div>
+        <div class="col"><div class="label">{'()[]{}': 'latin'}</div><div id="e3-on">인용문 (사람 이름) 끝.</div></div>
     </div>
 </div>
 
-<h2>3. <code>languageOverrides</code></h2>
+<h2>4. <code>languageOverrides</code></h2>
 <p class="lead">Override the BCP-47 <code>lang</code> attribute emitted for a script. Browsers use <code>lang</code> for hyphenation rules, screen-reader pronunciation, and font fallbacks — so a Traditional-Chinese site usually wants <code>zh-TW</code> or <code>zh-Hant</code>, not the generic <code>zh</code>. Inspect the spans to see the attribute change.</p>
 <div class="example">
     <div class="row">
-        <div class="col"><div class="label">default (lang="zh")</div><div id="e3-default">量子力学</div></div>
-        <div class="col"><div class="label">{chinese: 'zh-TW'}</div><div id="e3-tw">量子力学</div></div>
+        <div class="col"><div class="label">default (lang="zh")</div><div id="e4-default">量子力学</div></div>
+        <div class="col"><div class="label">{chinese: 'zh-TW'}</div><div id="e4-tw">量子力学</div></div>
     </div>
 </div>
 
-<h2>4. <code>useShortNames</code></h2>
+<h2>5. <code>useShortNames</code></h2>
 <p class="lead">When <code>true</code> (default), each span gets an <code>ml-xx</code> class for easy CSS targeting. When <code>false</code>, only <code>lang</code> and <code>data-script</code> are emitted — use this if you target solely via the data attribute. (The right column has no styling because the demo CSS only targets <code>.ml-xx</code>.)</p>
 <div class="example">
     <div class="row">
-        <div class="col"><div class="label">useShortNames: true</div><div id="e4-on">Hello 안녕</div></div>
-        <div class="col"><div class="label">useShortNames: false</div><div id="e4-off">Hello 안녕</div></div>
+        <div class="col"><div class="label">useShortNames: true</div><div id="e5-on">Hello 안녕</div></div>
+        <div class="col"><div class="label">useShortNames: false</div><div id="e5-off">Hello 안녕</div></div>
     </div>
 </div>
 
-<h2>5. <code>skipElements</code></h2>
+<h2>6. <code>skipElements</code></h2>
 <p class="lead">Tag names whose contents are skipped during traversal. Defaults to <code>['script','style','noscript','template']</code>. Add <code>'code'</code> to leave inline code blocks untouched.</p>
 <div class="example">
     <div class="row">
-        <div class="col"><div class="label">default (code is wrapped)</div><div id="e5-default">Inline <code>print('안녕')</code> in prose.</div></div>
-        <div class="col"><div class="label">skipElements: [..., 'code']</div><div id="e5-skip">Inline <code>print('안녕')</code> in prose.</div></div>
+        <div class="col"><div class="label">default (code is wrapped)</div><div id="e6-default">Inline <code>print('안녕')</code> in prose.</div></div>
+        <div class="col"><div class="label">skipElements: [..., 'code']</div><div id="e6-skip">Inline <code>print('안녕')</code> in prose.</div></div>
     </div>
 </div>
 
 <script>
     Multilingual.wrap('#e1-out');
 
-    Multilingual.wrap('#e2-off');
-    Multilingual.wrap('#e2-on', { glyphOverrides: { '()[]{}': 'latin' } });
+    Multilingual.wrap('#e2-true',  { wrapWhitespace: true });
+    Multilingual.wrap('#e2-false', { wrapWhitespace: false });
 
-    Multilingual.wrap('#e3-default');
-    Multilingual.wrap('#e3-tw', { languageOverrides: { chinese: 'zh-TW' } });
+    Multilingual.wrap('#e3-off');
+    Multilingual.wrap('#e3-on', { glyphOverrides: { '()[]{}': 'latin' } });
 
-    Multilingual.wrap('#e4-on');
-    Multilingual.wrap('#e4-off', { useShortNames: false });
+    Multilingual.wrap('#e4-default');
+    Multilingual.wrap('#e4-tw', { languageOverrides: { chinese: 'zh-TW' } });
 
-    Multilingual.wrap('#e5-default');
-    Multilingual.wrap('#e5-skip', {
+    Multilingual.wrap('#e5-on');
+    Multilingual.wrap('#e5-off', { useShortNames: false });
+
+    Multilingual.wrap('#e6-default');
+    Multilingual.wrap('#e6-skip', {
         skipElements: ['script', 'style', 'noscript', 'template', 'code']
     });
 </script>
