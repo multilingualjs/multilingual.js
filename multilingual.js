@@ -49,7 +49,6 @@ const DEFAULT_CONFIG = {
 
 // Global configuration (set via Multilingual.init())
 let GLOBAL_CONFIG = { ...DEFAULT_CONFIG };
-let isInitialized = false;
 
 // Script detection via Unicode property escapes. Order matters: Hiragana/Katakana
 // are matched before Han so Japanese kana don't fall through to chinese.
@@ -130,59 +129,41 @@ class Multilingual {
     }
 
     /**
-     * Split text into segments by writing system
+     * Split text into segments by writing system.
+     *
+     * Three phases:
+     *   1. Tag every char with a script. Whitespace/punctuation without an
+     *      explicit glyph override gets `null` (inheritable).
+     *   2. Inheritable chars adopt the nearest neighbor script — prefer the
+     *      previous char, fall back to the next. Pure-neutral text → 'latin'.
+     *   3. Group consecutive same-script chars into segments.
      */
     segmentText(text) {
+        const tagged = [...text].map(char => {
+            if (this.glyphOverrideMap[char]) return { char, script: this.glyphOverrideMap[char] };
+            if (this.config.preserveWhitespace && /[\s\p{P}]/u.test(char)) return { char, script: null };
+            return { char, script: this.detectScript(char) };
+        });
+
+        let prev = null;
+        for (const t of tagged) {
+            if (t.script !== null) { prev = t.script; }
+            else if (prev) { t.script = prev; }
+        }
+        let next = null;
+        for (let i = tagged.length - 1; i >= 0; i--) {
+            if (tagged[i].script !== null) { next = tagged[i].script; }
+            else { tagged[i].script = next ?? 'latin'; }
+        }
+
         const segments = [];
-        let currentSegment = '';
-        let currentScript = null;
-        let lastNonWhitespaceScript = null;
-        
-        for (const char of text) {
-            const isWhitespaceOrPunctuation = /[\s\p{P}]/u.test(char);
-            
-            if (this.config.preserveWhitespace && isWhitespaceOrPunctuation) {
-                // For whitespace/punctuation, inherit script from surrounding text
-                if (currentScript === null && lastNonWhitespaceScript) {
-                    // Start new segment with previous script context
-                    currentScript = lastNonWhitespaceScript;
-                }
-                currentSegment += char;
-                continue;
-            }
-            
-            const charScript = this.detectScript(char);
-            lastNonWhitespaceScript = charScript; // Track last meaningful script
-            
-            if (currentScript === null) {
-                currentScript = charScript;
-                currentSegment += char;
-            } else if (currentScript === charScript) {
-                currentSegment += char;
-            } else {
-                // Script changed, save current segment and start new one
-                if (currentSegment.trim() && currentSegment.trim().length >= this.config.minSegmentLength) {
-                    segments.push({
-                        text: currentSegment,
-                        script: currentScript,
-                        lang: this.scriptToLang[currentScript]
-                    });
-                }
-                currentSegment = char;
-                currentScript = charScript;
-            }
+        for (const { char, script } of tagged) {
+            const last = segments[segments.length - 1];
+            if (last && last.script === script) last.text += char;
+            else segments.push({ text: char, script, lang: this.scriptToLang[script] });
         }
-        
-        // Add the last segment
-        if (currentSegment.trim() && currentSegment.trim().length >= this.config.minSegmentLength) {
-            segments.push({
-                text: currentSegment,
-                script: currentScript,
-                lang: this.scriptToLang[currentScript]
-            });
-        }
-        
-        return segments;
+
+        return segments.filter(s => s.text.trim().length >= this.config.minSegmentLength);
     }
 
     /**
@@ -257,48 +238,20 @@ class Multilingual {
     }
 
     /**
-     * Main method to wrap multilingual text in an element
-     * @param {string|HTMLElement} selector - CSS selector, element ID, class name, or DOM element
+     * Wrap multilingual text in matching elements.
+     * @param {string|Element} target - CSS selector or DOM element
+     * @returns {number} - Number of elements processed
      */
-    wrap(selector) {
-        let elements = [];
-        
-        if (typeof selector === 'string') {
-            // Try different selection methods
-            if (selector.startsWith('#')) {
-                // ID selector
-                const element = document.getElementById(selector.slice(1));
-                if (element) elements = [element];
-            } else if (selector.startsWith('.')) {
-                // Class selector
-                elements = Array.from(document.getElementsByClassName(selector.slice(1)));
-            } else if (selector.includes(' ') || selector.includes('>', '+', '~')) {
-                // Complex CSS selector
-                elements = Array.from(document.querySelectorAll(selector));
-            } else {
-                // Try as tag name first, then as ID, then as class
-                elements = Array.from(document.getElementsByTagName(selector));
-                if (elements.length === 0) {
-                    const byId = document.getElementById(selector);
-                    if (byId) elements = [byId];
-                }
-                if (elements.length === 0) {
-                    elements = Array.from(document.getElementsByClassName(selector));
-                }
-            }
-        } else if (selector instanceof HTMLElement) {
-            elements = [selector];
-        }
+    wrap(target) {
+        const elements = target instanceof Element
+            ? [target]
+            : [...document.querySelectorAll(target)];
 
-        // Process each element
-        elements.forEach(element => {
-            this.processElement(element);
-        });
+        elements.forEach(el => this.processElement(el));
 
         if (this.config.debug) {
             console.log(`Wrapped ${elements.length} elements`);
         }
-
         return elements.length;
     }
 
@@ -308,28 +261,21 @@ class Multilingual {
      * @returns {Multilingual} - Returns the Multilingual class for chaining
      */
     static init(config = {}) {
-        // Update global configuration
         GLOBAL_CONFIG = { ...DEFAULT_CONFIG, ...config };
-        isInitialized = true;
-        
+
         if (GLOBAL_CONFIG.debug) {
-            console.log('Multilingual library initialized with config:', GLOBAL_CONFIG);
+            console.log('Multilingual initialized:', GLOBAL_CONFIG);
         }
 
-        // If autoWrap is enabled, start auto-wrapping
         if (GLOBAL_CONFIG.autoWrap) {
+            const run = () => setTimeout(
+                () => new Multilingual().wrap(GLOBAL_CONFIG.autoWrapSelector),
+                GLOBAL_CONFIG.autoWrapDelay
+            );
             if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    setTimeout(() => {
-                        const multilingual = new Multilingual();
-                        multilingual.wrap(GLOBAL_CONFIG.autoWrapSelector);
-                    }, GLOBAL_CONFIG.autoWrapDelay);
-                });
+                document.addEventListener('DOMContentLoaded', run);
             } else {
-                setTimeout(() => {
-                    const multilingual = new Multilingual();
-                    multilingual.wrap(GLOBAL_CONFIG.autoWrapSelector);
-                }, GLOBAL_CONFIG.autoWrapDelay);
+                run();
             }
         }
 
@@ -348,12 +294,5 @@ class Multilingual {
     }
 }
 
-// No automatic initialization - library must be explicitly initialized
-
-// Make Multilingual globally available
+// Library is inert until Multilingual.init() or Multilingual.wrap() is called.
 window.Multilingual = Multilingual;
-
-// Convenience function (kept for backward compatibility)
-window.wrapMultilingualText = function(selector, config = {}) {
-    return Multilingual.wrap(selector, config);
-};

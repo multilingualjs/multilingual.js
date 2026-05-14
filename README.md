@@ -199,8 +199,7 @@ span[data-script="korean"] {
 
 Works in all modern browsers that support:
 - ES6 (let/const, arrow functions)
-- Unicode property escapes in regex
-- TreeWalker API
+- Unicode property escapes in regex (`\p{Script=...}`)
 
 ## License
 

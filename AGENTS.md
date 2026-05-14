@@ -62,16 +62,25 @@ Commit `599b040`:
 
 ## Pending Work
 
-In rough priority order:
-
-1. **Simplify `wrap()` selector handling** — collapse to `querySelectorAll`.
-2. **Drop `wrapMultilingualText` and `isInitialized`** if no longer justified.
-3. **Re-evaluate Arabic space handling** (see Known Issues) once segmentation logic is simpler.
+None on the v2.1 simplification track. Possible next moves:
+- Validate visually in browser against `index.html` and `example-new-api.html`.
+- Verify the Arabic space handling against any concrete failing case the original user had (HISTORY.md "Phase 5" was vague; couldn't reproduce in this pass).
+- Consider tightening `wrapSegments` (still uses string templates + class concat logic).
 
 ## Done
 
 - ✅ **Unicode ranges → `\p{Script=...}` regex** (`f66a245`). `SCRIPT_PATTERNS` at module scope; `detectScript` is 8 lines. Order: kana before Han so Japanese isn't swallowed by `chinese`. File 437 → 381 (−55).
-- ✅ **TreeWalker → recursive traversal**. `processElement` is now a 9-line recursive function; `bind(this)` gone. Snapshots `childNodes` before recursing so `processTextNode`'s DOM mutations don't break iteration. The `data-script` and `skipElements` guards now live on the recursive function itself. Dropped debug log for text-node count (the `wrap()` element-count log remains). File 381 → 359 (−22).
+- ✅ **TreeWalker → recursive traversal** (`d76c38e`). `processElement` is now a 9-line recursive function; `bind(this)` gone. Snapshots `childNodes` before recursing so `processTextNode`'s DOM mutations don't break iteration. The `data-script` and `skipElements` guards now live on the recursive function itself. Dropped debug log for text-node count (the `wrap()` element-count log remains). File 381 → 359 (−22).
+- ✅ **`wrap()` collapsed to `querySelectorAll`**. 30+ lines of `#`/`.`/tag/class-name prefix parsing replaced by `target instanceof Element ? [target] : [...document.querySelectorAll(target)]`. Browsers' native selector engine handles every form.
+- ✅ **Dropped legacy surface**: removed `wrapMultilingualText` global shim and the unused `isInitialized` flag. Removed the duplicate setTimeout block in `static init` (DOMContentLoaded path and immediate path share one `run` closure).
+- ✅ **`segmentText` rewritten as a three-phase tagger** (43 → 27 lines). Phase 1: tag each char with a script or `null` (inheritable). Phase 2: previous-fill nulls. Phase 3: forward-fill any remaining nulls (handles leading whitespace), fallback to `'latin'`. Final pass groups consecutive same-script chars into segments and applies `minSegmentLength`.
+  - **Bugfix as side effect**: `glyphOverrides` for punctuation now actually works. Previously, characters listed in `glyphOverrides` that were also matched by `\p{P}` would hit the whitespace branch first and inherit a neighbor script, ignoring the user's override.
+- ✅ **README cleanup**: dropped "TreeWalker API" from the browser-support list (no longer required).
+
+## Final Metrics
+
+- `multilingual.js`: 437 → 298 lines (−139, −32%).
+- Empty/stale files: −4 (`config-examples.js`, `examples.html`, `multilingual-wrapper.js`, `configuration-demo.html`).
 
 ## Known Issues (carried over from HISTORY.md)
 
