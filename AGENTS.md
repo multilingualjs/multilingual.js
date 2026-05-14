@@ -64,11 +64,14 @@ Commit `599b040`:
 
 In rough priority order:
 
-1. **Replace hardcoded Unicode ranges with `\p{Script=...}` regex** — biggest LOC reduction.
-2. **Replace TreeWalker with recursive traversal** — removes `bind(this)` friction.
-3. **Simplify `wrap()` selector handling** — collapse to `querySelectorAll`.
-4. **Drop `wrapMultilingualText` and `isInitialized`** if no longer justified.
-5. **Re-evaluate Arabic space handling** (see Known Issues) once segmentation logic is simpler.
+1. **Replace TreeWalker with recursive traversal** — removes `bind(this)` friction.
+2. **Simplify `wrap()` selector handling** — collapse to `querySelectorAll`.
+3. **Drop `wrapMultilingualText` and `isInitialized`** if no longer justified.
+4. **Re-evaluate Arabic space handling** (see Known Issues) once segmentation logic is simpler.
+
+## Done
+
+- ✅ **Unicode ranges → `\p{Script=...}` regex** (commit pending). `SCRIPT_PATTERNS` lives at module scope; `detectScript` is now 8 lines. Order: kana before Han so Japanese isn't swallowed by `chinese`. File 437 → 381 lines (−55).
 
 ## Known Issues (carried over from HISTORY.md)
 

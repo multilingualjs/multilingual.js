@@ -51,75 +51,29 @@ const DEFAULT_CONFIG = {
 let GLOBAL_CONFIG = { ...DEFAULT_CONFIG };
 let isInitialized = false;
 
+// Script detection via Unicode property escapes. Order matters: Hiragana/Katakana
+// are matched before Han so Japanese kana don't fall through to chinese.
+const SCRIPT_PATTERNS = {
+    korean:     /\p{Script=Hangul}/u,
+    japanese:   /[\p{Script=Hiragana}\p{Script=Katakana}]/u,
+    chinese:    /\p{Script=Han}/u,
+    arabic:     /\p{Script=Arabic}/u,
+    cyrillic:   /\p{Script=Cyrillic}/u,
+    greek:      /\p{Script=Greek}/u,
+    hebrew:     /\p{Script=Hebrew}/u,
+    thai:       /\p{Script=Thai}/u,
+    devanagari: /\p{Script=Devanagari}/u,
+    latin:      /\p{Script=Latin}/u,
+};
+
 class Multilingual {
     constructor(config = {}) {
         // Merge user config with global config
         this.config = { ...GLOBAL_CONFIG, ...config };
-        
+
         if (this.config.debug) {
             console.log('MultilingualWrapper initialized with config:', this.config);
         }
-        
-        // Unicode ranges for different writing systems
-        this.scriptRanges = {
-            latin: [
-                [0x0041, 0x005A], // A-Z
-                [0x0061, 0x007A], // a-z
-                [0x00C0, 0x00FF], // Latin-1 Supplement
-                [0x0100, 0x017F], // Latin Extended-A
-                [0x0180, 0x024F], // Latin Extended-B
-                [0x1E00, 0x1EFF], // Latin Extended Additional
-            ],
-            korean: [
-                [0xAC00, 0xD7AF], // Hangul Syllables
-                [0x1100, 0x11FF], // Hangul Jamo
-                [0x3130, 0x318F], // Hangul Compatibility Jamo
-                [0xA960, 0xA97F], // Hangul Jamo Extended-A
-                [0xD7B0, 0xD7FF], // Hangul Jamo Extended-B
-            ],
-            japanese: [
-                [0x3040, 0x309F], // Hiragana
-                [0x30A0, 0x30FF], // Katakana
-                [0x31F0, 0x31FF], // Katakana Phonetic Extensions
-            ],
-            chinese: [
-                [0x4E00, 0x9FFF], // CJK Unified Ideographs
-                [0x3400, 0x4DBF], // CJK Extension A
-                [0x20000, 0x2A6DF], // CJK Extension B
-                [0x2A700, 0x2B73F], // CJK Extension C
-                [0x2B740, 0x2B81F], // CJK Extension D
-                [0x2B820, 0x2CEAF], // CJK Extension E
-                [0x2CEB0, 0x2EBEF], // CJK Extension F
-                [0xF900, 0xFAFF], // CJK Compatibility Ideographs
-            ],
-            arabic: [
-                [0x0600, 0x06FF], // Arabic
-                [0x0750, 0x077F], // Arabic Supplement
-                [0x08A0, 0x08FF], // Arabic Extended-A
-                [0xFB50, 0xFDFF], // Arabic Presentation Forms-A
-                [0xFE70, 0xFEFF], // Arabic Presentation Forms-B
-            ],
-            cyrillic: [
-                [0x0400, 0x04FF], // Cyrillic
-                [0x0500, 0x052F], // Cyrillic Supplement
-                [0x2DE0, 0x2DFF], // Cyrillic Extended-A
-                [0xA640, 0xA69F], // Cyrillic Extended-B
-            ],
-            greek: [
-                [0x0370, 0x03FF], // Greek and Coptic
-                [0x1F00, 0x1FFF], // Greek Extended
-            ],
-            hebrew: [
-                [0x0590, 0x05FF], // Hebrew
-                [0xFB1D, 0xFB4F], // Hebrew Presentation Forms
-            ],
-            thai: [
-                [0x0E00, 0x0E7F], // Thai
-            ],
-            devanagari: [
-                [0x0900, 0x097F], // Devanagari
-            ]
-        };
 
         // Language codes for each script
         this.scriptToLang = {
@@ -165,22 +119,13 @@ class Multilingual {
      * Detect the writing system of a character
      */
     detectScript(char) {
-        // Check glyph overrides first
         if (this.glyphOverrideMap[char]) {
             return this.glyphOverrideMap[char];
         }
-
-        const charCode = char.codePointAt(0);
-        
-        for (const [script, ranges] of Object.entries(this.scriptRanges)) {
-            for (const [start, end] of ranges) {
-                if (charCode >= start && charCode <= end) {
-                    return script;
-                }
-            }
+        for (const [script, pattern] of Object.entries(SCRIPT_PATTERNS)) {
+            if (pattern.test(char)) return script;
         }
-        
-        // Default to latin for unrecognized characters (numbers, punctuation, etc.)
+        // Default to latin for unrecognized characters (digits, punctuation, etc.)
         return 'latin';
     }
 
