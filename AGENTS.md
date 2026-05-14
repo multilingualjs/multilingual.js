@@ -77,9 +77,23 @@ None on the v2.1 simplification track. Possible next moves:
   - **Bugfix as side effect**: `glyphOverrides` for punctuation now actually works. Previously, characters listed in `glyphOverrides` that were also matched by `\p{P}` would hit the whitespace branch first and inherit a neighbor script, ignoring the user's override.
 - ✅ **README cleanup**: dropped "TreeWalker API" from the browser-support list (no longer required).
 
+- ✅ **Config naming + trimming** (this pass).
+  - `autoWrap` → `autoInit`. `autoWrapSelector` → `selector`. `autoWrapDelay` → `delay`. (Previous names were awkward because `init()` is already the explicit call — the "auto" is about wrapping on init, not about init itself; `autoInit` reads correctly.)
+  - Removed `minSegmentLength` (no realistic use case; `1` covered everything).
+  - Removed `cssClasses.wrapper` (redundant — every span already has `data-script` and the `ml-xx` short class, providing two CSS-target paths).
+  - Updated [index.html](index.html), [example-new-api.html](example-new-api.html), and [README.md](README.md) to match. (HISTORY.md left as-is — it's a frozen v2.0 record.)
+
+## SCRIPT_PATTERNS coverage
+
+Within the 10 supported scripts (Latin, Korean, Japanese kana, Chinese Han, Arabic, Cyrillic, Greek, Hebrew, Thai, Devanagari), `\p{Script=...}` is canonical and complete — no block gaps. Limitations:
+
+- **CJK ambiguity**: Han ideographs always classify as `chinese`. Japanese kanji-only segments will be tagged `chinese` unless Hiragana/Katakana co-occur. Known design limitation.
+- **Combining marks (`Script=Inherited`)**: e.g. U+0300 COMBINING GRAVE — no script-specific match; falls through to `'latin'`. Rare in practice (most scripts use precomposed forms).
+- **Unsupported scripts**: Bengali, Tamil, Tibetan, Khmer, Lao, Georgian, Armenian, Ethiopic, Mongolian, etc. — all fall through to `'latin'`. Intentional scope limit.
+
 ## Final Metrics
 
-- `multilingual.js`: 437 → 298 lines (−139, −32%).
+- `multilingual.js`: 437 → 272 lines (−165, −38%).
 - Empty/stale files: −4 (`config-examples.js`, `examples.html`, `multilingual-wrapper.js`, `configuration-demo.html`).
 
 ## Known Issues (carried over from HISTORY.md)

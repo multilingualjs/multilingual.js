@@ -85,8 +85,8 @@
         <script>
             // Initialize with auto-wrapping
             Multilingual.init({
-                autoWrap: true,
-                autoWrapSelector: '#auto-content',
+                autoInit: true,
+                selector: '#auto-content',
                 cssClasses: {
                     useShortNames: true
                 },
@@ -104,13 +104,8 @@
         <script>
             function wrapManual() {
                 Multilingual.wrap('#manual-content', {
-                    cssClasses: {
-                        useShortNames: true,
-                        wrapper: 'manual-segment'
-                    },
-                    glyphOverrides: {
-                        '()[]{}': 'latin'
-                    }
+                    cssClasses: { useShortNames: true },
+                    glyphOverrides: { '()[]{}': 'latin' }
                 });
             }
         </script>
@@ -125,10 +120,7 @@
         <script>
             function wrapWithInstance() {
                 const multilingual = new Multilingual({
-                    cssClasses: {
-                        useShortNames: true,
-                        wrapper: 'instance-segment'
-                    },
+                    cssClasses: { useShortNames: true },
                     preserveWhitespace: true,
                     debug: true
                 });
@@ -144,13 +136,11 @@
         <button onclick="wrapMultiple()">Wrap Both</button>
         <script>
             function wrapMultiple() {
-                // Different configurations for different elements
                 Multilingual.wrap('#config1', {
-                    cssClasses: { useShortNames: true, wrapper: 'style1' }
+                    cssClasses: { useShortNames: true }
                 });
-                
                 Multilingual.wrap('#config2', {
-                    cssClasses: { useShortNames: true, wrapper: 'style2' },
+                    cssClasses: { useShortNames: true },
                     glyphOverrides: { '()': 'latin' }
                 });
             }

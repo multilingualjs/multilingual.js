@@ -10,21 +10,16 @@
     <script>
         // Initialize the multilingual library with configuration
         Multilingual.init({
-            autoWrap: true,
-            autoWrapSelector: '#content',
-            autoWrapDelay: 50,
+            autoInit: true,
+            selector: '#content',
+            delay: 50,
             debug: false,
-            
+
             // Example glyph overrides - specify script for specific characters
             glyphOverrides: {
                 '()[]{}': 'latin',    // Treat parentheses and brackets as Latin
                 '،؛؟': 'arabic',      // Arabic punctuation stays with Arabic
             },
-            
-            cssClasses: {
-                // wrapper: 'multilingual-segment',
-                // useShortNames: true   // Use ml-ko, ml-en class names
-            }
         });
     </script>
     <style>

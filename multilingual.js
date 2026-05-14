@@ -5,46 +5,31 @@
 
 // Default configuration settings
 const DEFAULT_CONFIG = {
-    // Auto-wrap settings
-    autoWrap: false,                   // Automatically wrap content when initialized (disabled by default)
-    autoWrapSelector: 'body',          // Which element to auto-wrap ('body', '#content', '.article', etc.)
-    autoWrapDelay: 100,               // Delay in ms before auto-wrapping (allows other scripts to load)
-    
-    // Detection settings
-    preserveWhitespace: true,          // Keep whitespace and punctuation with surrounding text
-    minSegmentLength: 1,              // Minimum character length for a segment to be wrapped
-    
-    // Glyph overrides - specify which characters should be treated as specific scripts
-    glyphOverrides: {
-        // Examples:
-        // '()[]{}': 'latin',           // Treat parentheses and brackets as Latin
-        // '،؛؟': 'arabic',             // Arabic punctuation
-        // '。、': 'japanese',          // Japanese punctuation
-    },
-    
-    // Language detection overrides
-    languageOverrides: {
-        // You can override default language codes for specific scripts
-        // latin: 'en',    // Default is 'en'
-        // chinese: 'zh-CN', // Could be 'zh-TW' for Traditional Chinese
-    },
-    
-    // Elements to skip during processing
+    // When `autoInit` is true, init() schedules a wrap of `selector` after `delay` ms.
+    autoInit: false,
+    selector: 'body',
+    delay: 100,
+
+    // Attach whitespace and punctuation to the surrounding script's segment.
+    preserveWhitespace: true,
+
+    // Force specific characters to a script. Examples:
+    //   '()[]{}': 'latin',  '،؛؟': 'arabic',  '。、': 'japanese'
+    glyphOverrides: {},
+
+    // Override the lang attribute emitted for a script (e.g. chinese: 'zh-TW').
+    languageOverrides: {},
+
+    // Elements whose contents are not processed.
     skipElements: ['script', 'style', 'noscript', 'template'],
-    
-    // CSS class names
+
+    // CSS class behavior.
     cssClasses: {
-        wrapper: '',                   // Additional class for all wrapped spans
-        useShortNames: true,          // Use ml-ko, ml-en instead of korean-script, latin-script
-        // scriptSpecific: {
-        //     latin: 'custom-latin',
-        //     korean: 'custom-korean',
-        //     // etc.
-        // }
+        useShortNames: true,          // Emit ml-ko / ml-en / ... shortcuts
+        scriptSpecific: {}            // Optional { korean: 'my-ko', ... }
     },
-    
-    // Debug mode
-    debug: false                      // Set to true for console logging
+
+    debug: false
 };
 
 // Global configuration (set via Multilingual.init())
@@ -163,35 +148,24 @@ class Multilingual {
             else segments.push({ text: char, script, lang: this.scriptToLang[script] });
         }
 
-        return segments.filter(s => s.text.trim().length >= this.config.minSegmentLength);
+        return segments;
     }
 
     /**
      * Wrap text segments with spans
      */
     wrapSegments(segments) {
-        return segments.map(segment => {
-            const trimmedText = segment.text.trim();
-            if (!trimmedText) {
-                return segment.text; // Return whitespace as-is
-            }
-            
-            // Build CSS classes
-            let cssClass = this.config.cssClasses.wrapper || '';
-            
-            // Add short class name if enabled
-            if (this.config.cssClasses.useShortNames && this.scriptToShortClass[segment.script]) {
-                cssClass += (cssClass ? ' ' : '') + this.scriptToShortClass[segment.script];
-            }
-            
-            // Add custom script-specific class if provided
-            if (this.config.cssClasses.scriptSpecific && this.config.cssClasses.scriptSpecific[segment.script]) {
-                cssClass += (cssClass ? ' ' : '') + this.config.cssClasses.scriptSpecific[segment.script];
-            }
-            
-            const classAttr = cssClass ? ` class="${cssClass}"` : '';
-            
-            return `<span lang="${segment.lang}" data-script="${segment.script}"${classAttr}>${segment.text}</span>`;
+        const { useShortNames, scriptSpecific = {} } = this.config.cssClasses;
+        return segments.map(({ text, script, lang }) => {
+            if (!text.trim()) return text; // whitespace-only segment, no wrap
+
+            const classes = [
+                useShortNames && this.scriptToShortClass[script],
+                scriptSpecific[script],
+            ].filter(Boolean);
+
+            const classAttr = classes.length ? ` class="${classes.join(' ')}"` : '';
+            return `<span lang="${lang}" data-script="${script}"${classAttr}>${text}</span>`;
         }).join('');
     }
 
@@ -267,10 +241,10 @@ class Multilingual {
             console.log('Multilingual initialized:', GLOBAL_CONFIG);
         }
 
-        if (GLOBAL_CONFIG.autoWrap) {
+        if (GLOBAL_CONFIG.autoInit) {
             const run = () => setTimeout(
-                () => new Multilingual().wrap(GLOBAL_CONFIG.autoWrapSelector),
-                GLOBAL_CONFIG.autoWrapDelay
+                () => new Multilingual().wrap(GLOBAL_CONFIG.selector),
+                GLOBAL_CONFIG.delay
             );
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', run);
