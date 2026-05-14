@@ -60,6 +60,11 @@
         .ml-ja { background: #fce4ec; padding: 0 2px; border-radius: 3px; border: 1px solid #e91e63; }
         .ml-zh { background: #f3e5f5; padding: 0 2px; border-radius: 3px; border: 1px solid #9c27b0; }
         .ml-ar { background: #e8f5e8; padding: 0 2px; border-radius: 3px; border: 1px solid #4caf50; direction: rtl; unicode-bidi: embed; }
+
+        /* Category styling (used only in the separation example) */
+        .ml-space { outline: 1px dotted #999; min-width: 0.4em; display: inline-block; }
+        .ml-punct { background: #ffcdd2; border-radius: 3px; padding: 0 2px; border: 1px solid #e53935; }
+        .ml-num   { background: #c8e6c9; border-radius: 3px; padding: 0 2px; border: 1px solid #43a047; font-variant-numeric: tabular-nums; }
     </style>
 </head>
 <body>
@@ -85,12 +90,20 @@ Multilingual.wrap('#content', { /* per-call config */ });</code></pre>
     </div>
 </div>
 
-<h2>2. <code>wrapWhitespace</code></h2>
-<p class="lead">When <code>true</code> (default), whitespace and punctuation are absorbed into the surrounding script's span — so background colors, borders, and padding extend across spaces. When <code>false</code>, whitespace stays as bare text between spans, keeping each span tight on its script content. Useful when you don't want span styling to bleed into the gaps.</p>
+<h2>2. <code>separateWhitespace</code> / <code>separatePunct</code> / <code>separateNum</code></h2>
+<p class="lead">By default, whitespace and punctuation merge into the surrounding script's span, and digits join the Latin segment. Set any of <code>separateWhitespace</code>, <code>separatePunct</code>, <code>separateNum</code> to <code>true</code> to give that category its own span with class <code>ml-space</code> / <code>ml-punct</code> / <code>ml-num</code> — useful when you want typographic control (tabular numbers, styled punctuation, visible spaces). Separated categories don't propagate during inheritance, so a stray space next to a separated comma still attaches to the nearest real script.</p>
 <div class="example">
     <div class="row">
-        <div class="col"><div class="label">wrapWhitespace: true (bleeds)</div><div id="e2-true">안녕 hello, مرحبا!</div></div>
-        <div class="col"><div class="label">wrapWhitespace: false (tight)</div><div id="e2-false">안녕 hello, مرحبا!</div></div>
+        <div class="col"><div class="label">all default</div><div id="e2-default">안녕 hello, 123!</div></div>
+        <div class="col"><div class="label">separateWhitespace: true</div><div id="e2-ws">안녕 hello, 123!</div></div>
+    </div>
+    <div class="row">
+        <div class="col"><div class="label">separatePunct: true</div><div id="e2-punct">안녕 hello, 123!</div></div>
+        <div class="col"><div class="label">separateNum: true</div><div id="e2-num">안녕 hello, 123!</div></div>
+    </div>
+    <div class="row">
+        <div class="col"><div class="label">all three</div><div id="e2-all">안녕 hello, 123!</div></div>
+        <div class="col"></div>
     </div>
 </div>
 
@@ -133,8 +146,11 @@ Multilingual.wrap('#content', { /* per-call config */ });</code></pre>
 <script>
     Multilingual.wrap('#e1-out');
 
-    Multilingual.wrap('#e2-true',  { wrapWhitespace: true });
-    Multilingual.wrap('#e2-false', { wrapWhitespace: false });
+    Multilingual.wrap('#e2-default');
+    Multilingual.wrap('#e2-ws',    { separateWhitespace: true });
+    Multilingual.wrap('#e2-punct', { separatePunct: true });
+    Multilingual.wrap('#e2-num',   { separateNum: true });
+    Multilingual.wrap('#e2-all',   { separateWhitespace: true, separatePunct: true, separateNum: true });
 
     Multilingual.wrap('#e3-off');
     Multilingual.wrap('#e3-on', { glyphOverrides: { '()[]{}': 'latin' } });

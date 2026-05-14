@@ -10,10 +10,16 @@ const DEFAULT_CONFIG = {
     selector: 'body',
     delay: 100,
 
-    // When true, whitespace and punctuation are absorbed into the surrounding
-    // script's span. When false, they remain as bare text between spans —
-    // useful for tight visual styling (avoids background/border bleed into spaces).
-    wrapWhitespace: true,
+    // When false (default), whitespace / punctuation / digits merge into the
+    // surrounding script's span. Set any of these true to give that category
+    // its own segment with its own class (ml-space / ml-punct / ml-num) —
+    // useful for typographic control (tabular numbers, styled punctuation,
+    // visible spaces, etc.). Separated categories don't participate in
+    // inheritance: e.g. with separatePunct on, the space in "Hello, world"
+    // inherits the nearest real script (latin), not the punct script.
+    separateWhitespace: false,
+    separatePunct: false,
+    separateNum: false,
 
     // Force specific characters to a script. Examples:
     //   '()[]{}': 'latin',  '،؛؟': 'arabic',  '。、': 'japanese'
@@ -48,6 +54,10 @@ const SCRIPT_PATTERNS = {
     devanagari: /\p{Script=Devanagari}/u,
     latin:      /\p{Script=Latin}/u,
 };
+
+// Category-pseudo-scripts. Excluded from inheritance propagation so that, e.g.,
+// a separated punct segment doesn't bleed its script onto adjacent whitespace.
+const CATEGORY_SCRIPTS = new Set(['whitespace', 'punctuation', 'number']);
 
 class Multilingual {
     constructor(config = {}) {
@@ -84,7 +94,10 @@ class Multilingual {
             greek: 'ml-el',
             hebrew: 'ml-he',
             thai: 'ml-th',
-            devanagari: 'ml-hi'
+            devanagari: 'ml-hi',
+            whitespace:  'ml-space',
+            punctuation: 'ml-punct',
+            number:      'ml-num',
         };
 
         // Build glyph override map
@@ -115,40 +128,42 @@ class Multilingual {
     /**
      * Split text into segments by writing system.
      *
-     *   1. Tag every char with a script. Whitespace/punctuation without an
-     *      explicit glyph override gets `null` (neutral).
-     *   2. If `wrapWhitespace`, neutrals adopt the nearest neighbor script —
-     *      prefer the previous char, fall back to the next. (Otherwise neutrals
-     *      stay `null` and end up as bare text between spans.)
+     *   1. Tag every char. Whitespace / punctuation / digits get either their
+     *      category-script (if separated) or `null` (inheritable). Letters get
+     *      their detected script.
+     *   2. Fill nulls by inheriting the nearest *real* script (skipping over
+     *      separated category-scripts so they don't bleed onto neighbors).
+     *      Leading-only nulls fall back to 'latin'.
      *   3. Group consecutive same-script chars into segments.
      */
     segmentText(text) {
+        const { separateWhitespace, separatePunct, separateNum } = this.config;
+
         const tagged = [...text].map(char => {
             if (this.glyphOverrideMap[char]) return { char, script: this.glyphOverrideMap[char] };
-            if (/[\s\p{P}]/u.test(char)) return { char, script: null };
+            if (/\s/u.test(char))     return { char, script: separateWhitespace ? 'whitespace'  : null };
+            if (/\p{P}/u.test(char))  return { char, script: separatePunct      ? 'punctuation' : null };
+            if (/\p{N}/u.test(char))  return { char, script: separateNum        ? 'number'      : 'latin' };
             return { char, script: this.detectScript(char) };
         });
 
-        if (this.config.wrapWhitespace) {
-            let prev = null;
-            for (const t of tagged) {
-                if (t.script !== null) prev = t.script;
-                else if (prev) t.script = prev;
-            }
-            let next = null;
-            for (let i = tagged.length - 1; i >= 0; i--) {
-                if (tagged[i].script !== null) next = tagged[i].script;
-                else tagged[i].script = next ?? 'latin';
-            }
+        let prev = null;
+        for (const t of tagged) {
+            if (t.script === null) { if (prev) t.script = prev; }
+            else if (!CATEGORY_SCRIPTS.has(t.script)) prev = t.script;
+        }
+        let next = null;
+        for (let i = tagged.length - 1; i >= 0; i--) {
+            if (tagged[i].script === null) tagged[i].script = next ?? 'latin';
+            else if (!CATEGORY_SCRIPTS.has(tagged[i].script)) next = tagged[i].script;
         }
 
         const segments = [];
         for (const { char, script } of tagged) {
             const last = segments[segments.length - 1];
             if (last && last.script === script) last.text += char;
-            else segments.push({ text: char, script, lang: script ? this.scriptToLang[script] : null });
+            else segments.push({ text: char, script });
         }
-
         return segments;
     }
 
@@ -156,12 +171,14 @@ class Multilingual {
      * Wrap text segments with spans
      */
     wrapSegments(segments) {
-        return segments.map(({ text, script, lang }) => {
-            // Neutral (null script) or whitespace-only segments emit as bare text.
-            if (!script || !text.trim()) return text;
+        return segments.map(({ text, script }) => {
+            // Whitespace-only segments emit as bare text.
+            if (!text.trim()) return text;
+            const lang = this.scriptToLang[script];
             const cls = this.config.useShortNames ? this.scriptToShortClass[script] : null;
-            const classAttr = cls ? ` class="${cls}"` : '';
-            return `<span lang="${lang}" data-script="${script}"${classAttr}>${text}</span>`;
+            const langAttr  = lang ? ` lang="${lang}"` : '';
+            const classAttr = cls  ? ` class="${cls}"` : '';
+            return `<span${langAttr} data-script="${script}"${classAttr}>${text}</span>`;
         }).join('');
     }
 
