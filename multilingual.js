@@ -172,8 +172,10 @@ class Multilingual {
      */
     wrapSegments(segments) {
         return segments.map(({ text, script }) => {
-            // Whitespace-only segments emit as bare text.
-            if (!text.trim()) return text;
+            // Pure-whitespace segments that inherited a script (rather than being
+            // explicitly tagged 'whitespace') stay as bare text — no point wrapping
+            // " " in a korean span just because it inherited from a neighbor.
+            if (script !== 'whitespace' && !text.trim()) return text;
             const lang = this.scriptToLang[script];
             const cls = this.config.useShortNames ? this.scriptToShortClass[script] : null;
             const langAttr  = lang ? ` lang="${lang}"` : '';
